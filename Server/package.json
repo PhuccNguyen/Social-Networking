@@ -1,0 +1,25 @@
+{
+  "name": "social-networking",
+  "version": "1.0.0",
+  "description": "Social networks are online spaces and mobile applications that let people and groups interact, exchange information, connect, and build relationships. Individuals can establish connections with neighbors, family, friends, and those who share their interests. One of the most significant uses of the internet in modern times is social networking.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "Connect": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "(https://github.com/PhuccNguyen/Social-Networking.git)"
+  },
+  "keywords": [
+    "NodeJs",
+    "Mongodb",
+    "React",
+    "Express"
+  ],
+  "author": "PhucNguyen",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.18.2"
+  }
+}
