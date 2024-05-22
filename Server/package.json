@@ -1,11 +1,12 @@
 {
   "name": "back-end-social-networking",
   "version": "1.0.0",
+  "type": "module",
   "description": "Social networks are online spaces and mobile applications that let people and groups interact, exchange information, connect, and build relationships. Individuals can establish connections with neighbors, family, friends, and those who share their interests. One of the most significant uses of the internet in modern times is social networking.",
-  "main": "none important server.js",
+  "main": "none important index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -30,9 +31,11 @@
     "gridfs-stream": "^1.1.1",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.6.2",
     "mongodb-core": "^3.2.7",
     "mongoose": "^8.4.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

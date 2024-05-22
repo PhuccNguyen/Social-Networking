@@ -9,31 +9,46 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from 'url';
 
-// Configurations
+// Load environment variables from .env file
+dotenv.config(); 
+
+// Configurations for __filename and __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-dotenv.confg();
+
 const app = express();
+
+// Middleware configurations
 app.use(express.json());
 app.use(helmet());
-app.use(helmet.crossOriginRsourcesPolicy({ policy: "cross-origin" }));
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
 
-    // /* FILE STORAGE */ MongoDB
+// Debugging: Check if MONGO_URL and PORT are loaded
+console.log('MONGO_URL:', process.env.MONGO_URL);
+console.log('PORT:', process.env.PORT);
+
+// File storage 
 const storage = multer.diskStorage({
- destination: function (req, file, cb) {
-  cb(null, "public/assets");
- },
- filename: function (req, file, cb) {
+  destination: function (req, file, cb) {
+    cb(null, "public/assets");
+  },
+  filename: function (req, file, cb) {
     cb(null, file.originalname);
- }
+  }
 });
-const upload = multer ({storage});
+const upload = multer({ storage });
 
+// Mongoose connection
+const PORT = process.env.PORT || 6001;
 
-
-
+mongoose.connect(process.env.MONGO_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
+  app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+}).catch((error) => console.log(`${error} did not connect`));

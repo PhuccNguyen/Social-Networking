@@ -11,6 +11,11 @@ const port = 8080
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
+
+//  declare routes
+app.get('/aa', (req, res) => {
+  res.send('Hello !')
+}) 
 app.get('/aa', (req, res) => {
     // res.send('<h2>Nice!<h2>')
     res.render('abs.html')
