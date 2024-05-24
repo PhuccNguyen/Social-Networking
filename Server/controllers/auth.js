@@ -12,6 +12,10 @@ export const register = async (req, res) => {
             mobile,
             email,
             intro,
+            address,
+            gender,
+            birthday,
+            status,
             password,
             picturePath,
             friends,
@@ -20,7 +24,7 @@ export const register = async (req, res) => {
         } = req.body;
 
         // Check if required fields are provided
-        if (!firstName || !lastName || !userName || !mobile || !email || !intro || !password) {
+        if (!firstName || !lastName || !userName || !mobile || !email || !intro || !address || !gender || !birthday || !status || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -40,13 +44,17 @@ export const register = async (req, res) => {
             mobile,
             email,
             intro,
+            address,
+            gender,
+            birthday,
+            status,
             password: passwordHash,
             picturePath,
             friends,
             location,
             occupation,
             viewedProfile: Math.floor(Math.random() * 1000),
-            impressions: Math.floor(Math.random() * 1000)
+            impressions: Math.floor(Math.random() * 1000),
         });
         const savedUser = await newUser.save();
         res.status(201).json(savedUser);
@@ -54,6 +62,7 @@ export const register = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
 
 
      /* LOGIN USER */ 

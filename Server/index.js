@@ -9,7 +9,10 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from 'url';
 import authRoutes from "./routes/auth.js";
+import usersRoutes from "./routes/users.js";
+import postRoutes from "./routes/post.js";
 import { register } from "./controllers/auth.js";
+import { verifyToken } from './middleware/auth.js';
 
 // Load environment variables from .env file
 dotenv.config(); 
@@ -46,10 +49,12 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Routes With Files
-app.post("/auth/register", upload.single("picture"), register);
+app.post("/auth/register", upload.single("picture"), verifyToken, register);
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/users", usersRoutes);
+app.use("/posts", postRoutes);
 
 // Mongoose connection
 const PORT = process.env.PORT || 6001;
