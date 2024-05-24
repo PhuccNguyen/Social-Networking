@@ -35,12 +35,15 @@ import User from "../models/User";
 export const addRemoveFriends = async (req, res) => {
     try {
         const { id, friendId } = req.params;
+        // Check if Friend is Already in User's Friends List
         const user = await User.findById(id);
         const friend =  await User.findById(friendId); 
 
+        // Check if Friend is Already in User's Friends List
         if ( user.friends.includes(friendId)) {
             user.friends = user.friends.filter((id) => id !== friendId);
             friend.friends = friend.friends.filter((id) => id !== id);
+
         } else {
             user.friends.push(friendId);
             friend.friends.push(id);
