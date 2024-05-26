@@ -11,11 +11,15 @@ import { fileURLToPath } from 'url';
 import authRoutes from "./routes/auth.js";
 import usersRoutes from "./routes/users.js";
 import postRoutes from "./routes/post.js";
+import { createPost } from "./controllers/post.js";
 import { register } from "./controllers/auth.js";
 import { verifyToken } from './middleware/auth.js';
 
 // Load environment variables from .env file
 dotenv.config(); 
+
+// config staic files
+app.use(express.static(path.join(__dirname,'public')));
 
 // Configurations for __filename and __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -50,7 +54,7 @@ const upload = multer({ storage });
 
 // Routes With Files
 app.post("/auth/register", upload.single("picture"), verifyToken, register);
-app.post("/posts", verifyToken, upload.single("picture"),);
+app.post("/posts", verifyToken, upload.single("picture"), createPost);
 
 // Routes
 app.use("/auth", authRoutes);
