@@ -10,16 +10,20 @@ import path from "path";
 import { fileURLToPath } from 'url';
 import authRoutes from "./routes/auth.js";
 import usersRoutes from "./routes/users.js";
-import postRoutes from "./routes/post.js";
+import postsRoutes from "./routes/post.js";
 import { createPost } from "./controllers/post.js";
 import { register } from "./controllers/auth.js";
 import { verifyToken } from './middleware/auth.js';
+import User  from "./models/User.js";
+import Post from "./models/Post.js";
+// import { users, posts } from "./data/index.js"
+
 
 // Load environment variables from .env file
 dotenv.config(); 
 
 // config staic files
-app.use(express.static(path.join(__dirname,'public')));
+// app.use(express.static(path.join(__dirname,'public')));
 
 // Configurations for __filename and __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -59,7 +63,7 @@ app.post("/posts", verifyToken, upload.single("picture"), createPost);
 // Routes
 app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
-app.use("/posts", postRoutes);
+app.use("/posts", postsRoutes);
 
 // Mongoose connection
 const PORT = process.env.PORT || 6001;
@@ -67,5 +71,15 @@ mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
-  app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
-}).catch((error) => console.log(`${error} did not connect`));
+  console.log("MongoDB connection successfully!!");
+  app.listen(PORT, () => console.log(`Server running on port correct is 4001: ${PORT}`));
+
+  /* After connect will be ADD DATA form data folder models*/  
+  // User.insertMany(users);
+  // Post.insertMany(posts);
+
+})
+.catch((error) => {
+  console.error('Error when connecting to MongoDB Please check your configuration:', error);
+});
+

@@ -1,8 +1,8 @@
 import express from "express";
 import { login } from "../controllers/auth.js";
 
-const route = express.Router();
+const router = express.Router(); // Corrected `route` to `router`
 
-route.post("/login", login);
+router.post("/login", login); // Using `router` instead of `route`
 
-export default router;
+export default router; // Exporting `router` instead of `route`
