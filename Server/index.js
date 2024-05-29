@@ -68,8 +68,8 @@ app.use("/posts", postsRoutes);
 // Mongoose connection
 const PORT = process.env.PORT || 6001;
 mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+  // useNewUrlParser: true,
+  // useUnifiedTopology: true,
 }).then(() => {
   console.log("MongoDB connection successfully!!");
   app.listen(PORT, () => console.log(`Server running on port correct is 4001: ${PORT}`));
