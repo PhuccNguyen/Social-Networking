@@ -77,7 +77,6 @@ mongoose.connect(process.env.MONGO_URL, {
   /* After connect will be ADD DATA form data folder models*/  
   // User.insertMany(users);
   // Post.insertMany(posts);
-
 })
 .catch((error) => {
   console.error('Error when connecting to MongoDB Please check your configuration:', error);
