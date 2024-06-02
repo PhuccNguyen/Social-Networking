@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { styled } from "@mui/system";
+import { Styled } from "@mui/system";
 
 const middleinsert = style(Box)({
     display: "flex",

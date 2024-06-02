@@ -6,10 +6,11 @@ import { Search, Message, DarkMode, LightMode, Notifications, Help, Menu, Close 
 
 // Importing Redux hooks and actions
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/router"; // Next.js router
 const router = useRouter(); // Using Next.js router
 import { setMode, setLogout } from "state"; // Fixing capitalization on setLogout
 import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useRouter } from "next/router";
 import Middleinsert from "components/middleinsert"; 
 
 // Navbar component
@@ -19,7 +20,9 @@ const Navbar = () => {
 
     // Hooks to use dispatch and navigate
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
+    const router = useRouter();
+
 
     // Getting the user state from Redux store
     const user = useSelector((state) => state.user);
@@ -52,7 +55,7 @@ const Navbar = () => {
                     fontWeight="bold"
                     fontSize="clamp(1rem, 2rem, 2.25rem)" // Responsive font size
                     color="primary"
-                    onClick={() => navigate("/home")} // Navigate to home on click
+                    onClick={() => router.push("/home")}  // Navigate to home on click
                     sx={{
                         "&:hover": {
                             color: primaryLight, // Change color on hover
@@ -60,7 +63,7 @@ const Navbar = () => {
                         },
                     }}
                 >
-                    Sociopedia
+                    HWSOCIAL
                 </Typography>
     
                 {/* Search bar for non-mobile screens */}
@@ -70,14 +73,14 @@ const Navbar = () => {
                         borderRadius="9px" // Rounded corners
                         gap="3rem"
                         padding="0.1rem 1.5rem"
-                    >
-                        <InputBase placeholder="Search..."/> // Input field for search
-                        <IconButton> 
-                            <Search/> // Search icon
+                    >   
+                        <IconButton>
+                        <InputBase placeholder="Search..."/> 
+                            <Search/> 
                         </IconButton>
                     </middleinsert>
                 )}
-            </middleinsert>   
+            </middleinsert> 
     
             {/* Desktop Navigation */}
             {isNonMobileScreen ? (

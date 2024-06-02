@@ -1,5 +1,7 @@
 import { Box } from "@mui/material";
 import Navbar from "views/navbar";
+// import { Navbar } from  "views/navbar";
+
 
 const HomePage = () => {
     return (
