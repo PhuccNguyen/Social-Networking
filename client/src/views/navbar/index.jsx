@@ -59,6 +59,7 @@ const Navbar = () => {
                 </middleinsert>
             )}
         </middleinsert>   
+
             {/* Desktop Nav*/}
     {isNonMobileScreen ? (
       <middleinsert gap="2rem">
@@ -80,17 +81,92 @@ const Navbar = () => {
                 with: "150px",
                 borderRadius: "0,25rem",
                 p: "0,25rem 1rem",
-                "& .MuiSvgIcon-root"
+                "& .MuiSvgIcon-root": {
+                    pr: "0,25rem",
+                    width: "3rem",
+
+                },
+                "& .MuiSelect-select:focus": {
+                    backgroundColor: neutralLight,
+
+                }
             }}
+            input={<InputBase/>}
             >
+                <MenuItem value={fullName}>
+                    <Typography>{fullName}</Typography>
+                </MenuItem>
+                <MenuItem onClick={() => dispatchEvent(setLogout())}>Log Out</MenuItem>
 
             </Select>
         </FormControl>
-      </middleinsert>) : ( <IconButton> </IconButton>
+      </middleinsert> 
+      ) : ( 
+      <IconButton 
+        onClick={() => setIsMobileMenuToggle(!isMobileMenuToggle)}>
+        <Menu/>
+      </IconButton>
       )} 
+      
+      {/* Mobile Nav*/}
+      {!isNonMobileScreen && isMobileMenuToggle (
+        <Box
+          position="fixed"
+          right="0"
+          bottom="0"
+          height="100%"
+          zIndex="10"
+          maxWidth="500px"
+          minWidth="300px"
+          backgroundColor= {background}
+          >           
+      {/* CLOSE ICON */}
+      <middleinsert display="flex" flexDirection="column" 
+      justifyContent="center" alignItems="center" gap="3rem">
+        <IconButton 
+            onClick={() => dispatch(setMode())}>
+            sx={{fontSize: "25px "}}
+            { theme.palette.mode === "dark" ? ( 
+                <darkMode sx={{fontSize: "25px "}} />
+            ) : ( 
+            <lightMode sx={{ color: dark, fontSize: "25px" }} /> 
+            )}
+        </IconButton>
+        <Message sx={{ fontSize: "25px" }}/>
+        <Notifications sx={{ fontSize: "25px" }}/>
+        <Help sx= {{ fontSize: "25px" }}/>
+        <FormControl variant="standard" value={fullName}>
+            <Select
+            value={fullName}
+            sx={{
+                backgroundColor: neutralLight,
+                with: "150px",
+                borderRadius: "0,25rem",
+                p: "0,25rem 1rem",
+                "& .MuiSvgIcon-root": {
+                    pr: "0,25rem",
+                    width: "3rem",
+
+                },
+                "& .MuiSelect-select:focus": {
+                    backgroundColor: neutralLight,
+
+                }
+            }}
+            input={<InputBase/>}
+            >
+                <MenuItem value={fullName}>
+                    <Typography>{fullName}</Typography>
+                </MenuItem>
+                <MenuItem onClick={() => dispatchEvent(setLogout())}>Log Out</MenuItem>
+
+            </Select>
+        </FormControl>
+      </middleinsert>            
+       </Box>
+      )}
+
     </middleinsert>  
-
-
     );
 };
 
