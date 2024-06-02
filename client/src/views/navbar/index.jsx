@@ -6,9 +6,11 @@ import { Search, Message, DarkMode, LightMode, Notifications, Help, Menu, Close 
 
 // Importing Redux hooks and actions
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/router"; // Next.js router
+const router = useRouter(); // Using Next.js router
 import { setMode, setLogout } from "state"; // Fixing capitalization on setLogout
 import { useNavigate } from "react-router-dom";
-import middleinsert from "component/middleinsert"; // Assuming this is a custom component
+import Middleinsert from "components/middleinsert"; 
 
 // Navbar component
 const Navbar = () => {
