@@ -8,10 +8,10 @@ import { Search, Message, DarkMode, LightMode, Notifications, Help, Menu, Close 
 import { useDispatch, useSelector } from "react-redux";
 const router = useRouter(); // Using Next.js router
 import { setMode, setLogout } from "state"; // Fixing capitalization on setLogout
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import React from 'react';
 import { useRouter } from "next/router";
-import Middleinsert from "components/middleinsert"; 
+import Middleinsert from "../components/middleinsert"; 
 
 // Navbar component
 const Navbar = () => {
