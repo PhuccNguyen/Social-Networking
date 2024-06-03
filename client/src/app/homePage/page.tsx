@@ -1,11 +1,9 @@
+"use client";
+
 import { Box } from "@mui/material";
 import React from 'react';
-import Navbar from "../navbar";
+import Navbar from "../navbar/page";
 
-// import { Navbar } from  "views/navbar";
-
-
-// const HomePage = () => {
 export default function HomePage() {
     return (
         <Box>
@@ -13,5 +11,4 @@ export default function HomePage() {
             <h1>Welcome to the Home Page</h1>
         </Box>
     );
-};
-
+}

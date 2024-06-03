@@ -1,16 +1,16 @@
+"use client";
 
 // Importing necessary hooks and components from React and Material-UI
 import { useState } from "react";
+import { configureStore } from '@reduxjs/toolkit';
 import { Box, IconButton, InputBase, Typography, Select, MenuItem, FormControl, useTheme, useMediaQuery } from "@mui/material";
 import { Search, Message, DarkMode, LightMode, Notifications, Help, Menu, Close } from "@mui/icons-material";
 
 // Importing Redux hooks and actions
 import { useDispatch, useSelector } from "react-redux";
-const router = useRouter(); // Using Next.js router
-import { setMode, setLogout } from "state"; // Fixing capitalization on setLogout
-// import { useNavigate } from "react-router-dom";
+import { setModel, setLogout } from "../state"; // Corrected import path
 import React from 'react';
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Middleinsert from "../components/middleinsert"; 
 
 // Navbar component
@@ -20,12 +20,10 @@ const Navbar = () => {
 
     // Hooks to use dispatch and navigate
     const dispatch = useDispatch();
-    // const navigate = useNavigate();
     const router = useRouter();
 
-
     // Getting the user state from Redux store
-    const user = useSelector((state) => state.user);
+    const user = useSelector((state: any) => state.user);
 
     // Hook to check if the screen width is above 1000px
     const isNonMobileScreen = useMediaQuery("(min-width: 1000px)");
@@ -45,10 +43,10 @@ const Navbar = () => {
     
     return (
         // Outer container for the Navbar with padding and background color
-        <middleinsert padding="1rem 6%" backgroundColor={alt}>
+        <Middleinsert padding="1rem 6%" backgroundColor={alt}>
             
             {/* Inner container for the brand name and search bar */}
-            <middleinsert gap="1.75rem">
+            <Middleinsert gap="1.75rem">
                 
                 {/* Brand name "Sociopedia" */}
                 <Typography 
@@ -68,7 +66,7 @@ const Navbar = () => {
     
                 {/* Search bar for non-mobile screens */}
                 {isNonMobileScreen && (
-                    <middleinsert 
+                    <Middleinsert 
                         backgroundColor={neutralLight} // Light background color
                         borderRadius="9px" // Rounded corners
                         gap="3rem"
@@ -78,13 +76,13 @@ const Navbar = () => {
                         <InputBase placeholder="Search..."/> 
                             <Search/> 
                         </IconButton>
-                    </middleinsert>
+                    </Middleinsert>
                 )}
-            </middleinsert> 
+            </Middleinsert> 
     
             {/* Desktop Navigation */}
             {isNonMobileScreen ? (
-                <middleinsert gap="2rem">
+                <Middleinsert gap="2rem">
     
                     {/* Toggle theme mode button */}
                     <IconButton onClick={() => dispatch(setMode())}>
@@ -125,7 +123,7 @@ const Navbar = () => {
                             <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem> // Logout option
                         </Select>
                     </FormControl>
-                </middleinsert> 
+                </Middleinsert> 
             ) : ( 
                 // Mobile menu toggle button
                 <IconButton 
@@ -147,7 +145,7 @@ const Navbar = () => {
                     backgroundColor={background}
                 >           
                     {/* Mobile menu content */}
-                    <middleinsert 
+                    <Middleinsert 
                         display="flex" 
                         flexDirection="column"
                         justifyContent="center" 
@@ -196,10 +194,10 @@ const Navbar = () => {
                                 <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem> // Logout option
                             </Select>
                         </FormControl>
-                    </middleinsert>            
+                    </Middleinsert>            
                 </Box>
             )}
-        </middleinsert>  
+        </Middleinsert>  
     );   
 };
 

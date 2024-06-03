@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
-import { Styled } from "@mui/system";
+import { styled } from "@mui/system";
 
-const middleinsert = style(Box)({
+const middleinsert = styled(Box)({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",

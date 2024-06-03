@@ -1,9 +1,9 @@
 
 // import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom';
 import { useRouter } from "next/router";
-import HomePage from './app/homePage';
+import HomePage from './app/homePage/page';
 import LoginPage from './app/loginPage';
-import ProfilePage from './app/profilePage';
+import ProfilePage from './app/profilePage/page';
 import {  useMemo } from 'react';
 import React from 'react';
 import { useSelector } from 'react-redux';
