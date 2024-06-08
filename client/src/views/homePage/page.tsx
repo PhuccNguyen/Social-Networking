@@ -1,12 +1,10 @@
-"use client";
-
-// import { Hand } from "@mui/material";
+import { Box } from "@mui/material";
 import React from 'react';
 
-export default function HomePage() {
+const HomePage = () => {
     return (
-        <div>
-            <h1>Welcome to the Home Page</h1>
-        </div>
+        <Box>
+            <h1 >Welcome to the Home Page </h1>
+        </Box>
     );
 }
