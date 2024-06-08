@@ -1,13 +1,8 @@
 
-// const LoginPage = () => {
-//     return (
-//     <div> loginpage </div>
-// )
-// };
-
-// export default LoginPage;
-export default function loginpage() {
+const LoginPage = () => {
     return (
-            <h1>Welcome to the Home Page</h1>
-    );
+    <h1> loginpage </h1>
+)
 };
+
+export default LoginPage;
