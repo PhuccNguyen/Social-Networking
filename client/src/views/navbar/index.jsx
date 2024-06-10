@@ -6,7 +6,7 @@ import {  Search,  Message,  DarkMode,  LightMode,  Notifications,  Help,  Menu,
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
-import Middleinsert from "components/middleinsert";
+import FlexBetween from "components/FlexBetween";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -25,8 +25,8 @@ const Navbar = () => {
   const fullName = `${user.firstName} ${user.lastName}`;
 
   return (
-    <Middleinsert padding="1rem 6%" backgroundColor={alt}>
-      <Middleinsert gap="1.75rem">
+    <FlexBetween padding="1rem 6%" backgroundColor={alt}>
+      <FlexBetween gap="1.75rem">
         <Typography
           fontWeight="bold"
           fontSize="clamp(1rem, 2rem, 2.25rem)"
@@ -42,7 +42,7 @@ const Navbar = () => {
           Sociopedia
         </Typography>
         {isNonMobileScreens && (
-          <Middleinsert
+          <FlexBetween
             backgroundColor={neutralLight}
             borderRadius="9px"
             gap="3rem"
@@ -52,13 +52,13 @@ const Navbar = () => {
             <IconButton>
               <Search />
             </IconButton>
-          </Middleinsert>
+          </FlexBetween>
         )}
-      </Middleinsert>
+      </FlexBetween>
 
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
-        <Middleinsert gap="2rem">
+        <FlexBetween gap="2rem">
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? (
               <DarkMode sx={{ fontSize: "25px" }} />
@@ -93,7 +93,7 @@ const Navbar = () => {
               <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
             </Select>
           </FormControl>
-        </Middleinsert>
+        </FlexBetween>
       ) : (
         <IconButton
           onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}
@@ -124,7 +124,7 @@ const Navbar = () => {
           </Box>
 
           {/* MENU ITEMS */}
-          <Middleinsert
+          <FlexBetween
             display="flex"
             flexDirection="column"
             justifyContent="center"
@@ -170,10 +170,10 @@ const Navbar = () => {
                 </MenuItem>
               </Select>
             </FormControl>
-          </Middleinsert>
+          </FlexBetween>
         </Box>
       )}
-    </Middleinsert>
+    </FlexBetween>
   );
 };
 
