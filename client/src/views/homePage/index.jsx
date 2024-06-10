@@ -1,7 +1,12 @@
+import { Box } from "@mui/material"
+import Navbar from "views/navbar";
 
 const homePage = () => {
     return (
-    <div> Well come HomePage </div>
+    <Box> 
+      <Navbar />      
+      <h1> EIu OPIw</h1>
+    </Box>
   )
   };
   
