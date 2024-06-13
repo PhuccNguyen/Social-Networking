@@ -14,9 +14,9 @@ import postsRoutes from "./routes/post.js";
 import { createPost } from "./controllers/post.js";
 import { register } from "./controllers/auth.js";
 import { verifyToken } from './middleware/auth.js';
-// import User  from "./models/User.js";
-// import Post from "./models/Post.js";
-// import { users, posts } from "./data/index.js"
+import User  from "./models/User.js";
+import Post from "./models/Post.js";
+import { users, posts } from "./data/index.js"
 
 
 // Load environment variables from .env file
@@ -74,7 +74,7 @@ mongoose.connect(process.env.MONGO_URL, {
   console.log("MongoDB connection successfully!!");
   app.listen(PORT, () => console.log(`Server running on port correct is 4001: ${PORT}`));
 
-  /* After connect will be ADD DATA form data folder models*/  
+  // /* After connect will be ADD DATA form data folder models*/  
   // User.insertMany(users);
   // Post.insertMany(posts);
 })
