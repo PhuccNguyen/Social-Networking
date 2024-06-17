@@ -1,8 +1,6 @@
 import { useState } from "react";
-
-import {  Box,  IconButton,  InputBase,  Typography,  Select,  MenuItem,  FormControl,  useTheme,  useMediaQuery,} from "@mui/material";
-import {  Search,  Message,  DarkMode,  LightMode,  Notifications,  Help,  Menu, Close,} from "@mui/icons-material";
-
+import { Box, IconButton, InputBase, Typography, Select, MenuItem, FormControl, useTheme, useMediaQuery } from "@mui/material";
+import { Search, Message, DarkMode, LightMode, Notifications, Help, Menu, Close } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
@@ -22,32 +20,33 @@ const Navbar = () => {
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
 
-  
-  const fullName = `${user.firstName} ${user.lastName}`;
+  // Check if user is defined before accessing its properties
+  const fullName = user ? `${user.firstName} ${user.lastName}` : "Guest";
 
   return (
-    
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
       <FlexBetween gap="1.75rem">
         <Typography
           fontWeight="bold"
           fontSize="clamp(1rem, 2rem, 2.25rem)"
-          color="primary"
           onClick={() => navigate("/home")}
           sx={{
+            color: theme.palette.mode === "dark" ? "white" : "black",
             "&:hover": {
-              color: primaryLight,
+              WebkitTextFillColor: "transparent",
+              background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+              WebkitBackgroundClip: "text",
               cursor: "pointer",
             },
           }}
         >
-          Sociopedia
+          FX
         </Typography>
         {isNonMobileScreens && (
           <FlexBetween
             backgroundColor={neutralLight}
             borderRadius="9px"
-            gap="3rem"
+            gap="7rem"
             padding="0.1rem 1.5rem"
           >
             <InputBase placeholder="Search..." />
@@ -68,9 +67,10 @@ const Navbar = () => {
               <LightMode sx={{ color: dark, fontSize: "25px" }} />
             )}
           </IconButton>
+          
           <Message sx={{ fontSize: "25px" }} />
           <Notifications sx={{ fontSize: "25px" }} />
-          <Help sx={{ fontSize: "25px" }} />
+          {/* <Help sx={{ fontSize: "25px" }} /> */}
           <FormControl variant="standard" value={fullName}>
             <Select
               value={fullName}
@@ -97,9 +97,7 @@ const Navbar = () => {
           </FormControl>
         </FlexBetween>
       ) : (
-        <IconButton
-          onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}
-        >
+        <IconButton onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}>
           <Menu />
         </IconButton>
       )}
@@ -118,9 +116,7 @@ const Navbar = () => {
         >
           {/* CLOSE ICON */}
           <Box display="flex" justifyContent="flex-end" p="1rem">
-            <IconButton
-              onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}
-            >
+            <IconButton onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}>
               <Close />
             </IconButton>
           </Box>
@@ -133,10 +129,7 @@ const Navbar = () => {
             alignItems="center"
             gap="3rem"
           >
-            <IconButton
-              onClick={() => dispatch(setMode())}
-              sx={{ fontSize: "25px" }}
-            >
+            <IconButton onClick={() => dispatch(setMode())} sx={{ fontSize: "25px" }}>
               {theme.palette.mode === "dark" ? (
                 <DarkMode sx={{ fontSize: "25px" }} />
               ) : (
@@ -144,8 +137,9 @@ const Navbar = () => {
               )}
             </IconButton>
             <Message sx={{ fontSize: "25px" }} />
-            <Notifications sx={{ fontSize: "25px" }} />
+            {/* <Notifications sx={{ fontSize: "25px" }} /> */}
             <Help sx={{ fontSize: "25px" }} />
+            
             <FormControl variant="standard" value={fullName}>
               <Select
                 value={fullName}
@@ -167,9 +161,7 @@ const Navbar = () => {
                 <MenuItem value={fullName}>
                   <Typography>{fullName}</Typography>
                 </MenuItem>
-                <MenuItem onClick={() => dispatch(setLogout())}>
-                  Log Out
-                </MenuItem>
+                <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
               </Select>
             </FormControl>
           </FlexBetween>
