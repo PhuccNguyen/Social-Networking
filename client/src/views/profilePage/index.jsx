@@ -1,7 +1,7 @@
 
 const ProfilePage = () => {
   return (
-  <div> Well come loginpage </div>
+  <div> Well come Profilepage </div>
 )
 };
 
