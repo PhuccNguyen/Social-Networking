@@ -6,6 +6,10 @@ import {
   useMediaQuery,
   Typography,
   useTheme,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
@@ -16,13 +20,16 @@ import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 
+// Import components from @mui/lab for date picking
+// import { LocalizationProvider, AdapterDateFns, DatePicker } from "@mui/lab";
+
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
   userName: yup.string().required("required"),
   mobile: yup.string().required("required"),
   email: yup.string().email("invalid email").required("required"),
-  intro: yup.string().required("required"),
+  intro: yup.string(),
   address: yup.string().required("required"),
   gender: yup.string().required("required"),
   birthday: yup.string().required("required"),
@@ -47,7 +54,7 @@ const initialValuesRegister = {
   intro: "",
   address: "",
   gender: "",
-  birthday: "",
+  birthday: null,
   status: "",
   password: "",
   location: "",
@@ -204,26 +211,33 @@ const Form = () => {
                   helperText={touched.address && errors.address}
                   sx={{ gridColumn: "span 2" }}
                 />
+
+                <FormControl fullWidth variant="outlined" error={Boolean(touched.gender) && Boolean(errors.gender)}
+                  sx={{ gridColumn: "span 2" }}>
+                  <InputLabel>Gender</InputLabel>
+                  <Select label="Gender"  name="gender"  value={values.gender} onBlur={handleBlur}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value="male">Male</MenuItem>
+                    <MenuItem value="female">Female</MenuItem>
+                  </Select>
+
+                  {Boolean(touched.gender) && Boolean(errors.gender) && (
+                    <Typography color="error">{errors.gender}</Typography>
+                  )}
+                </FormControl>
+                
                 <TextField
-                  label="Gender"
+                  label="Bithday"
                   onBlur={handleBlur}
                   onChange={handleChange}
-                  value={values.gender}
-                  name="gender"
-                  error={Boolean(touched.gender) && Boolean(errors.gender)}
-                  helperText={touched.gender && errors.gender}
+                  value={values.bithday}
+                  name="bithday"
+                  error={Boolean(touched.bithday) && Boolean(errors.bithday)}
+                  helperText={touched.bithday && errors.bithday}
                   sx={{ gridColumn: "span 2" }}
                 />
-                <TextField
-                  label="Birthday"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.birthday}
-                  name="birthday"
-                  error={Boolean(touched.birthday) && Boolean(errors.birthday)}
-                  helperText={touched.birthday && errors.birthday}
-                  sx={{ gridColumn: "span 2" }}
-                />
+                
                 <TextField
                   label="Status"
                   onBlur={handleBlur}
@@ -235,6 +249,17 @@ const Form = () => {
                   sx={{ gridColumn: "span 2" }}
                 />
                 <TextField
+                  label="Occupation"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.occupation}
+                  name="occupation"
+                  error={Boolean(touched.occupation) && Boolean(errors.occupation)}
+                  helperText={touched.occupation && errors.occupation}
+                  sx={{ gridColumn: "span 2" }}
+                />
+
+                <TextField
                   label="Location"
                   onBlur={handleBlur}
                   onChange={handleChange}
@@ -244,16 +269,7 @@ const Form = () => {
                   helperText={touched.location && errors.location}
                   sx={{ gridColumn: "span 4" }}
                 />
-                <TextField
-                  label="Occupation"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.occupation}
-                  name="occupation"
-                  error={Boolean(touched.occupation) && Boolean(errors.occupation)}
-                  helperText={touched.occupation && errors.occupation}
-                  sx={{ gridColumn: "span 4" }}
-                />
+
                 <Box
                   gridColumn="span 4"
                   border={`1px solid ${palette.neutral.medium}`}
@@ -291,7 +307,7 @@ const Form = () => {
             )}
 
             <TextField
-              label="Email, Mobile, or Username"
+              label="Email An Other"
               onBlur={handleBlur}
               onChange={handleChange}
               value={values.login}
@@ -351,6 +367,6 @@ const Form = () => {
       )}
     </Formik>
   );
-};  
+};
 
 export default Form;

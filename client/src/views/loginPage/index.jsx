@@ -1,6 +1,7 @@
 import { Box, Typography, useTheme, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import Form from "./Form"; // Make sure this path is correct
+// import Form from "./Form";  // Ensure this path is correct
+import Form from "./Form";
 
 const LoginPage = () => {
   const theme = useTheme();
@@ -39,7 +40,7 @@ const LoginPage = () => {
         backgroundColor={theme.palette.background.alt}
       >
         <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
-          Welcome to FX, the Social Media for Sociopaths!
+          Welcome to FX, the Social Media for Volunteer!
         </Typography>
         <Form />
       </Box>
