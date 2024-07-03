@@ -11,8 +11,13 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import {  LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
+import React from 'react';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -35,7 +40,7 @@ const registerSchema = yup.object().shape({
   birthday: yup.string().required("required"),
   status: yup.string().required("required"),
   password: yup.string().required("required"),
-  location: yup.string().required("required"),
+  // location: yup.string().required("required"),
   occupation: yup.string().required("required"),
   picture: yup.string().required("required"),
 });
@@ -57,7 +62,7 @@ const initialValuesRegister = {
   birthday: null,
   status: "",
   password: "",
-  location: "",
+  // location: "",
   occupation: "",
   picture: "",
 };
@@ -181,6 +186,7 @@ const Form = () => {
                   helperText={touched.userName && errors.userName}
                   sx={{ gridColumn: "span 2" }}
                 />
+
                 <TextField
                   label="Mobile"
                   onBlur={handleBlur}
@@ -191,6 +197,7 @@ const Form = () => {
                   helperText={touched.mobile && errors.mobile}
                   sx={{ gridColumn: "span 2" }}
                 />
+
                 <TextField
                   label="Intro"
                   onBlur={handleBlur}
@@ -201,6 +208,7 @@ const Form = () => {
                   helperText={touched.intro && errors.intro}
                   sx={{ gridColumn: "span 2" }}
                 />
+                
                 <TextField
                   label="Address"
                   onBlur={handleBlur}
@@ -227,16 +235,45 @@ const Form = () => {
                   )}
                 </FormControl>
                 
-                <TextField
-                  label="Bithday"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.bithday}
-                  name="bithday"
-                  error={Boolean(touched.bithday) && Boolean(errors.bithday)}
-                  helperText={touched.bithday && errors.bithday}
-                  sx={{ gridColumn: "span 2" }}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                   <DatePicker
+                     // Set the label of the date picker, displayed as a placeholder
+                     label="Birthday"
+                     // Set the current value of the date picker
+                     // If values.birthday exists, convert it to a dayjs object, otherwise set to null
+                     value={values.birthday ? dayjs(values.birthday) : null}
+                     // Define the callback function triggered when the date changes
+                     onChange={(newValue) => {
+                       // Call handleChange function to update the form state
+                       handleChange({
+                         target: {
+                           // Set the name of the form field being updated to 'birthday'
+                           name: 'birthday',
+                           // Set the value to the new date formatted as 'YYYY-MM-DD', or empty string if newValue is null
+                           value: newValue ? newValue.format('YYYY-MM-DD') : '',
+                         },
+                       });
+                     }}
+                     // Define the function to render the input field
+                     renderInput={(params) => (
+                       // Render the TextField component as the input field for the date picker
+                       <TextField
+                         // Spread the params onto the TextField component
+                         {...params}
+                         // Set the onBlur event handler to handleBlur, triggered when the input loses focus
+                         onBlur={handleBlur}
+                         // Set the name attribute of the input field to 'birthday'
+                         name="birthday"
+                         // Set the error state of the input field, update with actual validation logic
+                         error={Boolean(false) && Boolean(false)} // Currently always false
+                         // Set the helper text displayed below the input field, update with actual validation logic
+                         helperText={false && false} // Currently always false
+                         // Set the style for the input field to span 4 columns in a grid layout
+                         sx={{ gridColumn: "span 4" }}
+                       />
+                    )}
+                   />
+                </LocalizationProvider>
                 
                 <TextField
                   label="Status"
@@ -248,6 +285,7 @@ const Form = () => {
                   helperText={touched.status && errors.status}
                   sx={{ gridColumn: "span 2" }}
                 />
+
                 <TextField
                   label="Occupation"
                   onBlur={handleBlur}
@@ -259,7 +297,7 @@ const Form = () => {
                   sx={{ gridColumn: "span 2" }}
                 />
 
-                <TextField
+                {/* <TextField
                   label="Location"
                   onBlur={handleBlur}
                   onChange={handleChange}
@@ -268,21 +306,21 @@ const Form = () => {
                   error={Boolean(touched.location) && Boolean(errors.location)}
                   helperText={touched.location && errors.location}
                   sx={{ gridColumn: "span 4" }}
-                />
+                /> */}
 
                 <Box
                   gridColumn="span 4"
                   border={`1px solid ${palette.neutral.medium}`}
                   borderRadius="5px"
-                  p="1rem"
-                >
+                  p="1rem" >
+
                   <Dropzone
                     acceptedFiles=".jpg,.jpeg,.png"
                     multiple={false}
                     onDrop={(acceptedFiles) =>
                       setFieldValue("picture", acceptedFiles[0])
-                    }
-                  >
+                    }>
+
                     {({ getRootProps, getInputProps }) => (
                       <Box
                         {...getRootProps()}
@@ -290,6 +328,7 @@ const Form = () => {
                         p="1rem"
                         sx={{ "&:hover": { cursor: "pointer" } }}
                       >
+                        
                         <input {...getInputProps()} />
                         {!values.picture ? (
                           <p>Add Picture Here</p>
@@ -307,7 +346,7 @@ const Form = () => {
             )}
 
             <TextField
-              label="Email An Other"
+              label="Email"
               onBlur={handleBlur}
               onChange={handleChange}
               value={values.login}
@@ -344,6 +383,7 @@ const Form = () => {
             >
               {isLogin ? "LOGIN" : "REGISTER"}
             </Button>
+            
             <Typography
               onClick={() => {
                 setPageType(isLogin ? "register" : "login");
