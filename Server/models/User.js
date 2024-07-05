@@ -38,11 +38,7 @@ const UserSchema = new mongoose.Schema(
             maxlength: 100,
             unique: true,
         },
-        address: {
-            type: String,
-            required: true,
-            maxlength: 100,
-        },
+        
         gender: {
             type: String,
             required: true,
@@ -70,6 +66,7 @@ const UserSchema = new mongoose.Schema(
             type: Array,
             default: [],
         },
+        location: String,
         occupation: String,
         viewedProfile: Number,
         impressions: Number,

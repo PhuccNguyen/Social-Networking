@@ -20,9 +20,9 @@ import User from "../models/User.js";
             user.friends.map((id) => User.findById(id))
         );
         const formattedFriends = friends.map(
-            ({ _id, firstName, lastName, intro, gender, status, occupation, location, picturePath }) =>
+            ({  _id, firstName, lastName, userName,mobile,email, intro, gender,birthday, status, occupation, location, picturePath }) =>
                 { 
-                    return { _id, firstName, lastName, intro, gender, status, occupation, location, picturePath };
+                    return {  _id, firstName, lastName, userName,mobile,email, intro, gender,birthday, status, occupation, location, picturePath };
                }
         );
         res.status(200).json(formattedFriends);
@@ -55,9 +55,9 @@ export const addRemoveFriends = async (req, res) => {
             user.friends.map((id) => User.findById(id))
         );
         const formattedFriends = friends.map(
-            ({ _id, firstName, lastName, intro, gender, status, occupation, location, picturePath }) =>
+            ({ _id, firstName, lastName, userName,mobile,email, intro, gender,birthday, status, occupation, location, picturePath }) =>
                 { 
-                    return { _id, firstName, lastName, intro, gender, status, occupation, location, picturePath };
+                    return {  _id, firstName, lastName, userName,mobile,email, intro, gender,birthday, status, occupation, location, picturePath };
                }
         );
         res.status(200).json(formattedFriends);

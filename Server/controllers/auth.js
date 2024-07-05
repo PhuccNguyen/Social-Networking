@@ -13,7 +13,6 @@ export const register = async (req, res) => {
             mobile,
             email,
             intro,
-            address,
             gender,
             birthday,
             status,
@@ -25,7 +24,7 @@ export const register = async (req, res) => {
         } = req.body;
 
         // Check if required fields are provided
-        if (!firstName || !lastName || !userName || !mobile || !email || !intro || !address || !gender || !birthday || !status || !password) {
+        if (!firstName || !lastName || !userName || !mobile || !email || !intro || !gender || !birthday || !status || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -45,7 +44,6 @@ export const register = async (req, res) => {
             mobile,
             email,
             intro,
-            address,
             gender,
             birthday,
             status,
