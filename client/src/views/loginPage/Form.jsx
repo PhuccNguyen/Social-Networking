@@ -24,9 +24,7 @@ import { useDispatch } from "react-redux";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
-
-// Import components from @mui/lab for date picking
-// import { LocalizationProvider, AdapterDateFns, DatePicker } from "@mui/lab";
+// import {  Autocomplete } from '@react-google-maps/api';
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
@@ -49,6 +47,7 @@ const loginSchema = yup.object().shape({
   login: yup.string().required("required"),
   password: yup.string().required("required"),
 });
+
 
 const initialValuesRegister = {
   firstName: "",
@@ -74,6 +73,8 @@ const initialValuesLogin = {
 
 const Form = () => {
   const [pageType, setPageType] = useState("login");
+  const [preview, setPreview] = useState(null);
+  // const [address, setAddress] = useState("");
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -121,6 +122,14 @@ const Form = () => {
       navigate("/home");
     }
   };
+
+  // const handlePlaceSelect = (autocomplete, setFieldValue) => {
+  //   const place = autocomplete.getPlace();
+  //   if (place.formatted_address) {
+  //     setAddress(place.formatted_address);
+  //     setFieldValue("address", place.formatted_address);
+  //   }
+  // };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
@@ -209,16 +218,16 @@ const Form = () => {
                   sx={{ gridColumn: "span 2" }}
                 />
                 
-                <TextField
-                  label="Address"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.address}
-                  name="address"
-                  error={Boolean(touched.address) && Boolean(errors.address)}
-                  helperText={touched.address && errors.address}
-                  sx={{ gridColumn: "span 2" }}
-                />
+        
+                  <TextField
+                    label="Address"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    name="address"
+                    error={Boolean(touched.address) && Boolean(errors.address)}
+                    helperText={touched.address && errors.address}
+                    sx={{ gridColumn: "span 2" }}
+                  />
 
                 <FormControl fullWidth variant="outlined" error={Boolean(touched.gender) && Boolean(errors.gender)}
                   sx={{ gridColumn: "span 2" }}>
@@ -229,14 +238,14 @@ const Form = () => {
                     <MenuItem value="male">Male</MenuItem>
                     <MenuItem value="female">Female</MenuItem>
                   </Select>
-
                   {Boolean(touched.gender) && Boolean(errors.gender) && (
                     <Typography color="error">{errors.gender}</Typography>
                   )}
                 </FormControl>
                 
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <LocalizationProvider dateAdapter={AdapterDayjs} >
                    <DatePicker
+                     sx={{ gridColumn: "span 2" }}
                      // Set the label of the date picker, displayed as a placeholder
                      label="Birthday"
                      // Set the current value of the date picker
@@ -269,22 +278,26 @@ const Form = () => {
                          // Set the helper text displayed below the input field, update with actual validation logic
                          helperText={false && false} // Currently always false
                          // Set the style for the input field to span 4 columns in a grid layout
-                         sx={{ gridColumn: "span 4" }}
                        />
                     )}
                    />
                 </LocalizationProvider>
                 
-                <TextField
-                  label="Status"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
-                  value={values.status}
-                  name="status"
-                  error={Boolean(touched.status) && Boolean(errors.status)}
-                  helperText={touched.status && errors.status}
-                  sx={{ gridColumn: "span 2" }}
-                />
+                <FormControl fullWidth variant="outlined" error={Boolean(touched.status) && Boolean(errors.status)}
+                  sx={{ gridColumn: "span 2" }}>
+                  <InputLabel>Status</InputLabel>
+                  <Select label="status"  name="status"  value={values.status} onBlur={handleBlur}
+                    onChange={handleChange}
+                  >
+                    <MenuItem value="male">Sigle</MenuItem>
+                    <MenuItem value="male">Married</MenuItem>
+                    <MenuItem value="female">Divorce</MenuItem>
+                  </Select>
+
+                  {Boolean(touched.status) && Boolean(errors.status) && (
+                    <Typography color="error">{errors.status}</Typography>
+                  )}
+                </FormControl>
 
                 <TextField
                   label="Occupation"
@@ -308,35 +321,41 @@ const Form = () => {
                   sx={{ gridColumn: "span 4" }}
                 /> */}
 
-                <Box
-                  gridColumn="span 4"
-                  border={`1px solid ${palette.neutral.medium}`}
-                  borderRadius="5px"
-                  p="1rem" >
-
+            <Box gridColumn="span 2"  border={`1px solid ${palette.neutral.medium}`} borderRadius="5px" p="1rem" >
                   <Dropzone
-                    acceptedFiles=".jpg,.jpeg,.png"
-                    multiple={false}
-                    onDrop={(acceptedFiles) =>
-                      setFieldValue("picture", acceptedFiles[0])
-                    }>
-
+                    acceptedFiles=".jpg,.jpeg,.png"                
+        multiple={false}
+        onDrop={(acceptedFiles) => {
+          setFieldValue("picture", acceptedFiles[0]);
+          // Set the preview URL for the selected image
+          setPreview(URL.createObjectURL(acceptedFiles[0]));
+                    }}
+                  >
                     {({ getRootProps, getInputProps }) => (
                       <Box
-                        {...getRootProps()}
-                        border={`2px dashed ${palette.primary.main}`}
-                        p="1rem"
+                        {...getRootProps()}                
+            border={`2px dashed ${palette.primary.main}`}
+            p="1rem"
                         sx={{ "&:hover": { cursor: "pointer" } }}
                       >
-                        
                         <input {...getInputProps()} />
                         {!values.picture ? (
-                          <p>Add Picture Here</p>
+                        <p>Add Picture Here</p>
                         ) : (
                           <FlexBetween>
                             <Typography>{values.picture.name}</Typography>
                             <EditOutlinedIcon />
                           </FlexBetween>
+                        )}
+                        {/* Conditionally render the preview image */}
+                        {preview && (
+              <Box mt="1rem">
+                <img
+                  src={preview}
+                  alt="Selected"
+                  style={{ maxWidth: '100%', borderRadius: '5px' }}
+                />
+              </Box>
                         )}
                       </Box>
                     )}
