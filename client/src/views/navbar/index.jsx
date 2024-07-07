@@ -21,7 +21,8 @@ const Navbar = () => {
   const alt = theme.palette.background.alt;
 
   // Check if user is defined before accessing its properties
-  const fullName = user ? `${user.firstName} ${user.lastName}` : "Guest";
+  const fullName = `${user.firstName} ${user.lastName}`;
+  // const fullName = user ? `${user.firstName} ${user.lastName}` : "Guest";
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>

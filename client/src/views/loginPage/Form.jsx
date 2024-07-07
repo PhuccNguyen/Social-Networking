@@ -27,20 +27,19 @@ import FlexBetween from "components/FlexBetween";
 // import {  Autocomplete } from '@react-google-maps/api';
 
 const registerSchema = yup.object().shape({
-  firstName: yup.string().required("required"),
-  lastName: yup.string().required("required"),
-  userName: yup.string().required("required"),
-  mobile: yup.string().required("required"),
-  email: yup.string().email("invalid email").required("required"),
+  firstName: yup.string().required("First Name is required"),
+  lastName: yup.string().required("Last Name is required"),
+  userName: yup.string().required("User Name is required"),
+  mobile: yup.string().required("Mobile is required"),
+  email: yup.string().email("Invalid email format").required("Email is required"),
   intro: yup.string(),
-  address: yup.string().required("required"),
-  gender: yup.string().required("required"),
-  birthday: yup.string().required("required"),
-  status: yup.string().required("required"),
-  password: yup.string().required("required"),
-  // location: yup.string().required("required"),
-  occupation: yup.string().required("required"),
-  picture: yup.string().required("required"),
+  gender: yup.string().required("Gender is required"),
+  birthday: yup.date().required("Birthday is required"),
+  status: yup.string().required("Status is required"),
+  password: yup.string().required("Password is required"),
+  location: yup.string().required("Location is required"),
+  occupation: yup.string().required("Occupation is required"),
+  picture: yup.string().required("Picture is required"),
 });
 
 const loginSchema = yup.object().shape({
@@ -56,12 +55,12 @@ const initialValuesRegister = {
   mobile: "",
   email: "",
   intro: "",
-  address: "",
+  // address: "",
   gender: "",
   birthday: null,
   status: "",
   password: "",
-  // location: "",
+  location: "",
   occupation: "",
   picture: "",
 };
@@ -83,6 +82,7 @@ const Form = () => {
   const isRegister = pageType === "register";
 
   const register = async (values, onSubmitProps) => {
+        // this allows us to send form info with image
     const formData = new FormData();
     for (let value in values) {
       formData.append(value, values[value]);
@@ -175,6 +175,7 @@ const Form = () => {
                   helperText={touched.firstName && errors.firstName}
                   sx={{ gridColumn: "span 2" }}
                 />
+
                 <TextField
                   label="Last Name"
                   onBlur={handleBlur}
@@ -185,6 +186,7 @@ const Form = () => {
                   helperText={touched.lastName && errors.lastName}
                   sx={{ gridColumn: "span 2" }}
                 />
+
                 <TextField
                   label="User Name"
                   onBlur={handleBlur}
@@ -218,16 +220,6 @@ const Form = () => {
                   sx={{ gridColumn: "span 2" }}
                 />
                 
-        
-                  <TextField
-                    label="Address"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    name="address"
-                    error={Boolean(touched.address) && Boolean(errors.address)}
-                    helperText={touched.address && errors.address}
-                    sx={{ gridColumn: "span 2" }}
-                  />
 
                 <FormControl fullWidth variant="outlined" error={Boolean(touched.gender) && Boolean(errors.gender)}
                   sx={{ gridColumn: "span 2" }}>
@@ -248,7 +240,6 @@ const Form = () => {
                      sx={{ gridColumn: "span 2" }}
                      // Set the label of the date picker, displayed as a placeholder
                      label="Birthday"
-                     // Set the current value of the date picker
                      // If values.birthday exists, convert it to a dayjs object, otherwise set to null
                      value={values.birthday ? dayjs(values.birthday) : null}
                      // Define the callback function triggered when the date changes
@@ -256,9 +247,7 @@ const Form = () => {
                        // Call handleChange function to update the form state
                        handleChange({
                          target: {
-                           // Set the name of the form field being updated to 'birthday'
                            name: 'birthday',
-                           // Set the value to the new date formatted as 'YYYY-MM-DD', or empty string if newValue is null
                            value: newValue ? newValue.format('YYYY-MM-DD') : '',
                          },
                        });
@@ -270,14 +259,12 @@ const Form = () => {
                          // Spread the params onto the TextField component
                          {...params}
                          // Set the onBlur event handler to handleBlur, triggered when the input loses focus
+                         onChange={handleChange}
+                         value={values.birthday}
                          onBlur={handleBlur}
-                         // Set the name attribute of the input field to 'birthday'
                          name="birthday"
-                         // Set the error state of the input field, update with actual validation logic
-                         error={Boolean(false) && Boolean(false)} // Currently always false
-                         // Set the helper text displayed below the input field, update with actual validation logic
-                         helperText={false && false} // Currently always false
-                         // Set the style for the input field to span 4 columns in a grid layout
+                         error={Boolean(touched.birthday) && Boolean(errors.birthday)}
+                         helperText={touched.birthday && errors.birthday}
                        />
                     )}
                    />
@@ -310,7 +297,7 @@ const Form = () => {
                   sx={{ gridColumn: "span 2" }}
                 />
 
-                {/* <TextField
+                <TextField
                   label="Location"
                   onBlur={handleBlur}
                   onChange={handleChange}
@@ -318,8 +305,8 @@ const Form = () => {
                   name="location"
                   error={Boolean(touched.location) && Boolean(errors.location)}
                   helperText={touched.location && errors.location}
-                  sx={{ gridColumn: "span 4" }}
-                /> */}
+                  sx={{ gridColumn: "span 2" }}
+                />
 
             <Box gridColumn="span 2"  border={`1px solid ${palette.neutral.medium}`} borderRadius="5px" p="1rem" >
                   <Dropzone
