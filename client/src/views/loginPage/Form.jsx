@@ -42,7 +42,9 @@ const registerSchema = yup.object().shape({
 });
 
 const loginSchema = yup.object().shape({
-  login: yup.string().required("required"),
+  userName: yup.string().required("User Name is required").required("User Name  is required"),
+  mobile: yup.string().required("Mobile is required").required("Mobile is required"),
+  email: yup.string().email("invalid email").required("required"),
   password: yup.string().required("required"),
 });
 
@@ -64,7 +66,9 @@ const initialValuesRegister = {
 };
 
 const initialValuesLogin = {
-  login: "",
+  email: "",
+  username: "",
+  mobile: "",
   password: "",
 };
 
@@ -140,14 +144,8 @@ const Form = () => {
       validationSchema={isLogin ? loginSchema : registerSchema}
     >
       {({
-        values,
-        errors,
-        touched,
-        handleBlur,
-        handleChange,
-        handleSubmit,
-        setFieldValue,
-        resetForm,
+        values, errors, touched,
+        handleBlur,  handleChange,  handleSubmit,  setFieldValue, resetForm,
       }) => (
         <form onSubmit={handleSubmit}>
           <Box
@@ -166,9 +164,7 @@ const Form = () => {
                   onChange={handleChange}
                   value={values.firstName}
                   name="firstName"
-                  error={
-                    Boolean(touched.firstName) && Boolean(errors.firstName)
-                  }
+                  error={Boolean(touched.firstName) && Boolean(errors.firstName)}
                   helperText={touched.firstName && errors.firstName}
                   sx={{ gridColumn: "span 2" }}
                 />
@@ -353,10 +349,10 @@ const Form = () => {
               label="Email"
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.login}
-              name="login"
-              error={Boolean(touched.login) && Boolean(errors.login)}
-              helperText={touched.login && errors.login}
+              value={values.email}
+              name="email"
+              error={Boolean(touched.email) && Boolean(errors.email)}
+              helperText={touched.email && errors.email}
               sx={{ gridColumn: "span 4" }}
             />
             <TextField
