@@ -24,13 +24,12 @@ import { useDispatch } from "react-redux";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
-// import {  Autocomplete } from '@react-google-maps/api';
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("First Name is required"),
   lastName: yup.string().required("Last Name is required"),
-  userName: yup.string().required("User Name is required"),
-  mobile: yup.string().required("Mobile is required"),
+  userName: yup.string().required("User Name is required").required("User Name  is required"),
+  mobile: yup.string().required("Mobile is required").required("Mobile is required"),
   email: yup.string().email("Invalid email format").required("Email is required"),
   intro: yup.string(),
   gender: yup.string().required("Gender is required"),
@@ -55,7 +54,6 @@ const initialValuesRegister = {
   mobile: "",
   email: "",
   intro: "",
-  // address: "",
   gender: "",
   birthday: null,
   status: "",
@@ -73,7 +71,6 @@ const initialValuesLogin = {
 const Form = () => {
   const [pageType, setPageType] = useState("login");
   const [preview, setPreview] = useState(null);
-  // const [address, setAddress] = useState("");
   const { palette } = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -283,6 +280,7 @@ const Form = () => {
 
                   {Boolean(touched.status) && Boolean(errors.status) && (
                     <Typography color="error">{errors.status}</Typography>
+                    
                   )}
                 </FormControl>
 
