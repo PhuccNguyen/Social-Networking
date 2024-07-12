@@ -81,11 +81,12 @@ export const login = async (req, res) => {
         return res.status(404).json({ msg: "Don't Match Or Account Don't Exist" });
     }
     /*Create A JWT Token*/ 
-    const token = jwt.sign({ id: user._id}, process.env.JWT_SECRET);
+    const token = jwt.sign({ id: user._id}, process.env.JWT_SECRET, { expiresIn: '1h' });
     delete user.password;
     
     // Send the token and user information in the response
     res.status(200).json({ token, user });
+    
     
     // Send response without password
     const { password: _, ...userWithoutPassword } = user.toObject();
@@ -94,8 +95,14 @@ export const login = async (req, res) => {
     // Last login time
         user.lastLogin = new Date();
         await user.save();
-
+        
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
     }
+
+//     } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Server error' });
+//   }
 };

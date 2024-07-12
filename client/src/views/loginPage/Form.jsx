@@ -302,21 +302,20 @@ const Form = () => {
                   sx={{ gridColumn: "span 2" }}
                 />
 
-            <Box gridColumn="span 2"  border={`1px solid ${palette.neutral.medium}`} borderRadius="5px" p="1rem" >
+               <Box gridColumn="span 2"  border={`1px solid ${palette.neutral.medium}`} borderRadius="5px" p="1rem" >
                   <Dropzone
                     acceptedFiles=".jpg,.jpeg,.png"                
-        multiple={false}
-        onDrop={(acceptedFiles) => {
-          setFieldValue("picture", acceptedFiles[0]);
-          // Set the preview URL for the selected image
-          setPreview(URL.createObjectURL(acceptedFiles[0]));
+                  multiple={false}
+                  onDrop={(acceptedFiles) => {
+                  setFieldValue("picture", acceptedFiles[0]);
+                  // Set the preview URL for the selected image
+                  setPreview(URL.createObjectURL(acceptedFiles[0]));
                     }}
                   >
                     {({ getRootProps, getInputProps }) => (
                       <Box
                         {...getRootProps()}                
-            border={`2px dashed ${palette.primary.main}`}
-            p="1rem"
+                       border={`2px dashed ${palette.primary.main}`}  p="1rem"
                         sx={{ "&:hover": { cursor: "pointer" } }}
                       >
                         <input {...getInputProps()} />
@@ -330,20 +329,20 @@ const Form = () => {
                         )}
                         {/* Conditionally render the preview image */}
                         {preview && (
-              <Box mt="1rem">
-                <img
-                  src={preview}
-                  alt="Selected"
-                  style={{ maxWidth: '100%', borderRadius: '5px' }}
-                />
-              </Box>
-                        )}
-                      </Box>
-                    )}
-                  </Dropzone>
-                </Box>
-              </>
-            )}
+                       <Box mt="1rem">
+                         <img
+                           src={preview}
+                           alt="Selected"
+                           style={{ maxWidth: '100%', borderRadius: '5px' }}
+                         />
+                       </Box>
+                                 )}
+                               </Box>
+                             )}
+                           </Dropzone>
+                         </Box>
+                       </>
+                     )}
 
             <TextField
               label="Email"
