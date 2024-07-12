@@ -67,19 +67,19 @@ export const register = async (req, res) => {
      /* LOGIN USER */ 
 export const login = async (req, res) => {
     try {
-      const { userName, mobile, email, password } = req.body;
+      const { identifier, password } = req.body;
 
     // Find the user by email, mobile or username
-      const user = await User.findOne({ userName: userName, mobile: mobile, email: email });
-      if (!user){
-            return res.status(404).json({ msg: "User don't exist" });
-        }
+    const user = await User.findOne({ 
+        $or: [{ email: identifier} , {mobile: identifier}, {userName: identifier}]});
+      
+      if (!user){ return res.status(404).json({ msg: "User dose not exit! " });}
       
     // Check if the password is correct
       const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(404).json({ msg: "Don't Match Or Account Don't Exist" });
-    }
+      if (!isMatch) { 
+        return res.status(404).json({ msg: "Invalid credentials" }); }
+
     /*Create A JWT Token*/ 
     const token = jwt.sign({ id: user._id}, process.env.JWT_SECRET, { expiresIn: '1h' });
     delete user.password;

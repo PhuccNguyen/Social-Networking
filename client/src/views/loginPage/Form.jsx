@@ -11,7 +11,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import {  LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
@@ -28,8 +28,8 @@ import FlexBetween from "components/FlexBetween";
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("First Name is required"),
   lastName: yup.string().required("Last Name is required"),
-  userName: yup.string().required("User Name is required").required("User Name  is required"),
-  mobile: yup.string().required("Mobile is required").required("Mobile is required"),
+  userName: yup.string().required("User Name is required"),
+  mobile: yup.string().required("Mobile is required"),
   email: yup.string().email("Invalid email format").required("Email is required"),
   intro: yup.string(),
   gender: yup.string().required("Gender is required"),
@@ -39,13 +39,6 @@ const registerSchema = yup.object().shape({
   location: yup.string().required("Location is required"),
   occupation: yup.string().required("Occupation is required"),
   picture: yup.string().required("Picture is required"),
-});
-
-const loginSchema = yup.object().shape({
-  userName: yup.string().required("User Name is required").required("User Name  is required"),
-  mobile: yup.string().required("Mobile is required").required("Mobile is required"),
-  email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
 });
 
 
@@ -65,10 +58,14 @@ const initialValuesRegister = {
   picture: "",
 };
 
+const loginSchema = yup.object().shape({
+  identifier: yup.string().required("Email, Mobile, or User Name is required"),
+  password: yup.string().required("Password is required"),
+});
+
+
 const initialValuesLogin = {
-  email: "",
-  username: "",
-  mobile: "",
+  identifier: "",
   password: "",
 };
 
@@ -83,7 +80,6 @@ const Form = () => {
   const isRegister = pageType === "register";
 
   const register = async (values, onSubmitProps) => {
-        // this allows us to send form info with image
     const formData = new FormData();
     for (let value in values) {
       formData.append(value, values[value]);
@@ -123,14 +119,6 @@ const Form = () => {
       navigate("/home");
     }
   };
-
-  // const handlePlaceSelect = (autocomplete, setFieldValue) => {
-  //   const place = autocomplete.getPlace();
-  //   if (place.formatted_address) {
-  //     setAddress(place.formatted_address);
-  //     setFieldValue("address", place.formatted_address);
-  //   }
-  // };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
@@ -231,13 +219,9 @@ const Form = () => {
                 <LocalizationProvider dateAdapter={AdapterDayjs} >
                    <DatePicker
                      sx={{ gridColumn: "span 2" }}
-                     // Set the label of the date picker, displayed as a placeholder
                      label="Birthday"
-                     // If values.birthday exists, convert it to a dayjs object, otherwise set to null
                      value={values.birthday ? dayjs(values.birthday) : null}
-                     // Define the callback function triggered when the date changes
                      onChange={(newValue) => {
-                       // Call handleChange function to update the form state
                        handleChange({
                          target: {
                            name: 'birthday',
@@ -245,13 +229,9 @@ const Form = () => {
                          },
                        });
                      }}
-                     // Define the function to render the input field
                      renderInput={(params) => (
-                       // Render the TextField component as the input field for the date picker
                        <TextField
-                         // Spread the params onto the TextField component
                          {...params}
-                         // Set the onBlur event handler to handleBlur, triggered when the input loses focus
                          onChange={handleChange}
                          value={values.birthday}
                          onBlur={handleBlur}
@@ -269,9 +249,9 @@ const Form = () => {
                   <Select label="status"  name="status"  value={values.status} onBlur={handleBlur}
                     onChange={handleChange}
                   >
-                    <MenuItem value="male">Sigle</MenuItem>
-                    <MenuItem value="male">Married</MenuItem>
-                    <MenuItem value="female">Divorce</MenuItem>
+                    <MenuItem value="single">Single</MenuItem>
+                    <MenuItem value="married">Married</MenuItem>
+                    <MenuItem value="divorce">Divorce</MenuItem>
                   </Select>
 
                   {Boolean(touched.status) && Boolean(errors.status) && (
@@ -288,7 +268,7 @@ const Form = () => {
                   name="occupation"
                   error={Boolean(touched.occupation) && Boolean(errors.occupation)}
                   helperText={touched.occupation && errors.occupation}
-                  sx={{ gridColumn: "span 2" }}
+                  sx={{ gridColumn: "span 4" }}
                 />
 
                 <TextField
@@ -299,72 +279,108 @@ const Form = () => {
                   name="location"
                   error={Boolean(touched.location) && Boolean(errors.location)}
                   helperText={touched.location && errors.location}
-                  sx={{ gridColumn: "span 2" }}
+                  sx={{ gridColumn: "span 4" }}
                 />
 
-               <Box gridColumn="span 2"  border={`1px solid ${palette.neutral.medium}`} borderRadius="5px" p="1rem" >
+                <TextField
+                  label="Email"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.email}
+                  name="email"
+                  error={Boolean(touched.email) && Boolean(errors.email)}
+                  helperText={touched.email && errors.email}
+                  sx={{ gridColumn: "span 4" }}
+                />
+
+                <TextField
+                  label="Password"
+                  type="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.password}
+                  name="password"
+                  error={Boolean(touched.password) && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
+                  sx={{ gridColumn: "span 4" }}
+                />
+
+                <Box
+                  gridColumn="span 4"
+                  border={`1px solid ${palette.neutral.medium}`}
+                  borderRadius="5px"
+                  p="1rem"
+                >
                   <Dropzone
-                    acceptedFiles=".jpg,.jpeg,.png"                
-                  multiple={false}
-                  onDrop={(acceptedFiles) => {
-                  setFieldValue("picture", acceptedFiles[0]);
-                  // Set the preview URL for the selected image
-                  setPreview(URL.createObjectURL(acceptedFiles[0]));
+                    acceptedFiles=".jpg,.jpeg,.png"
+                    multiple={false}
+                    onDrop={(acceptedFiles) => {
+                      setFieldValue("picture", acceptedFiles[0]);
+                      const file = acceptedFiles[0];
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setPreview(reader.result);
+                      };
+                      reader.readAsDataURL(file);
                     }}
                   >
                     {({ getRootProps, getInputProps }) => (
                       <Box
-                        {...getRootProps()}                
-                       border={`2px dashed ${palette.primary.main}`}  p="1rem"
+                        {...getRootProps()}
+                        border={`2px dashed ${palette.primary.main}`}
+                        p="1rem"
                         sx={{ "&:hover": { cursor: "pointer" } }}
                       >
                         <input {...getInputProps()} />
                         {!values.picture ? (
-                        <p>Add Picture Here</p>
+                          <p>Add Picture Here</p>
                         ) : (
                           <FlexBetween>
                             <Typography>{values.picture.name}</Typography>
                             <EditOutlinedIcon />
                           </FlexBetween>
                         )}
-                        {/* Conditionally render the preview image */}
-                        {preview && (
-                       <Box mt="1rem">
-                         <img
-                           src={preview}
-                           alt="Selected"
-                           style={{ maxWidth: '100%', borderRadius: '5px' }}
-                         />
-                       </Box>
-                                 )}
-                               </Box>
-                             )}
-                           </Dropzone>
-                         </Box>
-                       </>
-                     )}
+                      </Box>
+                    )}
+                  </Dropzone>
+                  {preview && (
+                    <Box mt={2} display="flex" justifyContent="center">
+                      <img
+                        src={preview}
+                        alt="Preview"
+                        style={{ maxWidth: '100%', maxHeight: '300px' }}
+                      />
+                    </Box>
+                  )}
+                </Box>
+              </>
+            )}
 
-            <TextField
-              label="Email"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.email}
-              name="email"
-              error={Boolean(touched.email) && Boolean(errors.email)}
-              helperText={touched.email && errors.email}
-              sx={{ gridColumn: "span 4" }}
-            />
-            <TextField
-              label="Password"
-              type="password"
-              onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.password}
-              name="password"
-              error={Boolean(touched.password) && Boolean(errors.password)}
-              helperText={touched.password && errors.password}
-              sx={{ gridColumn: "span 4" }}
-            />
+            {isLogin && (
+              <>
+                <TextField
+                  label="Email, Mobile, or User Name"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.identifier}
+                  name="identifier"
+                  error={Boolean(touched.identifier) && Boolean(errors.identifier)}
+                  helperText={touched.identifier && errors.identifier}
+                  sx={{ gridColumn: "span 4" }}
+                />
+                <TextField
+                  label="Password"
+                  type="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.password}
+                  name="password"
+                  error={Boolean(touched.password) && Boolean(errors.password)}
+                  helperText={touched.password && errors.password}
+                  sx={{ gridColumn: "span 4" }}
+                />
+              </>
+            )}
           </Box>
 
           {/* BUTTONS */}
@@ -382,7 +398,6 @@ const Form = () => {
             >
               {isLogin ? "LOGIN" : "REGISTER"}
             </Button>
-            
             <Typography
               onClick={() => {
                 setPageType(isLogin ? "register" : "login");
