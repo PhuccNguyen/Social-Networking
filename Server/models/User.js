@@ -70,8 +70,6 @@ const UserSchema = new mongoose.Schema(
         occupation: String,
         viewedProfile: Number,
         impressions: Number,
-
-
         lastLogin: {
             type: Date,
             default: Date.now,
