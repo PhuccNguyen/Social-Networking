@@ -85,20 +85,29 @@ const Form = () => {
       formData.append(value, values[value]);
     }
     formData.append("picturePath", values.picture.name);
-
-    const savedUserResponse = await fetch(
-      "http://localhost:3001/auth/register",
+    
+    try {
+    const savedUserResponse = await fetch("http://localhost:3001/auth/register",
       {
         method: "POST",
         body: formData,
       }
     );
+
+    if (!savedUserResponse.ok){
+      throw new Error(`HTTP error! Status: ${savedUserResponse.status}`);
+    }
+
     const savedUser = await savedUserResponse.json();
+    console.log("Saved User:--- ", savedUser); // Log saved user for debugging
     onSubmitProps.resetForm();
 
     if (savedUser) {
       setPageType("login");
     }
+  } catch (error) {
+    console.log("Register Error:-->", error);
+  }
   };
 
   const login = async (values, onSubmitProps) => {
@@ -127,9 +136,9 @@ const Form = () => {
 
   return (
     <Formik
-      onSubmit={handleFormSubmit}
-      initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
-      validationSchema={isLogin ? loginSchema : registerSchema}
+      onSubmit = {handleFormSubmit}
+      initialValues = {isLogin ? initialValuesLogin : initialValuesRegister}
+      validationSchema = {isLogin ? loginSchema : registerSchema}
     >
       {({
         values, errors, touched,
@@ -202,12 +211,14 @@ const Form = () => {
                 />
                 
 
-                <FormControl fullWidth variant="outlined" error={Boolean(touched.gender) && Boolean(errors.gender)}
+                <FormControl 
+                  fullWidth variant="outlined" 
+                  error={Boolean(touched.gender) && Boolean(errors.gender)}
                   sx={{ gridColumn: "span 2" }}>
-                  <InputLabel>Gender</InputLabel>
-                  <Select label="Gender"  name="gender"  value={values.gender} onBlur={handleBlur}
-                    onChange={handleChange}
-                  >
+                <InputLabel>Gender</InputLabel>
+                 <Select 
+                  label="Gender"  name="gender"  value={values.gender} onBlur={handleBlur} onChange={handleChange}
+                 >
                     <MenuItem value="male">Male</MenuItem>
                     <MenuItem value="female">Female</MenuItem>
                   </Select>
@@ -243,11 +254,19 @@ const Form = () => {
                    />
                 </LocalizationProvider>
                 
-                <FormControl fullWidth variant="outlined" error={Boolean(touched.status) && Boolean(errors.status)}
-                  sx={{ gridColumn: "span 2" }}>
+                <FormControl 
+                   fullWidth variant="outlined" 
+                   error={Boolean(touched.status) && Boolean(errors.status)}
+                   sx={{ gridColumn: "span 2" }}>
+
                   <InputLabel>Status</InputLabel>
-                  <Select label="status"  name="status"  value={values.status} onBlur={handleBlur}
-                    onChange={handleChange}
+
+                  <Select 
+                   label="status"  
+                   name="status"  
+                   value={values.status} 
+                   onBlur={handleBlur}
+                   onChange={handleChange}
                   >
                     <MenuItem value="single">Single</MenuItem>
                     <MenuItem value="married">Married</MenuItem>
@@ -256,7 +275,6 @@ const Form = () => {
 
                   {Boolean(touched.status) && Boolean(errors.status) && (
                     <Typography color="error">{errors.status}</Typography>
-                    
                   )}
                 </FormControl>
 
