@@ -25,6 +25,7 @@ import { setLogin } from "state";
 import Dropzone from "react-dropzone";
 import AdjustContent from "components/adjustment";
 
+
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("First Name is required"),
   lastName: yup.string().required("Last Name is required"),
@@ -198,7 +199,6 @@ const Form = () => {
                   helperText={touched.mobile && errors.mobile}
                   sx={{ gridColumn: "span 2" }}
                 />
-
                 <TextField
                   label="Intro"
                   onBlur={handleBlur}
