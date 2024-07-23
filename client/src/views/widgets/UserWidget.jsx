@@ -9,7 +9,7 @@ import {
 import { Box, Typography, Divider, useTheme } from "@mui/material"
 import Imageuser from "components/imageuser";
 import AdjustContent from "components/adjustcontent";
-import widgetwrapper from "components/widgetwrapper";
+import Widgetwrapper from "components/widgetwrapper";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +26,7 @@ const UserWidget = ({ userId, picturePath }) => {
     const getUser = async () => {
       const response = await fetch(`http://localhost:3001/users/${userId}`, {
         method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Communication ${token}` }, //header with a custom scheme Communication followed by the token
       });
       const data = await response.json();
       setUser(data);
@@ -34,15 +34,19 @@ const UserWidget = ({ userId, picturePath }) => {
   
     useEffect(() => {
       getUser();
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []); // This hook Ensures getUser is called once when the component mounts.
+    //The empty dependency array [] means this effect runs only once.
   
     if (!user) {
-      return null;
+      return null; //This ensures that the component doesn't try to render if the user data hasn't been fetched yet.
     }
   
     const {
       firstName,
       lastName,
+      // intro,
+      // gender,
+      // birthday,
       location,
       occupation,
       viewedProfile,
@@ -51,7 +55,7 @@ const UserWidget = ({ userId, picturePath }) => {
     } = user;
   
     return (
-      <UserWidget>
+      <Widgetwrapper>
         {/* FIRST ROW */}
         <AdjustContent
           gap="0.5rem"
@@ -146,7 +150,7 @@ const UserWidget = ({ userId, picturePath }) => {
             <EditOutlined sx={{ color: main }} />
           </AdjustContent>
         </Box>
-      </UserWidget>
+      </Widgetwrapper>
     );
   };
   
