@@ -56,10 +56,10 @@ const UserWidget = ({ userId, picturePath }) => {
   
     return (
       <Widgetwrapper>
+
         {/* FIRST ROW */}
         <AdjustContent
-          gap="0.5rem"
-          pb="1.1rem"
+          gap="0.5rem"pb="1.1rem"
           onClick={() => navigate(`/profile/${userId}`)}
         >
           <AdjustContent gap="1rem">
@@ -83,7 +83,6 @@ const UserWidget = ({ userId, picturePath }) => {
           </AdjustContent>
           <ManageAccountsOutlined />
         </AdjustContent>
-  
         <Divider />
   
         {/* SECOND ROW */}
@@ -126,10 +125,10 @@ const UserWidget = ({ userId, picturePath }) => {
   
           <AdjustContent gap="1rem" mb="0.5rem">
             <AdjustContent gap="1rem">
-              <img src="../assets/twitter.png" alt="twitter" />
+              <img src="../assets/zalo.png" alt="twitter" />
               <Box>
                 <Typography color={main} fontWeight="500">
-                  Twitter
+                  Zalo
                 </Typography>
                 <Typography color={medium}>Social Network</Typography>
               </Box>
