@@ -8,8 +8,8 @@ export const verifyToken = async (req, res, next) => {
       return res.status(403).send("Failed Token -> Access Denied");
     }
 
-    if (token.startsWith("Communication ")) {
-      token = token.substring(14, token.length).trimLeft();
+    if (token.startsWith("Bearer ")) {
+      token = token.substring(7, token.length).trimLeft();
     }
 
     const verified = jwt.verify(token, process.env.JWT_SECRET);
