@@ -5,7 +5,8 @@ import UserWidget from 'views/widgets/UserWidget';
 
 const HomePage = () => {
     const isNonMobileScreen = useMediaQuery("(min-width:1000px)");
-    const { _id, picturePath } = useSelector((state) => state.user);
+    const { _id, picturePath, userName } = useSelector((state) => state.user);
+    console.log("User Data:", { _id, picturePath, userName }); // Add this line
 
         return (
             <Box>
@@ -18,7 +19,7 @@ const HomePage = () => {
                   justifyContent="space-between"
                 >
                     <Box flexBasis={ isNonMobileScreen ? "26%" : undefined }>
-                        <UserWidget userId={_id} picturePath={picturePath} />                                                
+                        <UserWidget userId={ _id } picturePath={ picturePath } userName={ userName } />                                                
                     </Box>
 
                     <Box 
