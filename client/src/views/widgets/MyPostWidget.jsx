@@ -147,6 +147,12 @@ import {
                 <MicOutlined sx={{ color: mediumMain }} />
                 <Typography color={mediumMain}>Audio</Typography>
               </Adjustment>
+
+              
+              <Adjustment gap="0.25rem">
+                <MicOutlined sx={{ color: mediumMain }} />
+                <Typography color={mediumMain}>Audio</Typography>
+              </Adjustment>
             </>
           ) : (
             <Adjustment gap="0.25rem">
