@@ -31,7 +31,7 @@ import {
     const [image, setImage] = useState(null);
     const [post, setPost] = useState("");
     const { palette } = useTheme();
-    const { _id } = useSelector((state) => state.user);
+    const { _id, firstName, lastName } = useSelector((state) => state.user);
     const token = useSelector((state) => state.token);
     const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
     const mediumMain = palette.neutral.mediumMain;
@@ -40,6 +40,8 @@ import {
     const handlePost = async () => {
       const formData = new FormData();
       formData.append("userId", _id);
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
       formData.append("description", post);
       if (image) {
         formData.append("picture", image);
@@ -55,15 +57,18 @@ import {
       dispatch(setPosts({ posts }));
       setImage(null);
       setPost("");
+      
     };
+
+    
   
     return (
       <WidgetWrapper margin="-0.5rem 0rem 0rem 0rem" >
         <Adjustment gap="1.5rem" width= "600px" >
           <UserImage image={picturePath} />
           <InputBase
-            placeholder="What's on your mind...?"
-            onChange={(e) => setPost(e.target.value)}
+          placeholder={`What's on your mind, ${lastName} ${firstName} ?`}
+          onChange={(e) => setPost(e.target.value)}
             value={post}
             sx={{
               width: "100%",
