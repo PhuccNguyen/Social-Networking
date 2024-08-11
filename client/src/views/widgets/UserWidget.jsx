@@ -10,9 +10,9 @@ import { useNavigate } from "react-router-dom";
 
 const UserWidget = ({ userId, picturePath }) => {
   const [user, setUser] = useState(null);
-  const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
+  const { palette } = useTheme();
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
@@ -56,7 +56,7 @@ const UserWidget = ({ userId, picturePath }) => {
        {/******** One *******/}
        <AdjustContent
         gap="0.5rem"
-        mb="1.2rem"
+        mb="0.4rem"
         onClick={() => navigate (`/profile/${userId}`)}>
         <AdjustContent gap="1.5rem">
         <UserImage image={picturePath} />  
@@ -114,7 +114,8 @@ const UserWidget = ({ userId, picturePath }) => {
           </Box>
         <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
         <svg xmlns="http://www.w3.org/2000/svg" fontSize="30px" sx= {{ color: main}} width="1em" height="1em" viewBox="0 0 50 50"><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke="#306cfe" d="M33.333 8.333A2.083 2.083 0 0 0 31.25 6.25h-12.5a2.083 2.083 0 0 0-2.083 2.083v6.25h16.666zM43.75 41.667v-25a2.083 2.083 0 0 0-2.083-2.084H8.333a2.083 2.083 0 0 0-2.083 2.084v25a2.083 2.083 0 0 0 2.083 2.083h33.334a2.083 2.083 0 0 0 2.083-2.083"/><path stroke="#344054" d="M22.917 29.167H18a8.33 8.33 0 0 1-7.583-5.042l-3.792-8.646a2.08 2.08 0 0 1 1.708-.896h33.334a2.08 2.08 0 0 1 1.708.896l-3.792 8.646A8.33 8.33 0 0 1 32 29.167h-4.917"/><path stroke="#306cfe" d="M27.083 27.083h-4.166v4.167h4.166z"/></g></svg>          
-        <Typography variant="h5" fontWeight="100"  color={dark} sx = {{ "&:hover": 
+        <Typography variant="h5" fontWeight="100"  color={dark} 
+        sx = {{ "&:hover": 
                {
                 WebkitTextFillColor: "transparent",
                 background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
