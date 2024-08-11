@@ -120,7 +120,7 @@ const MyPostWidget = ({ picturePath }) => {
     </Adjustment>
   </Box>
 
-  <Box display="flex" justifyContent="space-between" maxWidth="100%" padding="0 10%">
+  <Box display="flex" justifyContent="space-between" maxWidth="100%" padding="0 9%">
     <Button
         onClick={() => setIsDialogOpen(true)}
         sx={{

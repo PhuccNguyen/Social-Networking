@@ -8,7 +8,7 @@ import MyPostWidget from "views/widgets/MyPostWidget";
 const HomePage = () => {
     const isNonMobileScreen = useMediaQuery("(min-width:1000px)");
     const { _id, picturePath, userName } = useSelector((state) => state.user);
-    console.log("User Data:", { _id, picturePath, userName }); // Add this line
+    console.log("User Data:", { _id, picturePath, userName }); 
 
         return (
             <Box>
@@ -18,6 +18,7 @@ const HomePage = () => {
                   padding="2rem 6%"
                   display={isNonMobileScreen ? "flex" : "block"}
                   gap="0.5rem"
+                  
                   justifyContent="space-between"
                 >
                     <Box flexBasis={ isNonMobileScreen ? "26%" : undefined }>
