@@ -1,15 +1,12 @@
-import {ManageAccountsOutlined, EditOutlined,LocationOnOutlined, WorkOutlineOutlined,} from "@mui/icons-material";
+import {ManageAccountsOutlined, EditOutlined,} from "@mui/icons-material";
 import { Box, Typography, Divider, useTheme } from "@mui/material";
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEnvelope, faLocationDot, faBriefcase } from '@fortawesome/free-solid-svg-icons';
 import UserImage from "components/UserImage";
 import AdjustContent from "components/adjustment";
 import WidgetWrapper from "components/widgetwrapper";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { light } from "@mui/material/styles/createPalette";
 
 const UserWidget = ({ userId, picturePath }) => {
   const [user, setUser] = useState(null);
@@ -92,7 +89,7 @@ const UserWidget = ({ userId, picturePath }) => {
         </Typography>
 
        <Box display="flex" alignItems="center" gap="1rem" mb="1rem" >
-          <svg xmlns="http://www.w3.org/2000/svg" fontSize="30px" sx= {{ color: main}} width="1em" height="1em" viewBox="0 0 72 72"><circle cx="36.446" cy="28.864" r="7.225" fill="#fff"/><path fill="#d22f27" d="M52.573 29.11c0-9.315-7.133-16.892-15.903-16.892s-15.903 7.577-15.903 16.896c.002.465.223 11.609 12.96 31.245a3.46 3.46 0 0 0 2.818 1.934c1.84 0 3.094-2.026 3.216-2.232C52.58 40.414 52.58 29.553 52.573 29.11M36.67 35.914a7.083 7.083 0 1 1 7.083-7.083a7.09 7.09 0 0 1-7.083 7.083"/><path fill="#ea5a47" d="M52.573 29.11c0-9.315-7.133-16.892-15.903-16.892a15 15 0 0 0-3.865.525c8.395.45 15.1 7.823 15.1 16.85c.006.443.006 11.303-12.813 30.95a6 6 0 0 1-.586.797c.52.584 1.257.928 2.04.954c1.839 0 3.093-2.027 3.215-2.233C52.58 40.414 52.58 29.553 52.573 29.11"/><g fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M36.545 62.294a3.46 3.46 0 0 1-2.817-1.935C20.99 40.723 20.769 29.58 20.766 29.114c0-9.32 7.134-16.896 15.904-16.896s15.903 7.577 15.903 16.892c.007.444.007 11.304-12.812 30.95c-.122.207-1.377 2.234-3.216 2.234"/><path d="M36.67 35.914a7.083 7.083 0 1 1 7.083-7.083a7.09 7.09 0 0 1-7.083 7.083"/></g></svg>
+       <svg xmlns="http://www.w3.org/2000/svg" fontSize="35px" width="1em" height="1em" viewBox="0 0 512 512"><path fill="#d62931" d="M240.3 396.8c3.3 5.1 9.1 8.5 15.7 8.5s12.4-3.4 15.8-8.5L382 226.6c14.8-22.9 23.4-48.1 23.4-77.3C405.3 64.9 339 0 256 0S106.7 64.9 106.7 149.3c0 29.2 8.6 54.4 23.4 77.3zM256 64c47.1 0 85.3 38.2 85.3 85.3s-38.2 85.3-85.3 85.3s-85.3-38.2-85.3-85.3S208.9 64 256 64m109.4 259.5L256 469.3L146.6 323.5c-37.4 19.6-61.3 48.9-61.3 81.8C85.3 464.2 161.7 512 256 512s170.7-47.8 170.7-106.7c0-32.9-23.9-62.2-61.3-81.8"/></svg>
           <Typography   variant="h5" fontWeight="100" color={dark} 
           sx = {{ "&:hover": 
                {
@@ -101,7 +98,7 @@ const UserWidget = ({ userId, picturePath }) => {
                 WebkitBackgroundClip: "text",       
                 cursor: "pointer",
                },
-            }}> {location}</Typography>  
+            }}>{location}</Typography>  
         </Box>
         <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
           <svg xmlns="http://www.w3.org/2000/svg" fontSize="30px" sx= {{ color: main}} width="1em" height="1em" 

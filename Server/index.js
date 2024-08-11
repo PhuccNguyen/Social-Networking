@@ -81,4 +81,3 @@ mongoose.connect(process.env.MONGO_URL, {
 .catch((error) => {
   console.error('Error when connecting to MongoDB Please check your configuration:', error);
 });
-
