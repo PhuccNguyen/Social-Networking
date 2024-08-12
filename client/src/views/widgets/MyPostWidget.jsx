@@ -1,6 +1,5 @@
 import {
   EditOutlined,
-  DeleteOutlined,
   ImageOutlined,
   LocationOnOutlined,
 } from "@mui/icons-material";
@@ -11,7 +10,6 @@ import {
   useTheme,
   Divider,
   Button,
-  IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -323,7 +321,7 @@ const MyPostWidget = ({ picturePath }) => {
                         <img
                           src={preview}
                           alt="Preview"
-                          style={{ maxWidth: "80px", maxHeight: "80px" }}
+                          style={{ maxWidth: "100px", maxHeight: "100px" }}
                         />
                         <Typography>{image.name}</Typography>
                         <EditOutlined />
