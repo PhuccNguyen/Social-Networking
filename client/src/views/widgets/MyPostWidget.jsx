@@ -111,10 +111,10 @@ const MyPostWidget = ({ picturePath }) => {
     setIsDialogOpen(false);
     setIsLocationDialogOpen(false);
   };
-
+ 
   const handleLocationSelect = (selectedLocation) => {
     setLocation(selectedLocation);
-    setCustomLocation(""); 
+    setCustomLocation("");
     setIsLocationDialogOpen(false);
   };
 
