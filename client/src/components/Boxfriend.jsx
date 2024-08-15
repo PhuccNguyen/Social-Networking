@@ -6,7 +6,7 @@ import { setFriends } from "state";
 import WidgetWrapper from "components/WidgetWrapper";
 import UserImage from "./UserImage";
 
-const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
+const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { _id } = useSelector((state) => state.user);
@@ -78,4 +78,4 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   );
 };
 
-export default Friend;
+export default Boxfriend;

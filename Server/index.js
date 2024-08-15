@@ -64,6 +64,9 @@ app.post("/posts", verifyToken, upload.single("picture"), createPost); // Verify
 app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
 app.use("/posts", postsRoutes);
+app.use("/volunteer-events", volunteerEventRoutes); 
+// Add volunteer event routes
+
 
 // Mongoose connection
 const PORT = process.env.PORT || 4001;
