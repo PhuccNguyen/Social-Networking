@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
-import PostWidget from "./PostWidget";
+import PostWidget from "widgets/PostWidget";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
@@ -47,13 +47,10 @@ const PostsWidget = ({ userId, isProfile = false }) => {
           lastName,
           description,
           location,
-          destination,  
           picturePath,
           userPicturePath,
           likes,
           comments,
-          createDate,   
-          status,       
         }) => (
           <PostWidget
             key={_id}
@@ -62,13 +59,10 @@ const PostsWidget = ({ userId, isProfile = false }) => {
             name={`${firstName} ${lastName}`}
             description={description}
             location={location}
-            destination={destination} 
             picturePath={picturePath}
             userPicturePath={userPicturePath}
             likes={likes}
             comments={comments}
-            createDate={createDate}  
-            status={status}           
           />
         )
       )}

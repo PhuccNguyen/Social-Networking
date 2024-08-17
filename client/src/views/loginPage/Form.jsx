@@ -23,7 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin } from "state";
 import Dropzone from "react-dropzone";
-import AdjustContent from "components/adjustment";
+import AdjustContent from "components/Adjustment";
 
 
 const registerSchema = yup.object().shape({

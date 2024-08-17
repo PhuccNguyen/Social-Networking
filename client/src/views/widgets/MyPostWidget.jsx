@@ -19,10 +19,10 @@ import {
   ListItemText,
   TextField,
 } from "@mui/material";
-import Adjustment from "components/adjustment";
+import Adjustment from "components/Adjustment";
 import Dropzone from "react-dropzone";
 import UserImage from "components/UserImage";
-import WidgetWrapper from "components/wrapperuser";
+import WidgetWrapper from "components/WrapperUser";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
@@ -40,7 +40,7 @@ const MyPostWidget = ({ picturePath }) => {
   const { palette } = useTheme();
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
-  const main = palette.neutral.main;
+  // const main = palette.neutral.main;
   const { _id, firstName, lastName } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
 

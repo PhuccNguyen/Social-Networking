@@ -11,7 +11,7 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
   const navigate = useNavigate();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends);
+  const friends = useSelector((state) => state.user.friends || []); // Ensure friends is an array
 
   const { palette } = useTheme();
   const primaryLight = palette.primary.light;
@@ -19,26 +19,35 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
 
-  const isFriend = friends.find((friend) => friend._id === friendId);
+  const isFriend = friends.some((friend) => friend._id === friendId); // Check if friendId exists in friends array
 
   const patchFriend = async () => {
-    const response = await fetch(
-      `http://localhost:3001/users/${_id}/${friendId}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+    try {
+      const response = await fetch(
+        `http://localhost:3001/users/${_id}/${friendId}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to update friend status');
       }
-    );
-    const data = await response.json();
-    dispatch(setFriends({ friends: data }));
+
+      const data = await response.json();
+      dispatch(setFriends({ friends: data }));
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   return (
     <WidgetWrapper>
-      <WidgetWrapper gap="1rem">
+      <Box display="flex" alignItems="center" gap="1rem">
         <UserImage image={userPicturePath} size="55px" />
         <Box
           onClick={() => {
@@ -63,19 +72,18 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
             {subtitle}
           </Typography>
         </Box>
-      </WidgetWrapper>
-      <IconButton
-        onClick={() => patchFriend()}
-        sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
-      >
-        {isFriend ? (
-          <PersonRemoveOutlined sx={{ color: primaryDark }} />
-        ) : (
-          <PersonAddOutlined sx={{ color: primaryDark }} />
-        )}
-      </IconButton>
+        <IconButton
+          onClick={patchFriend}
+          sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
+        >
+          {isFriend ? (
+            <PersonRemoveOutlined sx={{ color: primaryDark }} />
+          ) : (
+            <PersonAddOutlined sx={{ color: primaryDark }} />
+          )}
+        </IconButton>
+      </Box>
     </WidgetWrapper>
   );
 };
-
 export default Boxfriend;
