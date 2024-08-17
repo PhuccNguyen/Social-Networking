@@ -641,7 +641,7 @@
           <mxGeometry x="1455.0000000000002" y="1223.5" width="82.93" height="31" as="geometry" />
         </mxCell>
         <mxCell id="R8b29SRawxHvekzkB0up-33" value="Yourself Post" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="667.9300000000001" y="1221" width="82.93" height="31" as="geometry" />
+          <mxGeometry x="645.0000000000001" y="1258" width="82.93" height="31" as="geometry" />
         </mxCell>
         <mxCell id="R8b29SRawxHvekzkB0up-39" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="R8b29SRawxHvekzkB0up-35" target="R8b29SRawxHvekzkB0up-38" edge="1">
           <mxGeometry relative="1" as="geometry" />
