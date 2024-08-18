@@ -22,6 +22,10 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
   const isFriend = friends.some((friend) => friend._id === friendId); // Check if friendId exists in friends array
 
   const patchFriend = async () => {
+    if (!_id || !friendId) {
+      console.error('User ID or Friend ID is undefined');
+      return;
+    }
     try {
       const response = await fetch(
         `http://localhost:3001/users/${_id}/${friendId}`,
@@ -33,18 +37,18 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
           },
         }
       );
-
+  
       if (!response.ok) {
         throw new Error('Failed to update friend status');
       }
-
+  
       const data = await response.json();
       dispatch(setFriends({ friends: data }));
     } catch (error) {
       console.error(error.message);
     }
   };
-
+  
   return (
     <WidgetWrapper>
       <Box display="flex" alignItems="center" gap="1rem">

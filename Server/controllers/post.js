@@ -15,7 +15,7 @@ export const createPost = async (req, res) => {
         description,
         picturePath,
         UserpicturePath: user.picturePath,
-        likes: new Map(),  // Initialize likes as an empty Map
+        likes: {},  
         comments: [],      
       });
   
@@ -55,9 +55,9 @@ export const getUserPosts = async (req, res) => {
 // Like or unlike a post
 export const likePost = async (req, res) => {
     try {
-        const { id } = req.params;  // Corrected params access
+        const { id } = req.params;  
         const { userId } = req.body;
-        const post = await Post.findById(id);  // Use findById
+        const post = await Post.findById(id);  
 
         const isLiked = post.likes.get(userId);
 
@@ -68,7 +68,7 @@ export const likePost = async (req, res) => {
         }
 
         const updatedPost = await Post.findByIdAndUpdate(id, { likes: post.likes }, { new: true });
-        res.status(200).json(updatedPost);  // Changed to 200
+        res.status(200).json(updatedPost);  
     } catch (err) {
         res.status(404).json({ message: err.message });
     }

@@ -8,34 +8,45 @@ import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
 import Boxfriend from "components/BoxFriend";
 import Adjustment from "components/Adjustment";
 import WidgetWrapper from "components/WidgetWrapper";
-
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
 
-const PostWidget = ({
+const PostUserWidget = ({
   postId,
   postUserId,
   name,
   description,
   location,
+  destination,
   picturePath,
   userPicturePath,
-  likes = {},    // Provide a default value to avoid undefined errors
-  comments = [], // Provide a default value to avoid undefined errors
+  likes = {}, // Default to an empty object
+  comments = [], // Default to an empty array
 }) => {
   const [isComments, setIsComments] = useState(false);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
-  const loggedInUserId = useSelector((state) => state.user._id);
-  const isLiked = Boolean(likes[loggedInUserId]);
-  const likeCount = Object.keys(likes).length;
+  const loggedInUserId = useSelector((state) => state.user?._id); // Use optional chaining to avoid errors
+
+  const isLiked = Boolean(likes?.[loggedInUserId]);
+  const likeCount = Object.keys(likes || {}).length;
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
 
+
+  console.log('Post ID:', postId);
+console.log('Post User ID:', postUserId);
+console.log('Logged-in User ID:', loggedInUserId);
+
+
   const patchLike = async () => {
+    if (!postId) {
+      console.error("Post ID is undefined or invalid");
+      return;
+    }
     try {
       const response = await fetch(`http://localhost:3001/posts/${postId}/like`, {
         method: "PATCH",
@@ -54,13 +65,7 @@ const PostWidget = ({
       dispatch(setPost({ post: updatedPost }));
     } catch (error) {
       console.error(error.message);
-      // Optionally, display an error message to the user
     }
-  };
-
-  const handleShare = () => {
-    // Placeholder for share functionality
-    alert("Share functionality coming soon!");
   };
 
   return (
@@ -73,6 +78,9 @@ const PostWidget = ({
       />
       <Typography color={main} sx={{ mt: "1rem" }}>
         {description}
+      </Typography>
+      <Typography color={main} sx={{ mt: "1rem" }}>
+        {destination}
       </Typography>
       {picturePath && (
         <img
@@ -104,7 +112,7 @@ const PostWidget = ({
           </Adjustment>
         </Adjustment>
 
-        <IconButton onClick={handleShare}>
+        <IconButton onClick={() => alert("Share functionality coming soon!")}>
           <ShareOutlined />
         </IconButton>
       </Adjustment>
@@ -114,7 +122,7 @@ const PostWidget = ({
             <Box key={`${name}-${i}`}>
               <Divider />
               <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                {comment} {/* You can include the commenter's name if available */}
+                {comment}
               </Typography>
             </Box>
           ))}
@@ -125,4 +133,4 @@ const PostWidget = ({
   );
 };
 
-export default PostWidget;
+export default PostUserWidget;

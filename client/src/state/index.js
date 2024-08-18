@@ -29,9 +29,11 @@ export const authSlice = createSlice({
         console.error("user friends non-existent :(");
       }
     },
+    
     setPosts: (state, action) => {
       state.posts = action.payload.posts;
     },
+
     setPost: (state, action) => {
       const updatedPosts = state.posts.map((post) => {
         if (post._id === action.payload.post._id) return action.payload.post;
@@ -39,6 +41,18 @@ export const authSlice = createSlice({
       });
       state.posts = updatedPosts;
     },
+
+    // setPost: (state, action) => {
+    //   const updatedPost = action.payload.post;
+    //   const postIndex = state.posts.findIndex(post => post._id === updatedPost._id);
+
+    //   if (postIndex >= 0) {
+    //     state.posts[postIndex] = updatedPost;
+    //   } else {
+    //     console.error("Post not found in state");
+    //   }
+    // },
+
   },
 });
 
