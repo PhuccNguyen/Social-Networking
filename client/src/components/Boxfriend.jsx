@@ -1,3 +1,4 @@
+// src/components/Boxfriend.js
 import { PersonAddOutlined, PersonRemoveOutlined } from "@mui/icons-material";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +12,7 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
   const navigate = useNavigate();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends || []); // Ensure friends is an array
+  const friends = useSelector((state) => state.user.friends || []);
 
   const { palette } = useTheme();
   const primaryLight = palette.primary.light;
@@ -19,29 +20,18 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
 
-  const isFriend = friends.some((friend) => friend._id === friendId); // Check if friendId exists in friends array
+  const isFriend = friends.some((friend) => friend._id === friendId);
 
   const patchFriend = async () => {
-    if (!_id || !friendId) {
-      console.error('User ID or Friend ID is undefined');
-      return;
-    }
     try {
-      const response = await fetch(
-        `http://localhost:3001/users/${_id}/${friendId}`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-  
-      if (!response.ok) {
-        throw new Error('Failed to update friend status');
-      }
-  
+      const response = await fetch(`http://localhost:3001/users/${_id}/${friendId}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) throw new Error('Failed to update friend status');
       const data = await response.json();
       dispatch(setFriends({ friends: data }));
     } catch (error) {
@@ -49,6 +39,7 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
     }
   };
   
+
   return (
     <WidgetWrapper>
       <Box display="flex" alignItems="center" gap="1rem">
@@ -90,4 +81,5 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
     </WidgetWrapper>
   );
 };
+
 export default Boxfriend;
