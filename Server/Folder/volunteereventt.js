@@ -1,5 +1,5 @@
 import express from "express";
-import { createEvent, getEvents, getEventById, signupForEvent } from "./volunteer.js";
+import { createEvent, getEvents, getEventById, signupForEvent } from "../controllers/volunteer.js";
 import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
