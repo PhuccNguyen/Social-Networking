@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
-import PostUserWidget from "views/widgets/PostUserWidget";
+import PostUserWidget from "./PostUserWidget";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
@@ -24,12 +24,13 @@ const PostsWidget = ({ userId, isProfile = false }) => {
 
   const [loading, setLoading] = useState(true); // Loading state
 
-  const getFeedPosts = async () => {
+  const getPosts  = async () => {
     try {
       const response = await fetch("http://localhost:3001/posts", {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
+      
       if (!response.ok) {
         throw new Error("Failed to fetch posts");
       }
@@ -71,7 +72,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
     if (isProfile) {
       getUserPosts(signal);
     } else {
-      getFeedPosts(signal);
+      getPosts(signal);
     }
   
     return () => {

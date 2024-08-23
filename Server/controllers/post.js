@@ -36,26 +36,28 @@ export const createPost = async (req, res) => {
     }
 };
 
+
+//read
 // Get all posts for the feed
 export const getFeedPosts = async (req, res) => {
     try {
-        const posts = await Post.find().sort({ createdAt: -1 }); // Sort by latest posts first
-        res.status(200).json(posts);     
+      const post = await Post.find();
+      res.status(200).json(post);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+      res.status(404).json({ message: err.message });
     }
-}
+  };
 
 // Get posts by a specific user
 export const getUserPosts = async (req, res) => {
     try {
-        const { userId } = req.params;
-        const posts = await Post.find({ userId }).sort({ createdAt: -1 });
-        res.status(200).json(posts);     
+      const { userId } = req.params;
+      const post = await Post.find({ userId });
+      res.status(200).json(post);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+      res.status(404).json({ message: err.message });
     }
-};
+  };
 
 
 // Like or unlike a post
