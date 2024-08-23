@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36" version="24.7.7">
   <diagram name="Page-1" id="lx4iGV6XN1sk6dv8uI5J">
-    <mxGraphModel dx="3758" dy="949" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="4745" dy="1349" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -611,7 +611,7 @@
           <mxGeometry x="1038.43" y="1206" width="82.93" height="31" as="geometry" />
         </mxCell>
         <mxCell id="R8b29SRawxHvekzkB0up-10" value="Donate" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="979.9300000000001" y="1289" width="82.93" height="31" as="geometry" />
+          <mxGeometry x="965.7800000000001" y="1295" width="82.93" height="31" as="geometry" />
         </mxCell>
         <mxCell id="R8b29SRawxHvekzkB0up-15" value="Contribute Idea/error" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="1093.93" y="1289" width="82.93" height="31" as="geometry" />
