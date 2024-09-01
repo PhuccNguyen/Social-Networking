@@ -6,7 +6,7 @@ import {
 } from "@mui/icons-material";
 import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
 import FlexBetween from "components/Adjustment";
-// import Boxfriend from "components/BoxFriend";
+import Boxfriend from "components/BoxFriend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,7 +24,7 @@ const PostUserWidget = ({
   likes,
   comments,
 }) => {
-  const [isComments, setIsComments] = useState(false);
+  const [isCommentsVisible, setIsCommentsVisible] = useState(false);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
@@ -34,12 +34,10 @@ const PostUserWidget = ({
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
+  const background = palette.background.default;
+  const widgetBackground = palette.mode === 'dark' ? palette.grey[900] : '#f9f9f9';
 
-  console.log('Post ID:', postId);
-  console.log('Post User ID:', postUserId);
-  console.log('Logged-in User ID:', loggedInUserId);
-
-  const patchLike = async () => {
+  const handleLikeToggle = async () => {
     try {
       const response = await fetch(`http://localhost:3001/posts/${postId}/like`, {
         method: "PATCH",
@@ -56,59 +54,83 @@ const PostUserWidget = ({
       console.error(error.message);
     }
   };
-  
 
   return (
-    <WidgetWrapper m="2rem 0">
-      {/* <Boxfriend
+    <WidgetWrapper
+      m="1rem 1.5rem"
+      sx={{
+        backgroundColor: widgetBackground,
+        borderRadius: '10px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        color: main,
+      }}
+    >
+      {/* Displaying the user info using Boxfriend component */}
+      <Boxfriend
         friendId={postUserId}
         name={name}
         subtitle={location}
         userPicturePath={userPicturePath}
-      /> */}
-      <Typography color={main} sx={{ mt: "1rem" }}>
+      />
+
+      {/* Displaying the post destination and description */}
+      <Typography color={main} sx={{ mt: "1rem", fontSize: "0.95rem", fontWeight: 500 }}>
+        Check In At: {destination}
+      </Typography>
+      <Typography color={main} sx={{ mt: "0.5rem", fontSize: "0.85rem", lineHeight: 1.5 }}>
         {description}
       </Typography>
+
+      {/* Displaying the post image centered */}
       {picturePath && (
-        <img
-          width="100%"
-          height="auto"
-          alt="post"
-          style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
+        <Box
+          component="img"
           src={`http://localhost:3001/assets/${picturePath}`}
+          alt="post"
+          sx={{
+            display: 'block',
+            margin: '0.75rem auto',
+            borderRadius: "10px",
+            maxHeight: "400px",
+            maxWidth: "100%",
+            objectFit: "cover",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          }}
         />
       )}
-      <FlexBetween mt="0.25rem">
+
+      {/* Displaying like, comment, and share icons */}
+      <FlexBetween mt="0.75rem" sx={{ justifyContent: "space-between", alignItems: "center" }}>
         <FlexBetween gap="1rem">
           <FlexBetween gap="0.3rem">
-            <IconButton onClick={patchLike}>
+            <IconButton onClick={handleLikeToggle}>
               {isLiked ? (
                 <FavoriteOutlined sx={{ color: primary }} />
               ) : (
-                <FavoriteBorderOutlined />
+                <FavoriteBorderOutlined sx={{ color: main }} />
               )}
             </IconButton>
-            <Typography>{likeCount}</Typography>
+            <Typography sx={{ fontSize: "0.85rem" }}>{likeCount}</Typography>
           </FlexBetween>
-
           <FlexBetween gap="0.3rem">
-            <IconButton onClick={() => setIsComments(!isComments)}>
-              <ChatBubbleOutlineOutlined />
+            <IconButton onClick={() => setIsCommentsVisible(!isCommentsVisible)}>
+              <ChatBubbleOutlineOutlined sx={{ color: main }} />
             </IconButton>
-            <Typography>{comments.length}</Typography>
+            <Typography sx={{ fontSize: "0.85rem" }}>{comments.length}</Typography>
           </FlexBetween>
         </FlexBetween>
-
         <IconButton>
-          <ShareOutlined />
+          <ShareOutlined sx={{ color: main }} />
         </IconButton>
       </FlexBetween>
-      {isComments && (
+
+      {/* Displaying comments if visible */}
+      {isCommentsVisible && (
         <Box mt="0.5rem">
           {comments.map((comment, i) => (
             <Box key={`${name}-${i}`}>
               <Divider />
-              <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
+              <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem", fontSize: "0.85rem" }}>
                 {comment}
               </Typography>
             </Box>
