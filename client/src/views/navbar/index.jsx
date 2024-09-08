@@ -55,10 +55,21 @@ const Navbar = () => {
             </FlexBetween>
           )}
         </FlexBetween>
-
-        {/* DESKTOP NAV */}
-        {isNonMobileScreens ? (
-          <FlexBetween gap="2rem">
+        <FlexBetween >
+        <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate("/volunteer")}
+            >
+              Profile
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate("/volunteer")}
+            >
+              Home
+            </Button>
             <Button
               variant="contained"
               color="primary"
@@ -66,6 +77,12 @@ const Navbar = () => {
             >
               Volunteer
             </Button>
+        </FlexBetween>
+
+        {/* DESKTOP NAV */}
+        {isNonMobileScreens ? (
+          <FlexBetween gap="2rem">
+           
             <IconButton onClick={() => dispatch(setMode())}>
               {theme.palette.mode === "dark" ? (
                 <DarkMode sx={{ fontSize: "25px" }} />
