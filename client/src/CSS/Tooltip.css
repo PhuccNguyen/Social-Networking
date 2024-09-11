@@ -1,0 +1,87 @@
+.tooltip-container {
+    background:  grey;
+    position: relative;
+    cursor: pointer;
+    font-size: 17px;
+    padding: 0.7em 0.7em;
+    border-radius: 50px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  }
+  
+  .tooltip-container:hover {
+    background: #fff;
+    transition: all 0.9s;
+  }
+  
+  .tooltip-container .text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    fill: #fff;
+    transition: all 0.2s;
+  }
+  
+  .tooltip-container:hover .text {
+    fill: rgb(0, 0, 0);
+    transition: all 0.9s;
+  }
+  
+  /* Twitter */
+  .tooltip1 {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden;
+    background: #fff;
+    padding: 10px;
+    border-radius: 50px;
+    transition: opacity 0.3s, visibility 0.3s, top 0.3s;
+    z-index: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .tooltip-container:hover .tooltip1 {
+    opacity: 1;
+    visibility: visible;
+    top: 120%;
+    transform: translate(-50%, -5px);
+  }
+  
+  /* Facebook */
+  .tooltip2,
+  .tooltip3,
+  .tooltip4 {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden;
+    background: #fff;
+    padding: 10px;
+    border-radius: 50px;
+    transition: opacity 0.3s, visibility 0.3s, top 0.3s;
+    z-index: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .tooltip-container:hover .tooltip2 {
+    top: -120%;
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .tooltip-container:hover .tooltip3 {
+    top: 0;
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .tooltip-container:hover .tooltip4 {
+    top: 200%;
+    opacity: 1;
+    visibility: visible;
+  }
+  

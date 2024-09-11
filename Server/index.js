@@ -11,6 +11,9 @@ import { fileURLToPath } from 'url';
 import authRoutes from "./routes/auth.js";
 import usersRoutes from "./routes/users.js";
 import postsRoutes from "./routes/post.js";
+import eventsRoutes from "./routes/event.js";
+import adminRoutes from "./routes/admin.js";
+
 // import volunteerEventRoutes from "./Folder/volunteereventt.js"; 
 import { createPost } from "./controllers/post.js";
 import { register } from "./controllers/auth.js";
@@ -65,6 +68,9 @@ app.post("/posts", verifyToken, upload.single("picture"), createPost); // Verify
 app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
 app.use("/posts", postsRoutes);
+app.use("/event", eventsRoutes);
+app.use("/admin", adminRoutes);
+
 // app.use("/volunteer-events", volunteerEventRoutes); 
 // Add volunteer event routes
 

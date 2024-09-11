@@ -10,6 +10,7 @@ import Boxfriend from "components/BoxFriend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Tooltip from "CSS/Tooltip"; // Import the Tooltip component
 import { setPost } from "state";
 
 const PostUserWidget = ({
@@ -34,7 +35,6 @@ const PostUserWidget = ({
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
-  const background = palette.background.default;
   const widgetBackground = palette.mode === 'dark' ? palette.grey[900] : '#f9f9f9';
 
   const handleLikeToggle = async () => {
@@ -120,7 +120,8 @@ const PostUserWidget = ({
           </FlexBetween>
         </FlexBetween>
         <IconButton>
-          <ShareOutlined sx={{ color: main }} />
+           {/* Replace Share button with Tooltip */}
+        <Tooltip />
         </IconButton>
       </FlexBetween>
 

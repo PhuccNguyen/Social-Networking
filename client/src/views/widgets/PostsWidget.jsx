@@ -70,7 +70,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   }, [userId, isProfile, token, dispatch]);
 
   if (loading) {
-    return <div>Loading...Data Slow</div>;
+    return <div>Loading...Data</div>;
   }
 
   return (

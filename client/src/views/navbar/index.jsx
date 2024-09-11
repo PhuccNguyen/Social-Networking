@@ -1,16 +1,18 @@
 import { useState } from "react";
-import { Box, IconButton, InputBase, Typography, Select, MenuItem, FormControl, useTheme, useMediaQuery, Button } from "@mui/material";
+import { Box, IconButton, InputBase, Typography, Select, MenuItem, FormControl, useTheme, useMediaQuery } from "@mui/material";
 import { Search, Message, DarkMode, LightMode, Notifications, Menu, Close } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/Adjustment";
+import Textnavbar from "components/Textnavbar";
+import ButtonNavbar from "CSS/ButtonNavbar";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user); // Get user info from state
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
   const theme = useTheme();
@@ -20,17 +22,26 @@ const Navbar = () => {
   const alt = theme.palette.background.alt;
 
   const fullName = `${user.firstName} ${user.lastName}`;
+  const userId = user._id; // Retrieve userId from the user object
 
   return (
-    <Box position="fixed" top="0" width="100%" zIndex="1000" backgroundColor={alt}>
+    <Box
+      position="fixed"
+      top="0"
+      width="100%"
+      zIndex="1000"
+      backgroundColor={alt}
+      boxShadow="0px 4px 10px rgba(0, 0, 0, 0.1)"
+    >
       <FlexBetween padding="1rem 6%" backgroundColor={alt}>
+        {/* Logo and Search */}
         <FlexBetween gap="1.75rem">
           <Typography
+            variant="h5"
+            color={dark}
             fontWeight="bold"
             fontSize="clamp(1rem, 2rem, 2.25rem)"
-            onClick={() => navigate("/home")}
             sx={{
-              color: theme.palette.mode === "dark" ? "white" : "black",
               "&:hover": {
                 WebkitTextFillColor: "transparent",
                 background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
@@ -39,50 +50,37 @@ const Navbar = () => {
               },
             }}
           >
-            FX
+            EX
           </Typography>
+
           {isNonMobileScreens && (
             <FlexBetween
               backgroundColor={neutralLight}
               borderRadius="9px"
-              gap="7rem"
               padding="0.1rem 1.5rem"
+              gap="1rem"
+              sx={{
+                boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
+              }}
             >
-              <InputBase placeholder="Search..." />
+              <InputBase placeholder="Search..." sx={{ width: "100%" }} />
               <IconButton>
                 <Search />
               </IconButton>
             </FlexBetween>
           )}
         </FlexBetween>
-        <FlexBetween >
-        <Button
-              variant="contained"
-              color="primary"
-              onClick={() => navigate("/volunteer")}
-            >
-              Profile
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => navigate("/volunteer")}
-            >
-              Home
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => navigate("/volunteer")}
-            >
-              Volunteer
-            </Button>
-        </FlexBetween>
 
-        {/* DESKTOP NAV */}
+        {/* Buttons Section */}
+        <Textnavbar gap="1.5rem">
+          <ButtonNavbar label="Profile" path={`/profile/${userId}`} /> {/* Profile button with dynamic userId */}
+          <ButtonNavbar label="Home" path="/home" />
+          <ButtonNavbar label="Volunteer" path="/volunteer" />
+        </Textnavbar>
+
+        {/* Desktop Icons and Profile */}
         {isNonMobileScreens ? (
           <FlexBetween gap="2rem">
-           
             <IconButton onClick={() => dispatch(setMode())}>
               {theme.palette.mode === "dark" ? (
                 <DarkMode sx={{ fontSize: "25px" }} />
@@ -123,7 +121,7 @@ const Navbar = () => {
           </IconButton>
         )}
 
-        {/* MOBILE NAV */}
+        {/* Mobile Menu */}
         {!isNonMobileScreens && isMobileMenuToggled && (
           <Box
             position="fixed"
@@ -141,23 +139,12 @@ const Navbar = () => {
               </IconButton>
             </Box>
 
-            <FlexBetween display="flex" flexDirection="column" alignItems="center" gap="3rem">
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  navigate("/volunteer");
-                  setIsMobileMenuToggled(false);
-                }}
-              >
-                Volunteer
-              </Button>
+            <FlexBetween display="flex" flexDirection="column" alignItems="center" gap="2rem" padding="2rem">
+              <ButtonNavbar label="Profile" path={`/profile/${userId}`} /> {/* Mobile Profile button */}
+              <ButtonNavbar label="Home" path="/home" />
+              <ButtonNavbar label="Volunteer" path="/volunteer" />
               <IconButton onClick={() => dispatch(setMode())}>
-                {theme.palette.mode === "dark" ? (
-                  <DarkMode sx={{ fontSize: "25px" }} />
-                ) : (
-                  <LightMode sx={{ color: dark, fontSize: "25px" }} />
-                )}
+                {theme.palette.mode === "dark" ? <DarkMode /> : <LightMode />}
               </IconButton>
               <Message sx={{ fontSize: "25px" }} />
               <Notifications sx={{ fontSize: "25px" }} />
@@ -172,9 +159,6 @@ const Navbar = () => {
                     "& .MuiSvgIcon-root": {
                       pr: "0.25rem",
                       width: "3rem",
-                    },
-                    "& .MuiSelect-select:focus": {
-                      backgroundColor: neutralLight,
                     },
                   }}
                   input={<InputBase />}

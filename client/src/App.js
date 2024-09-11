@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "views/homePage";
 import LoginPage from "views/loginPage";
-import ProfilePage from "views/profilePage";
+import ProfilePage from "views/ProfilePage";
 import VolunteerPage from "views/VolunteerPage";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
@@ -22,7 +22,7 @@ function App() {
           <Routes>
           {/* <Route path="/reviewob" element={< />} /> */}
             <Route path="/" element={<LoginPage />} />
-            <Route path="/volunteer" element={<VolunteerPage />} />
+            <Route path="/volunteer" element={isAuth ? <VolunteerPage /> : <Navigate to="/" />}  />
             <Route path="/home" element={isAuth ? <HomePage /> : <Navigate to="/" />}  />
             <Route path="/profile/:userId" element={isAuth ? <ProfilePage  /> : <Navigate to="/" /> } />
           </Routes>
