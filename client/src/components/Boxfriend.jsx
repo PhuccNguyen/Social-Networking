@@ -11,7 +11,7 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
   const navigate = useNavigate();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends || []);
+  const friends = useSelector((state) => state.user.friends || []); // Ensure friends is an array
 
   const { palette } = useTheme();
   const primaryLight = palette.primary.light;
@@ -19,7 +19,8 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
 
-  const isFriend = friends.some((friend) => friend._id === friendId);
+  // Check if friends is an array, fallback to empty array if not
+  const isFriend = Array.isArray(friends) && friends.some((friend) => friend._id === friendId);
 
   const handleFriendToggle = async () => {
     try {
@@ -87,8 +88,7 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
             variant="h5"
             fontWeight="500"
             sx={{
-              "&:hover": {
-              },
+              "&:hover": {},
             }}
           >
             {name}

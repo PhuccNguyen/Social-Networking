@@ -7,10 +7,9 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const UserWidgetProfile = ({ userId, picturePath }) => {
+const UserWidgetInformation = ({ userId, picturePath }) => {
   const [user, setUser] = useState(null);
-  const [activeSection, setActiveSection] = useState('about'); // Default to 'about'
-  const navigate = useNavigate();
+  const [activeSection, setActiveSection] = useState('about'); 
   const token = useSelector((state) => state.token);
   const { palette } = useTheme();
   const dark = palette.neutral.dark;
@@ -45,7 +44,7 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
       case 'about':
         return 'About';
       case 'edit':
-        return 'Edit Information';
+        return 'Details Information';
       case 'experiences':
         return 'Experiences';
       default:
@@ -80,10 +79,9 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
         return (
           <Box>
             <Typography variant="body1" color={medium}>
-              Here you can edit your profile information, such as updating your name, occupation, and location.
+            <EditUser userId={userId} user={user} />
             </Typography>
             <Box> 
-            <EditUser />
             </Box>
           </Box>
         );
@@ -143,7 +141,7 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
               minWidth: '100px',
             }}
           >
-            Edit Info
+            Details Information
           </Button>
           <Button
             variant={activeSection === 'experiences' ? "contained" : "outlined"}
@@ -168,4 +166,4 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
   );
 };
 
-export default UserWidgetProfile;
+export default UserWidgetInformation;
