@@ -5,8 +5,8 @@ import { useParams } from "react-router-dom";
 import Navbar from "views/navbar";
 import FriendListWidget from "views/widgets/FriendList";
 import MyPostWidget from "views/widgets/MyPostWidget";
-import PostsWidget from "views/widgets/PostsWidget";
-import UserWidget from "views/widgets/UserWidget";
+import UserWidgetInformation from "views/widgets/UserWidgetInformation";
+import UserWidgetProfile from "views/widgets/UserWidgetProfile";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -44,22 +44,21 @@ const ProfilePage = () => {
         gap="2rem"
         justifyContent="center"
       >
-        {/* Left side: User widget and friends list */}
-        <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
-          <UserWidget userId={userId} picturePath={user.picturePath} />
-          <Box m="2rem 0" />
-          {/* <FriendListWidget userId={userId} /> */}
+        {/* Left side: User widget (20% width) */}
+        <Box
+          flexBasis="30%"   // Ensure it takes 20% of the container width
+          marginTop="70px"
+        >
+          <UserWidgetProfile userId={userId} picturePath={user.picturePath} />
         </Box>
 
-        {/* Right side: Posts section */}
+        {/* Right side: Posts section (80% width) */}
         <Box
-          flexBasis={isNonMobileScreens ? "42%" : undefined}
+          flexBasis="70%"  // Ensure it takes 80% of the container width
           mt={isNonMobileScreens ? undefined : "2rem"}
+          marginTop="70px"
         >
-          {/* Render the MyPostWidget only if it's the logged-in user's profile */}
-          {isMyProfile && <MyPostWidget picturePath={user.picturePath} />}
-          <Box m="2rem 0" />
-          <PostsWidget userId={userId} isProfile={isMyProfile} />
+          <UserWidgetInformation userId={userId} picturePath={user.picturePath} />
         </Box>
       </Box>
     </Box>
