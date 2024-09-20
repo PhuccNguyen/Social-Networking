@@ -77,3 +77,36 @@ export const updateUserRole = async (req, res) => {
       res.status(500).json({ message: err.message });
     }
   };
+
+// UPDATE INFOR USER
+export const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { firstName, lastName, status, location, occupation } = req.body;
+
+        // Check if the user is trying to edit their own profile
+        if (id !== req.user.id) {
+            return res.status(403).json({ message: "You are not authorized to update this profile" });
+        }
+
+        // FIND USER BY ID
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // UPDATE INFOR USER
+        user.firstName = firstName || user.firstName;
+        user.lastName = lastName || user.lastName;
+        user.status = status || user.status;
+        user.location = location || user.location;
+        user.occupation = occupation || user.occupation;
+
+        await user.save(); // Save New Infor In Database
+        res.status(200).json(user); // Return updated user info
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+

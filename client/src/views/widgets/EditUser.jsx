@@ -14,6 +14,7 @@ const EditUser = ({ userId }) => {
   const [error, setError] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(true);
+  const loggedInUserId = useSelector((state) => state.user._id); // ID of logged-in user
   const token = useSelector((state) => state.token);
   const { palette } = useTheme();
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ const EditUser = ({ userId }) => {
     getUser();
   }, [userId]);
 
+  // Handle form submit for updating user information
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -61,6 +63,8 @@ const EditUser = ({ userId }) => {
       }
 
       const updatedUser = await response.json();
+      console.log('User updated successfully:', updatedUser);
+      
       setOpenDialog(false);
       navigate(`/profile/${userId}`);
     } catch (error) {
@@ -72,12 +76,11 @@ const EditUser = ({ userId }) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  // Function to open dialog
+  // Open and close dialog for editing
   const handleOpenDialog = () => {
     setOpenDialog(true);
   };
 
-  // Function to close dialog
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
@@ -112,77 +115,71 @@ const EditUser = ({ userId }) => {
         </Typography>
       )}
 
-{/* 1111111111111111111111111111111 */}
+      <Grid container spacing={3} justifyContent="center">
+        <Grid item xs={12} md={12}>
+          <Box display="flex" alignItems="center">
+            <Typography variant="body1" color={palette.neutral.dark} fontWeight="bold" sx={{ minWidth: '150px' }}>
+              First Name:
+            </Typography>
+            <Typography variant="body1" color={palette.neutral.dark}>
+              {firstName || 'N/A'}
+            </Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={12}>
+          <Box display="flex" alignItems="center">
+            <Typography variant="body1" color={palette.neutral.dark} fontWeight="bold" sx={{ minWidth: '150px' }}>
+              Last Name:
+            </Typography>
+            <Typography variant="body1" color={palette.neutral.dark}>
+              {lastName || 'N/A'}
+            </Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={12}>
+          <Box display="flex" alignItems="center">
+            <Typography variant="body1" color={palette.neutral.dark} fontWeight="bold" sx={{ minWidth: '150px' }}>
+              Status:
+            </Typography>
+            <Typography variant="body1" color={palette.neutral.dark}>
+              {status || 'N/A'}
+            </Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={12}>
+          <Box display="flex" alignItems="center">
+            <Typography variant="body1" color={palette.neutral.dark} fontWeight="bold" sx={{ minWidth: '150px' }}>
+              Location:
+            </Typography>
+            <Typography variant="body1" color={palette.neutral.dark}>
+              {location || 'N/A'}
+            </Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={12}>
+          <Box display="flex" alignItems="center">
+            <Typography variant="body1" color={palette.neutral.dark} fontWeight="bold" sx={{ minWidth: '150px' }}>
+              Occupation:
+            </Typography>
+            <Typography variant="body1" color={palette.neutral.dark}>
+              {occupation || 'N/A'}
+            </Typography>
+          </Box>
+        </Grid>
+      </Grid>
 
-<Grid container spacing={3} justifyContent="center">
-  <Grid item xs={12} md={12}>
-    <Box display="flex" alignItems="center">
-      <Typography variant="body1" color={palette.neutral.dark} fontWeight="bold" sx={{ minWidth: '150px' }}>
-        First Name:
-      </Typography>
-      <Typography variant="body1" color={palette.neutral.dark}>
-        {firstName || 'N/A'}
-      </Typography>
-    </Box>
-  </Grid>
+      {/* Show edit button only if the logged-in user is viewing their own profile */}
+      {loggedInUserId === userId && (
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: 3 }}
+          onClick={handleOpenDialog}
+        >
+          Edit Information
+        </Button>
+      )}
 
-  <Grid item xs={12} md={12}>
-    <Box display="flex" alignItems="center">
-      <Typography variant="body1" color={palette.neutral.dark} fontWeight="bold" sx={{ minWidth: '150px' }}>
-        Last Name:
-      </Typography>
-      <Typography variant="body1" color={palette.neutral.dark}>
-        {lastName || 'N/A'}
-      </Typography>
-    </Box>
-  </Grid>
-
-  <Grid item xs={12} md={12}>
-    <Box display="flex" alignItems="center">
-      <Typography variant="body1" color={palette.neutral.dark} fontWeight="bold" sx={{ minWidth: '150px' }}>
-        Status:
-      </Typography>
-      <Typography variant="body1" color={palette.neutral.dark}>
-        {status || 'N/A'}
-      </Typography>
-    </Box>
-  </Grid>
-
-  <Grid item xs={12} md={12}>
-    <Box display="flex" alignItems="center">
-      <Typography variant="body1" color={palette.neutral.dark} fontWeight="bold" sx={{ minWidth: '150px' }}>
-        Location:
-      </Typography>
-      <Typography variant="body1" color={palette.neutral.dark}>
-        {location || 'N/A'}
-      </Typography>
-    </Box>
-  </Grid>
-
-  <Grid item xs={12} md={12}>
-    <Box display="flex" alignItems="center">
-      <Typography variant="body1" color={palette.neutral.dark} fontWeight="bold" sx={{ minWidth: '150px' }}>
-        Occupation:
-      </Typography>
-      <Typography variant="body1" color={palette.neutral.dark}>
-        {occupation || 'N/A'}
-      </Typography>
-    </Box>
-  </Grid>
-</Grid>
-
-
-      {/* Edit Information Button */}
-      <Button
-        variant="contained"
-        color="primary"
-        sx={{ mt: 3 }}
-        onClick={handleOpenDialog}
-      >
-        Edit Information
-      </Button>
-
-      {/* Dialog for Editing User Information */}
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Edit User Information</DialogTitle>
         <DialogContent>
@@ -190,7 +187,7 @@ const EditUser = ({ userId }) => {
             <TextField
               label="First Name"
               name="firstName"
-              value={firstName}
+              value={user.firstName}
               onChange={handleChange}
               fullWidth
               margin="normal"
@@ -199,7 +196,7 @@ const EditUser = ({ userId }) => {
             <TextField
               label="Last Name"
               name="lastName"
-              value={lastName}
+              value={user.lastName}
               onChange={handleChange}
               fullWidth
               margin="normal"
@@ -208,7 +205,7 @@ const EditUser = ({ userId }) => {
             <TextField
               label="Location"
               name="location"
-              value={location}
+              value={user.location}
               onChange={handleChange}
               fullWidth
               margin="normal"
@@ -216,7 +213,7 @@ const EditUser = ({ userId }) => {
             <TextField
               label="Status"
               name="status"
-              value={status}
+              value={user.status}
               onChange={handleChange}
               fullWidth
               margin="normal"
@@ -224,7 +221,7 @@ const EditUser = ({ userId }) => {
             <TextField
               label="Occupation"
               name="occupation"
-              value={occupation}
+              value={user.occupation}
               onChange={handleChange}
               fullWidth
               margin="normal"

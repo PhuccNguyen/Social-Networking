@@ -3,13 +3,14 @@ import { Box, Typography, Button, useTheme, Divider } from "@mui/material";
 import React, { useState } from 'react';
 import WidgetWrapper from "components/WidgetWrapper";
 import EditUser from "views/widgets/EditUser";
+import PostUser from "views/widgets/UserWidgetPost";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const UserWidgetInformation = ({ userId, picturePath }) => {
   const [user, setUser] = useState(null);
-  const [activeSection, setActiveSection] = useState('about'); 
+  const [activeSection, setActiveSection] = useState('post'); 
   const token = useSelector((state) => state.token);
   const { palette } = useTheme();
   const dark = palette.neutral.dark;
@@ -41,6 +42,8 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
   // Function to get the section title
   const getSectionTitle = () => {
     switch (activeSection) {
+      case 'post':
+        return 'Post';
       case 'about':
         return 'About';
       case 'edit':
@@ -55,10 +58,20 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
   // Function to render the section content
   const renderSectionContent = () => {
     switch (activeSection) {
+      case 'post':
+        return (
+          <Box sx={{ textAlign: 'justify' }}> {/* Set text alignment to justified */}
+            <Typography>
+              <PostUser />
+            </Typography>
+          </Box>
+        );
+
       case 'about':
         return (
           <Box sx={{ textAlign: 'justify' }}> {/* Set text alignment to justified */}
-            <Typography
+
+          <Typography
               variant="h5"
               color={dark}
               fontWeight="500"
@@ -75,6 +88,7 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
             </Typography>
           </Box>
         );
+
       case 'edit':
         return (
           <Box>
@@ -123,6 +137,16 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
 
         {/* Buttons */}
         <Box sx={{ display: 'flex', gap: '0.5rem' }}>
+        <Button
+            variant={activeSection === 'post' ? "contained" : "outlined"}
+            onClick={() => setActiveSection('post')}
+            sx={{
+              color: activeSection === 'post' ? "#fff" : main,
+              minWidth: '100px',
+            }}
+          >
+            Post
+          </Button>
           <Button
             variant={activeSection === 'about' ? "contained" : "outlined"}
             onClick={() => setActiveSection('about')}
@@ -143,6 +167,7 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
           >
             Details Information
           </Button>
+
           <Button
             variant={activeSection === 'experiences' ? "contained" : "outlined"}
             onClick={() => setActiveSection('experiences')}
