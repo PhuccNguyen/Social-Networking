@@ -58,7 +58,7 @@ const ProfilePage = () => {
           mt={isNonMobileScreens ? undefined : "2rem"}
           marginTop="70px"
         >
-          <UserWidgetInformation userId={userId} picturePath={user.picturePath} />
+          <UserWidgetInformation userId={userId} user={user} picturePath={user.picturePath} />
         </Box>
       </Box>
     </Box>

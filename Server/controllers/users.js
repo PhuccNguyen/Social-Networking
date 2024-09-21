@@ -82,7 +82,7 @@ export const updateUserRole = async (req, res) => {
 export const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const { firstName, lastName, status, location, occupation } = req.body;
+        const { firstName, lastName, status, location, occupation, email, mobile } = req.body;
 
         // Check if the user is trying to edit their own profile
         if (id !== req.user.id) {
@@ -101,6 +101,9 @@ export const updateUser = async (req, res) => {
         user.status = status || user.status;
         user.location = location || user.location;
         user.occupation = occupation || user.occupation;
+        user.email = email || user.email;
+        user.mobile = mobile || user.mobile;
+
 
         await user.save(); // Save New Infor In Database
         res.status(200).json(user); // Return updated user info
@@ -109,4 +112,49 @@ export const updateUser = async (req, res) => {
     }
 };
 
+
+// Update Password
+export const changePassword = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { oldPassword, newPassword } = req.body;
+  
+      const user = await User.findById(id);
+      if (!user) return res.status(404).json({ message: "User not found" });
+  
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) return res.status(400).json({ message: "Current password is incorrect" });
+  
+      const salt = await bcrypt.genSalt();
+      user.password = await bcrypt.hash(newPassword, salt);
+  
+      await user.save();
+      res.status(200).json({ message: "Password updated successfully" });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
+  
+  
+// Update Email and Mobile
+export const updateContact = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { email, mobile } = req.body;
+  
+      const user = await User.findById(id);
+      if (!user) return res.status(404).json({ message: "User not found" });
+  
+      user.email = email || user.email;
+      user.mobile = mobile || user.mobile;
+  
+      await user.save();
+      res.status(200).json({ message: "Contact information updated successfully" });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  };
+  
+  
+  
 

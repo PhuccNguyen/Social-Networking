@@ -1,16 +1,18 @@
-import { ManageAccountsOutlined, EditOutlined } from "@mui/icons-material";
 import { Box, Typography, Button, useTheme, Divider } from "@mui/material";
 import React, { useState } from 'react';
 import WidgetWrapper from "components/WidgetWrapper";
 import EditUser from "views/widgets/EditUser";
+import UserSecurity from "views/widgets/UserSecurity";
 import PostUser from "views/widgets/UserWidgetPost";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+
 const UserWidgetInformation = ({ userId, picturePath }) => {
   const [user, setUser] = useState(null);
-  const [activeSection, setActiveSection] = useState('post'); 
+  const [activeSection, setActiveSection] = useState('post');
+  const loggedInUserId = useSelector((state) => state.user._id); // ID of logged-in user 
   const token = useSelector((state) => state.token);
   const { palette } = useTheme();
   const dark = palette.neutral.dark;
@@ -39,6 +41,10 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
 
   const { firstName, lastName, status, email, location, occupation, friends, intro } = user;
 
+    // Open and close dialog for editing
+    const handleOpenDialog = () => {
+    };
+
   // Function to get the section title
   const getSectionTitle = () => {
     switch (activeSection) {
@@ -50,6 +56,8 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
         return 'Details Information';
       case 'experiences':
         return 'Experiences';
+      case 'security':
+        return ' Password and security';
       default:
         return '';
     }
@@ -96,7 +104,7 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
             <EditUser userId={userId} user={user} />
             </Typography>
             <Box> 
-            </Box>
+          </Box>
           </Box>
         );
       case 'experiences':
@@ -106,8 +114,20 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
               This is show Occupation and Experience Volunteer information.
             </Typography>
           </Box>
+        );      
+      case 'security':
+        return (
+          <Box>
+            <Typography variant="body1" color={medium}>
+            <UserSecurity userId={userId} user={user} />
+            </Typography>
+            <Box> 
+          </Box>
+          </Box>
         );
+
       default:
+
         return null;
     }
   };
@@ -121,6 +141,7 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
         backgroundColor: palette.background.paper,
       }}
     >
+      
       {/* Title and Buttons in the same row */}
       <Box
         sx={{
@@ -178,6 +199,23 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
           >
             Experiences
           </Button>
+      {/* Show  Password and security button only if the logged-in user is viewing their own profile */}
+      {loggedInUserId === userId && (
+          <Button
+          variant={activeSection === 'security' ? "contained" : "outlined"}
+          onClick={() => setActiveSection('security')}
+          sx={{
+            color: activeSection === 'security' ? "#fff" : main,
+            minWidth: '100px',
+          }}
+        >
+          Password and security
+        </Button>
+      )}
+      
+
+
+
         </Box>
       </Box>
 
@@ -187,6 +225,7 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
       <Box mt="1rem" width="95%" mx="auto"> {/* Set width to 95% and center the content */}
         {renderSectionContent()}
       </Box>
+      
     </WidgetWrapper>
   );
 };
