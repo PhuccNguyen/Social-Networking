@@ -1,18 +1,17 @@
-import { Box, Typography, TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, useTheme } from "@mui/material";
+import { Box, Typography, TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, InputAdornment, useTheme } from "@mui/material";
 import React, { useState, useEffect } from 'react';
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const UserSecurity = ({ userId }) => {
-  const [user, setUser] = useState({
-    email: '',
-    mobile: '',
-  });
+  const [user, setUser] = useState({ email: '', mobile: '' });
   const [error, setError] = useState(null);
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
   const [openEmailDialog, setOpenEmailDialog] = useState(false);
   const [loading, setLoading] = useState(true);
   const [passwordData, setPasswordData] = useState({ oldPassword: '', newPassword: '' });
+  const [showOldPassword, setShowOldPassword] = useState(false); // State for toggling old password visibility
+  const [showNewPassword, setShowNewPassword] = useState(false); // State for toggling new password visibility
   const token = useSelector((state) => state.token);
   const { palette } = useTheme();
 
@@ -50,25 +49,34 @@ const UserSecurity = ({ userId }) => {
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:3001/users/${userId}/changepassword`, {
+      const response = await fetch(`http://localhost:3001/users/${userId}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(passwordData),
+        body: JSON.stringify({
+          oldPassword: passwordData.oldPassword,
+          newPassword: passwordData.newPassword,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to change password");
+        const errorData = await response.json();
+        
+        // Check if the error is due to incorrect old password
+        if (response.status === 400 && errorData.message === "Current password is incorrect") {
+          alert("The current password you entered is incorrect. Please try again.");
+        } else {
+          throw new Error(errorData.message || "Failed to change password");
+        }
+        return; 
       }
 
-      const updatedUser = await response.json();
-      console.log('Password changed successfully:', updatedUser);
       setOpenPasswordDialog(false);
       alert('Password changed successfully');
     } catch (error) {
-      setError("Failed to change password");
+      setError(error.message);
     }
   };
 
@@ -76,8 +84,8 @@ const UserSecurity = ({ userId }) => {
   const handleEmailMobileSubmit = async (e) => {
     e.preventDefault();
     try {
-        const response = await fetch(`http://localhost:3001/users/${userId}`, {
-            method: "PATCH",
+      const response = await fetch(`http://localhost:3001/users/${userId}`, {
+        method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -103,6 +111,9 @@ const UserSecurity = ({ userId }) => {
 
   const handleOpenEmailDialog = () => setOpenEmailDialog(true);
   const handleCloseEmailDialog = () => setOpenEmailDialog(false);
+
+  const toggleShowOldPassword = () => setShowOldPassword(!showOldPassword);
+  const toggleShowNewPassword = () => setShowNewPassword(!showNewPassword);
 
   if (loading) {
     return <Typography>Loading user information...</Typography>;
@@ -152,8 +163,44 @@ const UserSecurity = ({ userId }) => {
         <DialogTitle>Change Password</DialogTitle>
         <DialogContent>
           <Box component="form" onSubmit={handlePasswordSubmit}>
-            <TextField label="Current Password" name="oldPassword" type="password" value={passwordData.oldPassword} onChange={(e) => setPasswordData({ ...passwordData, oldPassword: e.target.value })} fullWidth margin="normal" required />
-            <TextField label="New Password" name="newPassword" type="password" value={passwordData.newPassword} onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })} fullWidth margin="normal" required />
+            <TextField
+              label="Current Password"
+              name="oldPassword"
+              type={showOldPassword ? "text" : "password"}
+              value={passwordData.oldPassword}
+              onChange={(e) => setPasswordData({ ...passwordData, oldPassword: e.target.value })}
+              fullWidth
+              margin="normal"
+              required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={toggleShowOldPassword}>
+                      {showOldPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+            <TextField
+              label="New Password"
+              name="newPassword"
+              type={showNewPassword ? "text" : "password"}
+              value={passwordData.newPassword}
+              onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+              fullWidth
+              margin="normal"
+              required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={toggleShowNewPassword}>
+                      {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
             <Button type="submit" variant="contained" color="primary" sx={{ mt: 3 }}>Change Password</Button>
           </Box>
         </DialogContent>

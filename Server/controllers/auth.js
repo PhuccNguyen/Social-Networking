@@ -44,8 +44,8 @@ export const register = async (req, res) => {
             password: passwordHash,
             picturePath, friends,
             location, occupation,
-            viewedProfile: Math.floor(Math.random() * 1000),
-            impressions: Math.floor(Math.random() * 1000),
+            // viewedProfile: Math.floor(Math.random() * 1000),
+            // impressions: Math.floor(Math.random() * 1000),
         });
         const savedUser = await newUser.save();
         res.status(201).json(savedUser);

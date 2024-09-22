@@ -3,6 +3,7 @@ import HomePage from "views/homePage";
 import LoginPage from "views/loginPage";
 import ProfilePage from "views/ProfilePage";
 import VolunteerPage from "views/VolunteerPage";
+import NotFoundPage from "views/NotFoundPage"; // Import the new NotFoundPage
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -20,11 +21,12 @@ function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Routes>
-          {/* <Route path="/reviewob" element={< />} /> */}
             <Route path="/" element={<LoginPage />} />
-            <Route path="/volunteer" element={isAuth ? <VolunteerPage /> : <Navigate to="/" />}  />
-            <Route path="/home" element={isAuth ? <HomePage /> : <Navigate to="/" />}  />
-            <Route path="/profile/:userId" element={isAuth ? <ProfilePage  /> : <Navigate to="/" /> } />
+            <Route path="/volunteer" element={isAuth ? <VolunteerPage /> : <Navigate to="/" />} />
+            <Route path="/home" element={isAuth ? <HomePage /> : <Navigate to="/" />} />
+            <Route path="/profile/:userId" element={isAuth ? <ProfilePage /> : <Navigate to="/" />} />
+            {/* Wildcard route for 404 page */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>
