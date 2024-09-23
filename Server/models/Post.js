@@ -25,13 +25,21 @@ const PostSchema = new mongoose.Schema (
             type: Map,
             of: Boolean,
         },
-        comments:{
-            type: Array,
-            default: []
-        },
+        comments: [
+            {
+                userId: String,
+                firstName: String,
+                userPicturePath: String,
+                commentText: String,
+                createdAt: {
+                    type: Date,
+                    default: Date.now,
+                },
+            }
+        ],
     },
     { timestamps: true}
-)
+);
 
 const Post = mongoose.model("Post", PostSchema);
 export default Post;

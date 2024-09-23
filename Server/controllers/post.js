@@ -93,3 +93,43 @@ export const likePost = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 }
+
+// ADD COMMENT
+export const addComment = async (req, res) => {
+    try {
+        const { postId } = req.params;
+        const { userId, commentText } = req.body;
+
+        // Tìm kiếm bài viết theo postId
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        // Tìm kiếm người dùng theo userId
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Add the comment to the post with user information fetched from the database
+        const newComment = {
+            userId,
+            firstName: user.firstName,
+            lastName: user.lastName, // Bạn có thể thêm họ nếu cần
+            userPicturePath: user.picturePath,
+            commentText,
+            createdAt: new Date(),
+        };
+        post.comments.push(newComment);
+
+        // Lưu lại bài viết sau khi thêm bình luận
+        await post.save();
+        res.status(200).json(post);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+

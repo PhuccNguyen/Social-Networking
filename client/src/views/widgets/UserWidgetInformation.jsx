@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import WidgetWrapper from "components/WidgetWrapper";
 import EditUser from "views/widgets/EditUser";
 import UserSecurity from "views/widgets/UserSecurity";
+import UserAbout from "views/widgets/UserAbout";
 import PostUser from "views/widgets/UserWidgetPost";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -70,7 +71,7 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
         return (
           <Box sx={{ textAlign: 'justify' }}> {/* Set text alignment to justified */}
             <Typography>
-              <PostUser />
+              <PostUser userId={userId} isProfile={true}/>
             </Typography>
           </Box>
         );
@@ -79,20 +80,8 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
         return (
           <Box sx={{ textAlign: 'justify' }}> {/* Set text alignment to justified */}
 
-          <Typography
-              variant="h5"
-              color={dark}
-              fontWeight="500"
-              sx={{
-                "&:hover": {
-                  WebkitTextFillColor: "transparent",
-                  background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
-                  WebkitBackgroundClip: "text",
-                  cursor: "pointer",
-                },
-              }}
-            >
-              {intro}.
+          <Typography >
+              <UserAbout userId={userId} user={user}/>
             </Typography>
           </Box>
         );
