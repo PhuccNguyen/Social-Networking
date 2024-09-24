@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from 'bcryptjs';
+import Post from "../models/Post.js";
 // import SignupVolunteer from "../models/SignupVolunteer.js";
 // import VolunteerEvent from "../Folder/Volunteerevent.js";
 
@@ -128,6 +129,62 @@ export const updateUserRole = async (req, res) => {
           res.status(500).json({ message: err.message });
       }
   };
+  
+  // Save or unsave a post
+  export const savePosts = async (req, res) => {
+      try {
+          const { id } = req.params;  // User ID từ URL
+          const { postId } = req.body;  // Post ID từ body của request
+  
+          // Tìm user theo id
+          const user = await User.findById(id);
+          if (!user) {
+              return res.status(404).json({ message: "User not found" });
+          }
+  
+          // Tìm post theo id
+          const post = await Post.findById(postId);
+          if (!post) {
+              return res.status(404).json({ message: "Post not found" });
+          }
+  
+          // Kiểm tra xem post đã được lưu hay chưa
+          const isSaved = user.savedPosts.includes(postId);
+  
+          if (isSaved) {
+              // Nếu đã lưu, xóa khỏi danh sách savedPosts
+              user.savedPosts = user.savedPosts.filter(savedPostId => savedPostId.toString() !== postId);
+          } else {
+              // Nếu chưa lưu, thêm vào danh sách savedPosts
+              user.savedPosts.push(postId);
+          }
+  
+          // Lưu lại thông tin user đã cập nhật
+          await user.save();
+  
+          // Trả về danh sách savedPosts sau khi cập nhật
+          res.status(200).json(user.savedPosts);
+      } catch (err) {
+          res.status(500).json({ message: err.message });
+      }
+  };
+   
+  
+// Lấy các bài viết đã lưu của user
+export const getSavedPosts = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id).populate("savedPosts"); 
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json(user.savedPosts); 
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
   
 
 

@@ -116,7 +116,7 @@ export const addComment = async (req, res) => {
         const newComment = {
             userId,
             firstName: user.firstName,
-            lastName: user.lastName, // Bạn có thể thêm họ nếu cần
+            lastName: user.lastName, 
             userPicturePath: user.picturePath,
             commentText,
             createdAt: new Date(),

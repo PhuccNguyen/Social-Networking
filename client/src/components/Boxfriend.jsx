@@ -45,13 +45,12 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
         display="flex"
         alignItems="center"
         gap="1rem"
-        p="1rem"
+        p="0.5rem"
         sx={{
           borderRadius: "0.75rem",
-          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)", // Subtle shadow for depth
-          transition: "transform 0.3s ease, box-shadow 0.3s ease", // Smooth hover effect
+          transition: "transform 0.3s ease, box-shadow 0.3s ease",
           "&:hover": {
-            transform: "scale(1.01)", // Slight zoom on hover
+            transform: "scale(1.01)", 
             boxShadow: "0 6px 15px rgba(0, 0, 0, 0.15)",
           },
           "@media (max-width: 600px)": {
@@ -73,9 +72,6 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
             flexDirection: "column",
             justifyContent: "center",
             "&:hover": {
-              backgroundColor: palette.action.hover,
-              borderRadius: "0.5rem",
-              padding: "0.5rem",
             },
             "@media (max-width: 600px)": {
               width: "100%", // Full width on small screens

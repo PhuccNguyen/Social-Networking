@@ -2,6 +2,8 @@ import {
   ChatBubbleOutlineOutlined,
   FavoriteBorderOutlined,
   FavoriteOutlined,
+  BookmarkBorderOutlined, // Icon cho lưu bài viết
+  BookmarkOutlined, // Icon cho đã lưu bài viết
 } from "@mui/icons-material";
 import {
   Box,
@@ -15,15 +17,14 @@ import {
 import FlexBetween from "components/Adjustment";
 import Boxcomment from "components/BoxComment";
 import Boxfriends from "components/BoxFriend";
-
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost } from "state";
+import { setPost, setSavedPosts  } from "state";
 import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime"; 
+import relativeTime from "dayjs/plugin/relativeTime";
 
-dayjs.extend(relativeTime); 
+dayjs.extend(relativeTime);
 
 const PostUserWidget = ({
   postId,
@@ -36,6 +37,7 @@ const PostUserWidget = ({
   userPicturePath,
   likes,
   comments,
+  isSaved, 
 }) => {
   const [isCommentsVisible, setIsCommentsVisible] = useState(false);
   const [newComment, setNewComment] = useState("");
@@ -44,13 +46,14 @@ const PostUserWidget = ({
   const loggedInUser = useSelector((state) => state.user);
   const loggedInUserId = loggedInUser._id;
   const isLiked = Boolean(likes[loggedInUserId]);
-  const likeCount = Object.keys(likes).length;
+  const   likeCount = Object.keys(likes).length;
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
-  const widgetBackground =
-    palette.mode === "dark" ? palette.grey[900] : "#f9f9f9";
+
+  // const widgetBackground =
+  //   palette.mode === "dark" ? palette.grey[900] : "#f9f9f9";
 
   const handleLikeToggle = async () => {
     try {
@@ -71,6 +74,32 @@ const PostUserWidget = ({
       console.error(error.message);
     }
   };
+
+
+  const handleSavePost = async () => {
+    try {
+        const response = await fetch(
+            `http://localhost:3001/users/${loggedInUserId}/saved`,
+            {
+                method: "PATCH",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ postId }),
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Failed to save post');
+        }
+
+        const updatedSavedPosts = await response.json(); 
+        dispatch(setSavedPosts({ savedPosts: updatedSavedPosts }));  
+    } catch (error) {
+        console.error(error.message);
+    }
+};
 
   const handleCommentSubmit = async () => {
     if (newComment.trim() === "") return;
@@ -94,7 +123,7 @@ const PostUserWidget = ({
       );
       const updatedPost = await response.json();
       dispatch(setPost({ post: updatedPost }));
-      setNewComment(""); // Clear the input field
+      setNewComment(""); // Xóa nội dung trong trường nhập sau khi bình luận
     } catch (error) {
       console.error(error.message);
     }
@@ -104,7 +133,6 @@ const PostUserWidget = ({
     <WidgetWrapper
       m="1rem 1.5rem"
       sx={{
-        backgroundColor: widgetBackground,
         borderRadius: "10px",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         color: main,
@@ -116,8 +144,8 @@ const PostUserWidget = ({
         subtitle={location}
         userPicturePath={userPicturePath}
       />
-
-      <Typography
+       <Divider />
+       <Typography
         color={main}
         sx={{ mt: "1rem", fontSize: "0.95rem", fontWeight: 500 }}
       >
@@ -147,11 +175,13 @@ const PostUserWidget = ({
         />
       )}
 
+      {/* Bố cục cho các nút like, comment và save */}
       <FlexBetween
         mt="0.75rem"
         sx={{ justifyContent: "space-between", alignItems: "center" }}
       >
         <FlexBetween gap="1rem">
+          {/* Nút thích */}
           <FlexBetween gap="0.3rem">
             <IconButton onClick={handleLikeToggle}>
               {isLiked ? (
@@ -162,6 +192,8 @@ const PostUserWidget = ({
             </IconButton>
             <Typography sx={{ fontSize: "0.85rem" }}>{likeCount}</Typography>
           </FlexBetween>
+
+          {/* Nút bình luận */}
           <FlexBetween gap="0.3rem">
             <IconButton onClick={() => setIsCommentsVisible(!isCommentsVisible)}>
               <ChatBubbleOutlineOutlined sx={{ color: main }} />
@@ -170,20 +202,33 @@ const PostUserWidget = ({
               {comments.length}
             </Typography>
           </FlexBetween>
+
+          {/* Nút lưu bài viết */}
+          <FlexBetween gap="0.3rem">
+          <IconButton onClick={handleSavePost}>
+            {isSaved ? (
+               <BookmarkOutlined sx={{ color: primary }} />
+                   ) : (
+               <BookmarkBorderOutlined sx={{ color: main }} />
+             )}
+          </IconButton>
+          </FlexBetween>
+
         </FlexBetween>
       </FlexBetween>
 
+      {/* Phần render comment */}
       {isCommentsVisible && (
         <Box mt="0.5rem">
-          {/* Render existing comments */}
           {comments.map(
-            ({ userId, userName, userPicturePath, commentText, createdAt }, i) => (
+            ({ userId, lastName, firstName, userPicturePath, commentText, createdAt }, i) => (
               <Box key={`${userId}-${i}`} mt="0.5rem">
                 <Divider />
                 <FlexBetween gap="0.75rem" mt="0.5rem">
                   <Boxcomment
                     friendId={userId}
-                    name={userName}
+                    firstName={firstName}
+                    lastName={lastName}
                     userPicturePath={userPicturePath}
                     subtitle={`${dayjs(createdAt).fromNow()}`}
                   />
@@ -191,8 +236,8 @@ const PostUserWidget = ({
                 <Typography
                   sx={{
                     color: main,
-                    m: "0.5rem 0",
-                    pl: "1rem",
+                    m: "0rem 0 0.5rem",
+                    pl: "3rem",
                     fontSize: "0.85rem",
                   }}
                 >
@@ -202,7 +247,9 @@ const PostUserWidget = ({
             )
           )}
 
-          <Divider sx={{ mt: "1rem" }} />
+          <Divider sx={{ mt: "0.1rem" }} />
+
+          <Box>
           <TextField
             label="Write a comment..."
             fullWidth
@@ -212,6 +259,7 @@ const PostUserWidget = ({
             onChange={(e) => setNewComment(e.target.value)}
             sx={{ mt: "0.75rem" }}
           />
+        </Box>
           <Button
             variant="contained"
             color="primary"

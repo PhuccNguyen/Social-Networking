@@ -4,10 +4,12 @@ import {
     getUserFriends,
     addRemoveFriends,
     updateUser,
+    savePosts,
+    getSavedPosts,
 } from "../controllers/users.js";
 import { verifyToken } from '../middleware/auth.js';
 
-const router  = express.Router();
+const router = express.Router();
 
 // Get user profile
 router.get("/:id", verifyToken, getUser);
@@ -21,9 +23,10 @@ router.get("/:id/friends", verifyToken, getUserFriends);
 // Add or remove friends
 router.patch("/:id/:friendId", verifyToken, addRemoveFriends);
 
-// router.patch("/:id/changepassword", verifyToken, changePassword);
+// Save or unsave a post
+router.patch("/:id/saved", verifyToken, savePosts); 
 
-// router.patch("/:id", verifyToken, updateContact);
-
+// Get all saved posts
+router.get("/:id/savedPosts", verifyToken, getSavedPosts);
 
 export default router;

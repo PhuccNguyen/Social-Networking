@@ -2,6 +2,8 @@ import {
   EditOutlined,
   ImageOutlined,
   LocationOnOutlined,
+  VideoLibraryOutlined, // Icon for videos
+  InsertDriveFileOutlined, // Icon for files  
 } from "@mui/icons-material";
 import {
   Box,
@@ -32,6 +34,8 @@ const MyPostWidget = ({ picturePath }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLocationDialogOpen, setIsLocationDialogOpen] = useState(false);
   const [image, setImage] = useState(null);
+  const [video, setVideo] = useState(null); // Video state
+  const [file, setFile] = useState(null); // File state for PDFs or DOCX
   const [preview, setPreview] = useState(null);
   const [post, setPost] = useState("");
   const [location, setLocation] = useState("");
@@ -43,6 +47,8 @@ const MyPostWidget = ({ picturePath }) => {
   // const main = palette.neutral.main;
   const { _id, firstName, lastName } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
+
+
 
   const availableLocations = [
     "12 Lê Lợi, Quận 1, Sài Gòn – TP HCM",
@@ -86,6 +92,20 @@ const MyPostWidget = ({ picturePath }) => {
       formData.append("picturePath", image.name);
     }
 
+    if (image) {
+      formData.append("picture", image);
+      formData.append("picturePath", image.name);
+    }
+    if (video) {
+      formData.append("video", video);
+      formData.append("videoPath", video.name);
+    }
+    if (file) {
+      formData.append("file", file);
+      formData.append("filePath", file.name);
+      formData.append("fileType", file.type);
+    }
+
     const response = await fetch(`http://localhost:3001/posts`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
@@ -105,6 +125,8 @@ const MyPostWidget = ({ picturePath }) => {
     setImage(null);
     setPreview(null);
     setPost("");
+    setVideo(null); // Reset video
+    setFile(null);  // Reset file
     setLocation("");
     setCustomLocation(""); 
     setSearchTerm(""); 

@@ -29,11 +29,9 @@ export const authSlice = createSlice({
         console.error("user friends non-existent :(");
       }
     },
-    
     setPosts: (state, action) => {
       state.posts = action.payload.posts;
     },
-
     setPost: (state, action) => {
       const updatedPosts = state.posts.map((post) => {
         if (post._id === action.payload.post._id) return action.payload.post;
@@ -41,21 +39,16 @@ export const authSlice = createSlice({
       });
       state.posts = updatedPosts;
     },
-
-    // setPost: (state, action) => {
-    //   const updatedPost = action.payload.post;
-    //   const postIndex = state.posts.findIndex(post => post._id === updatedPost._id);
-
-    //   if (postIndex >= 0) {
-    //     state.posts[postIndex] = updatedPost;
-    //   } else {
-    //     console.error("Post not found in state");
-    //   }
-    // },
-
+    // Thêm action setSavedPosts để cập nhật savedPosts
+    setSavedPosts: (state, action) => {
+      if (state.user) {
+        state.user.savedPosts = action.payload.savedPosts; // Cập nhật savedPosts trong user
+      } else {
+        console.error("user not logged in");
+      }
+    },
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost } =
-  authSlice.actions;
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost, setSavedPosts } = authSlice.actions;
 export default authSlice.reducer;

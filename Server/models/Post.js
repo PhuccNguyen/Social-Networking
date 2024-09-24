@@ -29,6 +29,7 @@ const PostSchema = new mongoose.Schema (
             {
                 userId: String,
                 firstName: String,
+                lastName: String,
                 userPicturePath: String,
                 commentText: String,
                 createdAt: {

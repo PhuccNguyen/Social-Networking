@@ -61,7 +61,6 @@ const UserWidget = ({ userId, picturePath }) => {
         <AdjustContent gap="1.5rem">
         <UserImage image={picturePath} />  
          <Box>
-
             <Typography
             variant="h5"
             color={dark}

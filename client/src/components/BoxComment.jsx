@@ -2,7 +2,7 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import UserImage from "./UserImage";
 
-const BoxComment = ({ friendId, name, subtitle, userPicturePath }) => {
+const BoxComment = ({ friendId, firstName, lastName, subtitle, userPicturePath }) => {
   const navigate = useNavigate();
   const { palette } = useTheme();
   const main = palette.neutral.main;
@@ -26,7 +26,7 @@ const BoxComment = ({ friendId, name, subtitle, userPicturePath }) => {
         navigate(0);
       }}
     >
-      <UserImage image={userPicturePath} size="35px" /> {/* Image size adjusted */}
+      <UserImage image={userPicturePath} size="35px" />
       <Box>
         <Typography
           color={main}
@@ -34,8 +34,11 @@ const BoxComment = ({ friendId, name, subtitle, userPicturePath }) => {
           fontWeight="500"
           sx={{ lineHeight: 1.2 }}
         >
-          {name}
+                    {firstName}
+                    {lastName}
+
         </Typography>
+        
         <Typography color={medium} fontSize="0.75rem">
           {subtitle}
         </Typography>
