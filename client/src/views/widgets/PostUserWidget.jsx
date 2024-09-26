@@ -44,6 +44,7 @@ const PostUserWidget = ({
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUser = useSelector((state) => state.user);
+  const [saved, setSaved] = useState(isSaved); // Trạng thái lưu bài viết
   const loggedInUserId = loggedInUser._id;
   const isLiked = Boolean(likes[loggedInUserId]);
   const   likeCount = Object.keys(likes).length;
@@ -78,28 +79,29 @@ const PostUserWidget = ({
 
   const handleSavePost = async () => {
     try {
-        const response = await fetch(
-            `http://localhost:3001/users/${loggedInUserId}/saved`,
-            {
-                method: "PATCH",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ postId }),
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error('Failed to save post');
+      const response = await fetch(
+        `http://localhost:3001/users/${loggedInUserId}/saved`,
+        {
+          method: "post",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ postId }), 
         }
+      );
 
-        const updatedSavedPosts = await response.json(); 
-        dispatch(setSavedPosts({ savedPosts: updatedSavedPosts }));  
+      if (!response.ok) {
+        throw new Error('Failed to save/unsave post');
+      }
+
+      const updatedSavedPosts = await response.json(); 
+      dispatch(setSavedPosts({ savedPosts: updatedSavedPosts }));
+      setSaved(!saved);  // Đảo ngược trạng thái nút lưu
     } catch (error) {
-        console.error(error.message);
+      console.error(error.message);
     }
-};
+  };
 
   const handleCommentSubmit = async () => {
     if (newComment.trim() === "") return;
@@ -204,16 +206,22 @@ const PostUserWidget = ({
           </FlexBetween>
 
           {/* Nút lưu bài viết */}
+          <FlexBetween
+        mt="0.75rem"
+        sx={{ justifyContent: "space-between", alignItems: "center" }}
+      >
+        <FlexBetween gap="1rem">
           <FlexBetween gap="0.3rem">
-          <IconButton onClick={handleSavePost}>
-            {isSaved ? (
-               <BookmarkOutlined sx={{ color: primary }} />
-                   ) : (
-               <BookmarkBorderOutlined sx={{ color: main }} />
-             )}
-          </IconButton>
+            <IconButton onClick={handleSavePost}>
+              {saved ? (
+                <BookmarkOutlined sx={{ color: primary }} />
+              ) : (
+                <BookmarkBorderOutlined sx={{ color: main }} />
+              )}
+            </IconButton>
           </FlexBetween>
-
+        </FlexBetween>
+      </FlexBetween>
         </FlexBetween>
       </FlexBetween>
 
