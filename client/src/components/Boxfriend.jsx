@@ -6,7 +6,7 @@ import { setFriends } from "state";
 import WidgetWrapper from "components/WidgetWrapper";
 import UserImage from "./UserImage";
 
-const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
+const Boxfriend = ({ friendId, firstName, lastName, subtitle, userPicturePath }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { _id } = useSelector((state) => state.user);
@@ -87,7 +87,8 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
               "&:hover": {},
             }}
           >
-            {name}
+            {firstName}
+            {lastName}
           </Typography>
 
           <Typography color={medium} fontSize="0.75rem">

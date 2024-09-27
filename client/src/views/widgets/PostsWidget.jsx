@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPosts, setSavedPosts } from "state";
+import { setPosts } from "state";
 import PostUserWidget from "./PostUserWidget";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
@@ -88,7 +88,8 @@ const PostsWidget = ({ userId, isProfile = false }) => {
             key={_id}
             postId={_id}
             postUserId={userId}
-            name={`${firstName} ${lastName}`}
+            firstName = {firstName}
+            lastName  =  {lastName}
             description={description}
             destination={destination}
             location={location}

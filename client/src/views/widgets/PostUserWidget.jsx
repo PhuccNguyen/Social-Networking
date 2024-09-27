@@ -29,7 +29,8 @@ dayjs.extend(relativeTime);
 const PostUserWidget = ({
   postId,
   postUserId,
-  name,
+  lastName,
+  firstName,
   description,
   destination,
   location,
@@ -142,7 +143,8 @@ const PostUserWidget = ({
     >
       <Boxfriends
         friendId={postUserId}
-        name={name}
+        lastName = {lastName}
+        firstName = {firstName}
         subtitle={location}
         userPicturePath={userPicturePath}
       />

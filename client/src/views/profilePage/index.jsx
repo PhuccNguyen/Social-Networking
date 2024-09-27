@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import Navbar from "views/navbar";
-import FriendListWidget from "views/widgets/FriendList";
-import MyPostWidget from "views/widgets/MyPostWidget";
+// import FriendListWidget from "views/widgets/FriendList";
+// import MyPostWidget from "views/widgets/MyPostWidget";
 import UserWidgetInformation from "views/widgets/UserWidgetInformation";
 import UserWidgetProfile from "views/widgets/UserWidgetProfile";
 

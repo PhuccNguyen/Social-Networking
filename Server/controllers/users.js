@@ -185,22 +185,28 @@ export const savePosts = async (req, res) => {
 
    
   
-// Get all posts saved
+// Get all posts saved by a user
 export const getSavedPosts = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findById(id).populate("savedPosts"); 
+        const user = await User.findById(id).populate({
+            path: "savedPosts",
+            populate: {
+                path: "userId", // Populating userId in savedPosts
+                select: "firstName lastName userPicturePath", // Select specific fields
+            },
+        });
+
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
-        res.status(200).json(user.savedPosts); 
+        res.status(200).json(user.savedPosts);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
 
-  
 
 
 // // Update Password

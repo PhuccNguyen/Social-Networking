@@ -9,10 +9,9 @@ const UserAbout = ({ userId }) => {
   const [loading, setLoading] = useState(true);
   const [introData, setIntroData] = useState('');
   const token = useSelector((state) => state.token);
-  const loggedInUserId = useSelector((state) => state.user._id); // ID of logged-in user
+  const loggedInUserId = useSelector((state) => state.user._id); 
   const { palette } = useTheme();
 
-  // Fetch user data from the server
   const getUser = async () => {
     try {
       const response = await fetch(`http://localhost:3001/users/${userId}`, {
@@ -23,7 +22,7 @@ const UserAbout = ({ userId }) => {
       if (response.ok) {
         const data = await response.json();
         setUser(data);
-        setIntroData(data.intro || ''); // Set the intro data for the text field
+        setIntroData(data.intro || ''); 
         setLoading(false);
       } else {
         throw new Error("Failed to fetch user data");
