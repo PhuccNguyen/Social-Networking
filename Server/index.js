@@ -13,8 +13,9 @@ import usersRoutes from "./routes/users.js";
 import postsRoutes from "./routes/post.js";
 import eventsRoutes from "./routes/event.js";
 import adminRoutes from "./routes/admin.js";
-
+import friendRoutes from "./routes/friend.js"; 
 // import volunteerEventRoutes from "./Folder/volunteereventt.js"; 
+
 import { createPost } from "./controllers/post.js";
 import { register } from "./controllers/auth.js";
 import { verifyToken } from './middleware/auth.js';
@@ -26,8 +27,6 @@ import { verifyToken } from './middleware/auth.js';
 // Load environment variables from .env file
 dotenv.config(); 
 
-// config staic files
-// app.use(express.static(path.join(__dirname,'public')));
 
 // Configurations for __filename and __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -49,7 +48,7 @@ app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
 console.log('MONGO_URL:', process.env.MONGO_URL);
 console.log('PORT:', process.env.PORT);
 
-// File storage 
+// File storage (multer)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/assets");
@@ -58,11 +57,22 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   }
 });
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
 
 // Routes With Files
 app.post("/auth/register", upload.single("picture"), register); // No
 app.post("/posts", verifyToken, upload.single("picture"), createPost); // VerifyToken middleware here
+
 
 // Routes
 app.use("/auth", authRoutes);
@@ -70,6 +80,8 @@ app.use("/users", usersRoutes);
 app.use("/posts", postsRoutes);
 app.use("/event", eventsRoutes);
 app.use("/admin", adminRoutes);
+app.use("/friends", friendRoutes); // Sử dụng route "/friends"
+
 
 // app.use("/volunteer-events", volunteerEventRoutes); 
 // Add volunteer event routes

@@ -39,14 +39,18 @@ export const authSlice = createSlice({
       });
       state.posts = updatedPosts;
     },
+    
+    
     // Thêm action setSavedPosts để cập nhật savedPosts
     setSavedPosts: (state, action) => {
       if (state.user) {
-        state.user.savedPosts = action.payload.savedPosts; // Cập nhật savedPosts trong user
+        state.user.savedPosts = action.payload.savedPosts; 
       } else {
         console.error("user not logged in");
       }
     },
+
+    
   },
 });
 

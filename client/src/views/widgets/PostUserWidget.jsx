@@ -17,6 +17,8 @@ import {
 import FlexBetween from "components/Adjustment";
 import Boxcomment from "components/BoxComment";
 import Boxfriends from "components/BoxFriend";
+import BoxfriendDemo from "components/BoxFriendDemo";
+
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -142,6 +144,14 @@ const PostUserWidget = ({
       }}
     >
       <Boxfriends
+        friendId={postUserId}
+        lastName = {lastName}
+        firstName = {firstName}
+        subtitle={location}
+        userPicturePath={userPicturePath}
+      />
+      --------------------------------
+            <BoxfriendDemo
         friendId={postUserId}
         lastName = {lastName}
         firstName = {firstName}

@@ -65,6 +65,9 @@ const UserSchema = new mongoose.Schema(
             type: Array,
             default: [],
         },
+        
+        // friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],  
+
         role: {
             type: String,
             enum: ["user", "admin", "assistantAdmin"],

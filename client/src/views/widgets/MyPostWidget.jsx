@@ -82,44 +82,50 @@ const MyPostWidget = ({ picturePath }) => {
     "62 Tôn Thất Tùng, Quận 1, Sài Gòn – TP HCM",
     "30A Nam Kỳ Khởi Nghĩa, Quận 3, Sài Gòn – TP HCM"  ];
 
-  const handlePost = async () => {
-    const formData = new FormData();
-    formData.append("userId", _id);
-    formData.append("description", post);
-    formData.append("destination", location || customLocation || ""); 
-    if (image) {
-      formData.append("picture", image);
-      formData.append("picturePath", image.name);
-    }
-
-    if (image) {
-      formData.append("picture", image);
-      formData.append("picturePath", image.name);
-    }
-    if (video) {
-      formData.append("video", video);
-      formData.append("videoPath", video.name);
-    }
-    if (file) {
-      formData.append("file", file);
-      formData.append("filePath", file.name);
-      formData.append("fileType", file.type);
-    }
-
-    const response = await fetch(`http://localhost:3001/posts`, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-      body: formData,
-    });
-
-    if (response.ok) {
-      const posts = await response.json();
-      dispatch(setPosts({ posts }));
-      resetPostForm();
-    } else {
-      console.error("Failed to post");
-    }
-  };
+    const handlePost = async () => {
+      const formData = new FormData();
+      formData.append("userId", _id);  // Append user ID
+      formData.append("description", post);  // Append post description
+      formData.append("destination", location || customLocation || "");  // Append location
+    
+      // Append image if present
+      if (image) {
+        formData.append("picture", image);
+        formData.append("picturePath", image.name);
+      }
+    
+      // Append video if present
+      if (video) {
+        formData.append("video", video);
+        formData.append("videoPath", video.name);
+      }
+    
+      // Append file if present
+      if (file) {
+        formData.append("file", file);
+        formData.append("filePath", file.name);
+        formData.append("fileType", file.type);
+      }
+    
+      try {
+        const response = await fetch(`http://localhost:3001/posts`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` }, // Include token in headers
+          body: formData, // Send formData containing the post details and files
+        });
+    
+        if (response.ok) {
+          const posts = await response.json();  // Get the new post data
+          dispatch(setPosts({ posts }));  // Dispatch new posts to the store
+          resetPostForm();  // Reset the form after successful post
+        } else {
+          console.error("Failed to post");
+        }
+      } catch (error) {
+        console.error("Error posting:", error);
+      }
+    };
+    
 
   const resetPostForm = () => {
     setImage(null);

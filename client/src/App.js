@@ -5,6 +5,7 @@ import ProfilePage from "views/ProfilePage";
 import SavePost from "views/savepost";
 import VolunteerPage from "views/VolunteerPage";
 import SavedPostsPage from "views/SavedPostsPage";
+import FriendPage from "views/friendPage";
 import NotFoundPage from "views/NotFoundPage"; // Import the new NotFoundPage
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
@@ -26,6 +27,7 @@ function App() {
             <Route path="/" element={<LoginPage />} />
             <Route path="/volunteer" element={isAuth ? <VolunteerPage /> : <Navigate to="/" />} />
             <Route path="/SavedPostsPage" element={isAuth ? <SavedPostsPage /> : <Navigate to="/" />} />
+            <Route path="/FriendPage" element={isAuth ? <FriendPage /> : <Navigate to="/" />} />
             <Route path="/home" element={isAuth ? <HomePage /> : <Navigate to="/" />} />
             <Route path="/profile/:userId" element={isAuth ? <ProfilePage /> : <Navigate to="/" />} />
             <Route path="/savepost/:userId" element={isAuth ? <SavePost /> : <Navigate to="/" />} />
