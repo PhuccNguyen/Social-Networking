@@ -5,6 +5,7 @@ const initialState = {
   user: null,
   token: null,
   posts: [],
+  followedUsers: [], // Adding followed users
 };
 
 export const authSlice = createSlice({
@@ -22,13 +23,23 @@ export const authSlice = createSlice({
       state.user = null;
       state.token = null;
     },
+    
     setFriends: (state, action) => {
       if (state.user) {
         state.user.friends = action.payload.friends;
       } else {
-        console.error("user friends non-existent :(");
+        console.error("User not found when setting friends.");
       }
     },
+    
+    setFollowedUsers: (state, action) => {
+      if (state.user) {
+        state.user.following = action.payload.followedUsers;
+      } else {
+        console.error("User not found when setting followed users.");
+      }
+    },
+    
     setPosts: (state, action) => {
       state.posts = action.payload.posts;
     },
@@ -39,20 +50,24 @@ export const authSlice = createSlice({
       });
       state.posts = updatedPosts;
     },
-    
-    
-    // Thêm action setSavedPosts để cập nhật savedPosts
     setSavedPosts: (state, action) => {
       if (state.user) {
-        state.user.savedPosts = action.payload.savedPosts; 
+        state.user.savedPosts = action.payload.savedPosts;
       } else {
-        console.error("user not logged in");
+        console.error("User not logged in.");
       }
     },
-
-    
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost, setSavedPosts } = authSlice.actions;
+export const {
+  setMode,
+  setLogin,
+  setLogout,
+  setFriends,
+  setFollowedUsers,
+  setPosts,
+  setPost,
+  setSavedPosts,
+} = authSlice.actions;
 export default authSlice.reducer;

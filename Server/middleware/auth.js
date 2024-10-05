@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-// Verify Token Middleware
+
 export const verifyToken = async (req, res, next) => {
   try {
     let token = req.header("Authorization");
@@ -9,23 +9,34 @@ export const verifyToken = async (req, res, next) => {
       return res.status(403).json({ error: "Access Denied: No Token Provided" });
     }
 
+    // Remove "Bearer" from the token if it's present
     if (token.startsWith("Bearer ")) {
-      token = token.substring(7, token.length).trimLeft();
+      token = token.slice(7, token.length).trim();
     }
 
     // Verify the token
     const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (!verified) {
+      return res.status(401).json({ error: "Invalid Token" });
+    }
+
     req.user = verified;  // Attach the verified user info to the request object
     next();
 
   } catch (err) {
-    // Handle token errors such as expiration
+    console.error("Token Verification Error:", err.message);
     if (err.name === 'TokenExpiredError') {
       return res.status(401).json({ error: "Token Expired" });
     }
-    res.status(500).json({ error: "Invalid Token" });
+    return res.status(500).json({ error: "Failed to verify token" });
   }
 };
+
+
+
+
+
 
 // Verify Role Middleware (dynamic)
 export const verifyRole = (roles) => (req, res, next) => {

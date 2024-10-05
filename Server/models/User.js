@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema(
 
     // Friends and Followers
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
     savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
   },
