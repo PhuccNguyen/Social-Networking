@@ -1,8 +1,8 @@
-import { MoreHoriz, PersonAddOutlined, PersonRemoveOutlined, CheckCircleOutline } from "@mui/icons-material";
+import { MoreHoriz, PersonAddOutlined, PersonRemoveOutlined, HourglassEmptyOutlined } from "@mui/icons-material";
 import { Box, IconButton, Menu, MenuItem, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setFriends, setFollowedUsers } from "state"; // update redux state
+import { setFriends } from "state"; // update redux state
 import UserImage from "./UserImage";
 import { useState, useEffect } from "react";
 
@@ -12,19 +12,16 @@ const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath })
   const token = useSelector((state) => state.token);
   const { _id: senderId } = useSelector((state) => state.user); // Get the logged-in user's ID as senderId
   const friends = useSelector((state) => state.user.friends || []);
-  const followedUsers = useSelector((state) => state.user.following || []);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [friendRequestStatus, setFriendRequestStatus] = useState(null); // "pending", "accepted", or "none"
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [friendRequestStatus, setFriendRequestStatus] = useState("none"); // default status is "none"
 
   const { palette } = useTheme();
   const primaryDark = palette.primary.dark;
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
 
-  // Check if user is already a friend or being followed
+  // Check if user is already a friend
   const isFriend = friends.some((friend) => friend._id === friendId);
-  const isFollowed = followedUsers.includes(friendId);
 
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -32,29 +29,26 @@ const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath })
   // Fetch the current friend request status (pending/accepted)
   const fetchFriendRequestStatus = async () => {
     try {
-      const response = await fetch(`/friends/request-status/${friendId}`, {
+      const response = await fetch(`/friends/request-status/${senderId}/${friendId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
-      setFriendRequestStatus(data.status);
+      setFriendRequestStatus(data.status); // Update friend request status
     } catch (error) {
       console.error("Failed to fetch friend request status:", error.message);
     }
   };
 
+  // Handle Friend Action (send, cancel)
   const handleFriendAction = async (action) => {
     let url = '';
     let method = '';
 
     if (action === "add") {
-      // Pass both senderId and friendId in the URL for adding a friend
       url = `http://localhost:3001/friends/send-request/${senderId}/${friendId}`;
       method = "POST";
-    } else if (action === "accept") {
-      url = `http://localhost:3001/friends/accept-request/${friendId}`;
-      method = "PATCH";
-    } else if (action === "remove") {
-      url = `http://localhost:3001/friends/remove-friend/${friendId}`;
+    } else if (action === "cancel") {
+      url = `http://localhost:3001/friends/cancel-request/${senderId}/${friendId}`;
       method = "DELETE";
     }
 
@@ -68,20 +62,14 @@ const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath })
       });
 
       if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('Friend not found');
-        } else if (response.status === 500) {
-          throw new Error('Server error');
-        } else {
-          throw new Error('Failed to process friend request');
-        }
+        throw new Error("Failed to process friend request");
       }
 
-      const data = await response.json();
       if (method === "DELETE") {
-        dispatch(setFriends({ friends: data })); // Update friends if removed
+        setFriendRequestStatus("none"); // Reset status after cancellation
+      } else {
+        setFriendRequestStatus("pending"); // Set status to pending after sending
       }
-      setFriendRequestStatus(null); // Reset status after handling
       handleClose(); // Close the options menu
     } catch (error) {
       console.error("Friend request error:", error.message);
@@ -89,39 +77,9 @@ const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath })
     }
   };
 
-  const handleFollowAction = async () => {
-    const url = isFollowed
-      ? `http://localhost:3001/friends/unfollow/${friendId}`
-      : `http://localhost:3001/friends/follow/${friendId}`;
-    const method = isFollowed ? "DELETE" : "POST";
-
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          throw new Error('User not found');
-        } else if (response.status === 500) {
-          throw new Error('Server error');
-        } else {
-          throw new Error('Failed to follow/unfollow');
-        }
-      }
-
-      const data = await response.json();
-      setIsFollowing(!isFollowed); // Toggle following state
-      dispatch(setFollowedUsers(data.followedUsers)); // Update followed users in Redux
-    } catch (error) {
-      console.error("Follow/unfollow error:", error.message);
-      alert(`Error: ${error.message}`);
-    }
-  };
-
+  // Fetch the friend request status when the component mounts
   useEffect(() => {
-    fetchFriendRequestStatus();
+    fetchFriendRequestStatus(); // Load the friend request status on mount
   }, []);
 
   return (
@@ -143,17 +101,14 @@ const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath })
             <PersonRemoveOutlined sx={{ mr: 1 }} /> Remove Friend
           </MenuItem>
         ) : friendRequestStatus === "pending" ? (
-          <MenuItem onClick={() => handleFriendAction("accept")}>
-            <CheckCircleOutline sx={{ mr: 1 }} /> Accept Request
+          <MenuItem onClick={() => handleFriendAction("cancel")}>
+            <HourglassEmptyOutlined sx={{ mr: 1 }} /> Pending (Click to Cancel)
           </MenuItem>
         ) : (
           <MenuItem onClick={() => handleFriendAction("add")}>
             <PersonAddOutlined sx={{ mr: 1 }} /> Add Friend
           </MenuItem>
         )}
-        <MenuItem onClick={handleFollowAction}>
-          {isFollowed ? "Unfollow" : "Follow"}
-        </MenuItem>
       </Menu>
     </Box>
   );
