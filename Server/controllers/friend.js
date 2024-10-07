@@ -1,23 +1,30 @@
 import User from "../models/User.js";
 import FriendRequest from "../models/FriendRequest.js";
 
-// Send Friend Request
+// Send Friend Request or Update Status
 export const sendFriendRequest = async (req, res) => {
   try {
     const { senderId, friendId } = req.params;
 
-    // Check if a pending friend request already exists
+    // Kiểm tra xem yêu cầu kết bạn giữa sender và recipient đã tồn tại hay chưa
     const existingRequest = await FriendRequest.findOne({
       sender: senderId,
       recipient: friendId,
-      status: "pending"
     });
 
-    if (existingRequest) {
+    // Nếu yêu cầu đã tồn tại và đang ở trạng thái "pending", trả về lỗi thông báo yêu cầu đã được gửi
+    if (existingRequest && existingRequest.status === 'pending') {
       return res.status(400).json({ message: "Friend request already sent." });
     }
 
-    // Create a new friend request if not already pending
+    // Nếu yêu cầu đã tồn tại và không ở trạng thái "pending", cập nhật trạng thái thành "pending"
+    if (existingRequest) {
+      existingRequest.status = 'pending';
+      await existingRequest.save();
+      return res.status(200).json({ message: "Friend request status updated to pending." });
+    }
+
+    // Nếu chưa có yêu cầu, tạo mới yêu cầu kết bạn
     const newFriendRequest = new FriendRequest({
       sender: senderId,
       recipient: friendId,
@@ -32,29 +39,57 @@ export const sendFriendRequest = async (req, res) => {
   }
 };
 
-// getFriendRequestStatus returns the status
+
+// // getFriendRequestStatus returns the status
+// export const getFriendRequestStatus = async (req, res) => {
+//   try {
+//     const { senderId, friendId } = req.params;
+
+//     // Find any existing friend request between the sender and recipient
+//     const request = await FriendRequest.findOne({
+//       sender: senderId,
+//       recipient: friendId,
+//     });
+
+//     if (request) {
+//       // Return the status if found
+//       return res.status(200).json({ status: request.status });
+//     } else {
+//       // If no request, return "none"
+//       return res.status(200).json({ status: "none" });
+//     }
+//   } catch (error) {
+//     console.error("Failed to get friend request status:", error);
+//     return res.status(500).json({ message: "Failed to get friend request status." });
+//   }
+// };
+
+
 export const getFriendRequestStatus = async (req, res) => {
   try {
-      const { senderId, friendId } = req.params;
+    const { senderId, friendId } = req.params;
 
-      // Find any existing friend request between the sender and recipient
-      const request = await FriendRequest.findOne({
-          sender: senderId,
-          recipient: friendId,
-      });
+    // Find any existing friend request between the sender and recipient
+    const request = await FriendRequest.findOne({
+      $or: [
+        { sender: senderId, recipient: friendId },
+        { sender: friendId, recipient: senderId } // Check both directions
+      ]
+    });
 
-      if (request) {
-          // Return the status if found
-          return res.status(200).json({ status: request.status });
-      } else {
-          // If no request, return "none"
-          return res.status(200).json({ status: "none" });
-      }
-  } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: "Failed to get friend request status." });
+    if (request) {
+      // Return the friend request status if found
+      return res.status(200).json({ status: request.status });
+    } else {
+      // If no request exists, return "none"
+      return res.status(200).json({ status: "none" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
+
+
 
 
 
@@ -85,6 +120,7 @@ export const cancelFriendRequest = async (req, res) => {
 
 
 // Accept a Friend Request
+// Accept a Friend Request
 export const acceptFriendRequest = async (req, res) => {
   try {
     const { requestId } = req.params;
@@ -92,19 +128,23 @@ export const acceptFriendRequest = async (req, res) => {
 
     if (!friendRequest) return res.status(404).json({ message: "Friend request not found" });
 
+    // Cập nhật trạng thái thành "friended"
+    friendRequest.status = 'friended';
+    await friendRequest.save();
+
     const { sender, recipient } = friendRequest;
     sender.friends.push(recipient._id);
     recipient.friends.push(sender._id);
 
     await sender.save();
     await recipient.save();
-    await FriendRequest.findByIdAndDelete(requestId);
 
     res.status(200).json({ message: "Friend request accepted" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Remove a Friend
 export const removeFriend = async (req, res) => {

@@ -2,16 +2,14 @@ import { MoreHoriz, PersonAddOutlined, PersonRemoveOutlined, HourglassEmptyOutli
 import { Box, IconButton, Menu, MenuItem, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setFriends } from "state"; // update redux state
-import UserImage from "./UserImage";
 import { useState, useEffect } from "react";
+import UserImage from "./UserImage";
 
 const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
   const { _id: senderId } = useSelector((state) => state.user); // Get the logged-in user's ID as senderId
-  const friends = useSelector((state) => state.user.friends || []);
   const [anchorEl, setAnchorEl] = useState(null);
   const [friendRequestStatus, setFriendRequestStatus] = useState("none"); // default status is "none"
 
@@ -20,24 +18,31 @@ const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath })
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
 
-  // Check if user is already a friend
-  const isFriend = friends.some((friend) => friend._id === friendId);
-
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
 
-  // Fetch the current friend request status (pending/accepted)
-  const fetchFriendRequestStatus = async () => {
-    try {
-      const response = await fetch(`/friends/request-status/${senderId}/${friendId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json();
-      setFriendRequestStatus(data.status); // Update friend request status
-    } catch (error) {
-      console.error("Failed to fetch friend request status:", error.message);
+  // Fetch the current friend request status (pending/friended)
+const fetchFriendRequestStatus = async () => {
+  try {
+    const response = await fetch(`/friends/request-status/${senderId}/${friendId}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const textResponse = await response.text(); // Capture raw text
+    console.log("Response Text:", textResponse); // Log it to see if it's HTML or JSON
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch friend request status");
     }
-  };
+
+    const data = JSON.parse(textResponse); // Parse the raw text
+    setFriendRequestStatus(data.status); // Update friend request status
+  } catch (error) {
+    console.error("Failed to fetch friend request status:", error.message);
+  }
+};
+
 
   // Handle Friend Action (send, cancel)
   const handleFriendAction = async (action) => {
@@ -65,6 +70,9 @@ const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath })
         throw new Error("Failed to process friend request");
       }
 
+      const result = await response.json();
+      console.log("Friend request result:", result); // Log the result from the action
+
       if (method === "DELETE") {
         setFriendRequestStatus("none"); // Reset status after cancellation
       } else {
@@ -80,7 +88,7 @@ const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath })
   // Fetch the friend request status when the component mounts
   useEffect(() => {
     fetchFriendRequestStatus(); // Load the friend request status on mount
-  }, []);
+  }, [senderId, friendId]); // Fetch status if senderId or friendId changes
 
   return (
     <Box display="flex" alignItems="center" gap="1rem" p="0.5rem">
@@ -96,9 +104,9 @@ const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath })
         <MoreHoriz sx={{ color: primaryDark }} />
       </IconButton>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-        {isFriend ? (
+        {friendRequestStatus === "friended" ? (
           <MenuItem onClick={() => handleFriendAction("remove")}>
-            <PersonRemoveOutlined sx={{ mr: 1 }} /> Remove Friend
+            <PersonRemoveOutlined sx={{ mr: 1 }} /> Friend
           </MenuItem>
         ) : friendRequestStatus === "pending" ? (
           <MenuItem onClick={() => handleFriendAction("cancel")}>

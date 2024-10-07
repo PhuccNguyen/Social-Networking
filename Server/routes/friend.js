@@ -3,8 +3,6 @@ import {
   sendFriendRequest, 
   acceptFriendRequest, 
   removeFriend, 
-  followUser, 
-  unfollowUser,
   cancelFriendRequest,
   getFriendRequestStatus
 } from "../controllers/friend.js";
@@ -14,18 +12,13 @@ const router = express.Router();
 
 // Friend request routes
 router.post('/send-request/:senderId/:friendId', verifyToken, sendFriendRequest);
-router.patch('/accept-request/:friendId', verifyToken, acceptFriendRequest);
+router.patch('/accept-request/:requestId', verifyToken, acceptFriendRequest);
 router.delete('/remove-friend/:friendId', verifyToken, removeFriend);
 
-// New cancel route for pending requests
+// Route to get friend request status
+router.get("/request-status/:senderId/:friendId", verifyToken, getFriendRequestStatus);
+
+// Cancel request
 router.delete('/cancel-request/:senderId/:friendId', verifyToken, cancelFriendRequest);
-
-
-router.get('/request-status/:senderId/:friendId', verifyToken, getFriendRequestStatus);
-
-
-// Follow-related routes
-router.post('/follow/:friendId', verifyToken, followUser);
-router.delete('/unfollow/:friendId', verifyToken, unfollowUser);
 
 export default router;

@@ -77,6 +77,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
           firstName,
           lastName,
           description,
+          friendRequestStatus,
           destination,
           location,
           picturePath,
@@ -90,6 +91,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
             postUserId={userId}
             firstName = {firstName}
             lastName  =  {lastName}
+            status = {friendRequestStatus} 
             description={description}
             destination={destination}
             location={location}
@@ -101,7 +103,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
           />
         )
       ),
-    [posts, savedPosts]
+    [posts, savedPosts ]
   );
 
   if (loading) {
