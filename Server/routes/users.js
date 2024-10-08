@@ -2,7 +2,7 @@ import express from 'express';
 import {
     getUser,
     getUserFriends,
-    addRemoveFriends,
+    // addRemoveFriends,
     updateUser,
     savePosts,
     getSavedPosts,
@@ -21,11 +21,11 @@ router.patch("/:id", verifyToken, updateUser);
 router.get("/:id/friends", verifyToken, getUserFriends);
 
 // Add or remove friends
-router.patch("/:id/:friendId", verifyToken, addRemoveFriends);
+// router.patch("/:id/:friendId", verifyToken, addRemoveFriends);
 
 // Save or unsave a post
 router.post("/:id/saved", (req, res, next) => {
-    console.log("Middleware: Route accessed");
+       console.log("Middleware: Route accessed");
     next();
 }, verifyToken, (req, res, next) => {
     console.log("Middleware: Token verified");

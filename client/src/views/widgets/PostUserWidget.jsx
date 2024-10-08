@@ -16,8 +16,7 @@ import {
 } from "@mui/material";
 import FlexBetween from "components/Adjustment";
 import Boxcomment from "components/BoxComment";
-import Boxfriends from "components/BoxFriend";
-import BoxfriendDemo from "components/BoxFriendDemo";
+import Boxfriend from "components/BoxFriendDemo";
 
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
@@ -31,8 +30,8 @@ dayjs.extend(relativeTime);
 const PostUserWidget = ({
   postId,
   postUserId,
-  friendRequestStatus,
-  lastName,
+  friendRequestStatus, // New prop for friend request status
+  lastName, 
   firstName,
   description,
   destination,
@@ -144,22 +143,14 @@ const PostUserWidget = ({
         color: main,
       }}
     >
-      {/* <Boxfriends
+      <Boxfriend
         friendId={postUserId}
-        lastName = {lastName}
-        firstName = {firstName}
+        lastName={lastName}
+        firstName={firstName}
         subtitle={location}
+        initialFriendRequestStatus={friendRequestStatus} // Pass the friend request status
         userPicturePath={userPicturePath}
-      /> */}
-      --------------------------------
-            <BoxfriendDemo
-          friendId={postUserId} 
-          lastName={lastName}
-          firstName={firstName}
-          subtitle={location}
-          userPicturePath={userPicturePath}
-          status={friendRequestStatus} 
-      />
+     />
        <Divider />
        <Typography
         color={main}

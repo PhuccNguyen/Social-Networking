@@ -91,7 +91,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
             postUserId={userId}
             firstName = {firstName}
             lastName  =  {lastName}
-            status = {friendRequestStatus} 
+            friendRequestStatus = {friendRequestStatus}
             description={description}
             destination={destination}
             location={location}

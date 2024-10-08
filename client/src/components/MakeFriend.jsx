@@ -66,15 +66,8 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
         </Typography>
       </Box>
 
-      <IconButton
-        onClick={handleFriendToggle}
-        sx={{ backgroundColor: palette.primary.light, p: "0.5rem" }}
-      >
-        {isFriend ? (
-          <PersonRemoveOutlined sx={{ color: palette.primary.dark, fontSize: "1.1rem" }} />
-        ) : (
-          <PersonAddOutlined sx={{ color: palette.primary.dark, fontSize: "1.1rem" }} />
-        )}
+      <IconButton >
+        HH
       </IconButton>
     </Box>
   );

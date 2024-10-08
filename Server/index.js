@@ -80,7 +80,7 @@ app.use("/users", usersRoutes);
 app.use("/posts", postsRoutes);
 app.use("/event", eventsRoutes);
 app.use("/admin", adminRoutes);
-app.use("/friends", verifyToken, friendRoutes); // Friends routes are protected by token
+app.use("/friends", friendRoutes); // Friends routes are protected by token
 
 
 // app.use("/volunteer-events", volunteerEventRoutes); 

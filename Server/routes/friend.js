@@ -1,24 +1,13 @@
 import express from 'express';
-import { 
-  sendFriendRequest, 
-  acceptFriendRequest, 
-  removeFriend, 
-  cancelFriendRequest,
-  getFriendRequestStatus
-} from "../controllers/friend.js";
-import { verifyToken } from "../middleware/auth.js";
+import { sendFriendRequest, acceptFriendRequest, rejectFriendRequest, cancelFriendRequest, getUserFriends, getFriendRequestStatus } from '../controllers/friend.js';
 
 const router = express.Router();
 
-// Friend request routes
-router.post('/send-request/:senderId/:friendId', verifyToken, sendFriendRequest);
-router.patch('/accept-request/:requestId', verifyToken, acceptFriendRequest);
-router.delete('/remove-friend/:friendId', verifyToken, removeFriend);
-
-// Route to get friend request status
-router.get("/request-status/:senderId/:friendId", verifyToken, getFriendRequestStatus);
-
-// Cancel request
-router.delete('/cancel-request/:senderId/:friendId', verifyToken, cancelFriendRequest);
+router.post("/send-request", sendFriendRequest);
+router.post("/accept-request", acceptFriendRequest);
+router.post("/reject-request", rejectFriendRequest);
+router.post("/cancel-request", cancelFriendRequest);
+router.get("/:userId/friends", getUserFriends);
+router.get("/:userId/:targetUserId/friend-status", getFriendRequestStatus);
 
 export default router;

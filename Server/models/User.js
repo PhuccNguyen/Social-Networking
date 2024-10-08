@@ -22,9 +22,12 @@ const UserSchema = new mongoose.Schema(
       default: "user",
     },
 
-    // Friends and Followers
+    // Friends
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+
+    // Friend Requests
+    friendRequestsSent: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], 
+    friendRequestsReceived: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], 
 
     savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
   },
