@@ -1,5 +1,5 @@
-import { PersonAddOutlined, PersonRemoveOutlined, HourglassEmptyOutlined } from "@mui/icons-material";
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import { PersonAddOutlined, PersonRemoveOutlined, HourglassEmptyOutlined, MoreHoriz, DeleteOutline  } from "@mui/icons-material";
+import { Box, Button, Typography, useTheme, IconButton, Menu, MenuItem } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -16,8 +16,9 @@ const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath })
     const medium = palette.neutral.medium;
 
     const [friendRequestStatus, setFriendRequestStatus] = useState("not_friends");
+    const [anchorEl, setAnchorEl] = useState(null); // Để mở Menu
 
-    // Fetch the friend request status when the component mounts
+    // Lấy trạng thái kết bạn khi component được mount
     useEffect(() => {
         const fetchFriendRequestStatus = async () => {
             try {
@@ -83,19 +84,54 @@ const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath })
         } catch (error) {
             console.error("Error canceling friend request:", error);
         }
-    };  
+    };
 
-    // Render the correct button based on the current friend request status
+    const handleDeleteFriend = async () => {
+        try {
+            await fetch(`http://localhost:3001/friends/delete-friend`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId: loggedInUserId, friendId }),
+            });
+            setFriendRequestStatus("not_friends"); // Cập nhật lại trạng thái
+            handleMenuClose(); // Đóng menu sau khi xóa bạn
+        } catch (error) {
+            console.error("Error deleting friend:", error);
+        }
+    };
+
+    const handleMenuClick = (event) => {
+        if (loggedInUserId === friendId) {
+            return null;
+        }
+        setAnchorEl(event.currentTarget); // Mở menu
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null); // Đóng menu
+    };
+
     const renderActionButton = () => {
+        if (loggedInUserId === friendId) {
+            return null;
+        }
+
         switch (friendRequestStatus) {
             case "not_friends":
-                return <Button onClick={handleSendFriendRequest} variant="contained" color="primary" startIcon={<PersonAddOutlined />}>Add Friend</Button>;
+                return <MenuItem onClick={handleSendFriendRequest}>Add Friend</MenuItem>;
             case "request_sent":
-                return <Button onClick={handleCancelFriendRequest} variant="contained" color="warning" startIcon={<HourglassEmptyOutlined />}>Cancel Request</Button>;
+                return <MenuItem onClick={handleCancelFriendRequest}>Cancel Request</MenuItem>;
             case "request_received":
-                return <Button onClick={handleAcceptFriendRequest} variant="contained" color="primary" startIcon={<PersonAddOutlined />}>Accept Request</Button>;
+                return <MenuItem onClick={handleAcceptFriendRequest}>Accept Request</MenuItem>;
             case "friends":
-                return <Button onClick={handleCancelFriendRequest} variant="contained" color="secondary" startIcon={<PersonRemoveOutlined />}>Remove Friend</Button>;
+                return (
+                    <MenuItem onClick={handleDeleteFriend} startIcon={<DeleteOutline />}> 
+                      Remove Friend
+                    </MenuItem>
+                );
             default:
                 return null;
         }
@@ -108,7 +144,21 @@ const BoxFriend = ({ friendId, firstName, lastName, subtitle, userPicturePath })
                 <Typography color={main} variant="h5" fontWeight="500">{firstName} {lastName}</Typography>
                 <Typography color={medium} fontSize="0.75rem">{subtitle}</Typography>
             </Box>
-            {renderActionButton()}
+
+
+             
+            <IconButton onClick={handleMenuClick}>
+                <MoreHoriz />
+            </IconButton>
+
+            <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+            >
+                {renderActionButton()}
+            </Menu>
+
         </Box>
     );
 };

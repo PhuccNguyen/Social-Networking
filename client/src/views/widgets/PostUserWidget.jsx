@@ -30,7 +30,7 @@ dayjs.extend(relativeTime);
 const PostUserWidget = ({
   postId,
   postUserId,
-  friendRequestStatus, // New prop for friend request status
+  friendRequestStatus,
   lastName, 
   firstName,
   description,

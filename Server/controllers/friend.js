@@ -204,4 +204,34 @@ export const getFriendRequestStatus = async (req, res) => {
     }
 };
 
-// Other friend-related methods here (addRemoveFriends, accept, reject, etc.)
+// DELETE FRIEND
+export const deleteFriend = async (req, res) => {
+    try {
+        const { userId, friendId } = req.body; // Lấy userId và friendId từ body của request
+
+        // Tìm cả hai người dùng
+        const user = await User.findById(userId);
+        const friend = await User.findById(friendId);
+
+        if (!user || !friend) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Kiểm tra xem cả hai người dùng có nằm trong danh sách bạn bè của nhau không
+        if (!user.friends.includes(friendId) || !friend.friends.includes(userId)) {
+            return res.status(400).json({ message: "Not friends" });
+        }
+
+        // Xóa bạn khỏi danh sách của cả hai người dùng
+        user.friends = user.friends.filter(id => id.toString() !== friendId);
+        friend.friends = friend.friends.filter(id => id.toString() !== userId);
+
+        // Lưu lại thông tin của cả hai người dùng
+        await user.save();
+        await friend.save();
+
+        res.status(200).json({ message: "Friend deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting friend" });
+    }
+};

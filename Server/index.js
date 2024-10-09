@@ -80,11 +80,9 @@ app.use("/users", usersRoutes);
 app.use("/posts", postsRoutes);
 app.use("/event", eventsRoutes);
 app.use("/admin", adminRoutes);
-app.use("/friends", friendRoutes); // Friends routes are protected by token
-
-
+app.use("/friends", friendRoutes);
 // app.use("/volunteer-events", volunteerEventRoutes); 
-// Add volunteer event routes
+
 
 
 // Mongoose connection

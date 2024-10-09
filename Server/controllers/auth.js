@@ -82,7 +82,7 @@ export const login = async (req, res) => {
         await user.save();
 
         // Create JWT token
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '5h' });
 
         // Remove password before returning user data
         const { password: _, ...userWithoutPassword } = user.toObject();
