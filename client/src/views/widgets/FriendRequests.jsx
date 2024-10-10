@@ -1,13 +1,16 @@
+// src/views/widgets/FriendRequests.jsx
 import { Box, Typography, Button, Avatar, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import Loader from "components/Loader";
+
 
 const FriendRequests = ({ userId }) => {
     const [friendRequests, setFriendRequests] = useState([]);
+    const [loading, setLoading] = useState(true);
     const token = useSelector((state) => state.token);
     const theme = useTheme();
     const { palette } = theme;
-    const main = palette.neutral.main;
 
     // Fetch the friend requests for the current user
     const fetchFriendRequests = async () => {
@@ -25,6 +28,8 @@ const FriendRequests = ({ userId }) => {
             }
         } catch (error) {
             console.error('Error fetching friend requests:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -67,7 +72,7 @@ const FriendRequests = ({ userId }) => {
             if (response.ok) {
                 // Remove the rejected request from the list
                 setFriendRequests(friendRequests.filter(request => request._id !== requesterId));
-                console.log('Friend request rejected'); 
+                console.log('Friend request rejected');
             } else {
                 console.error('Failed to reject friend request');
             }
@@ -81,64 +86,82 @@ const FriendRequests = ({ userId }) => {
     }, []); // Fetch on component mount
 
     return (
-        <Box> 
-        <Typography
-         color={palette.neutral.dark}
-        variant="h4"  // Increased font size for better hierarchy
-        fontWeight="600"  // Bolder font for title
-        sx={{
-          mb: "1.5rem",
-          textAlign: 'center',  // Center align the title for better UI balance
-          textTransform: 'uppercase',  // Add uppercase style for a modern look
-          letterSpacing: '1.5px',  // Slight letter spacing for improved readability
-        }}
-      >
-        Friend requests
-      </Typography>
-            {friendRequests.length === 0 ? (
-                <Typography>No pending friend requests.</Typography>
+        <Box>
+            <Typography
+                color={palette.neutral.dark}
+                variant="h4"
+                fontWeight="600"
+                sx={{
+                    mb: "1.5rem",
+                    textAlign: 'center',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1.5px',
+                }}
+            >
+                Friend Requests
+            </Typography>
+            {loading ? (
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    height="50vh" // Adjust the height to center the loader vertically
+                >
+                    <Loader /> {/* Show the loader while data is loading */}
+                </Box>
             ) : (
-                friendRequests.map((request) => (
+                friendRequests.length === 0 ? (
                     <Box
-                        key={request._id}
                         display="flex"
+                        justifyContent="center"
                         alignItems="center"
-                        justifyContent="space-between"
-                        mb="1rem"
-                        p="0.5rem"
-                        border="1px solid"
-                        borderColor={palette.divider}
-                        borderRadius="8px"
+                        height="50vh" // Adjust the height to center the loader
                     >
-                        <Box display="flex" alignItems="center" gap="1rem">
-                            <Avatar src={request.picturePath} alt={request.firstName} />
-                            <Box>
-                                <Typography variant="body1" fontWeight="bold">
-                                    {request.firstName} {request.lastName}
-                                </Typography>
-                                <Typography variant="body2" color="textSecondary">
-                                    {request.email}
-                                </Typography>
+                        <Loader /> {/* Show loader animation if no pending requests */}
+                    </Box>
+                ) : (
+                    friendRequests.map((request) => (
+                        <Box
+                            key={request._id}
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            mb="1rem"
+                            p="0.5rem"
+                            border="1px solid"
+                            borderColor={palette.divider}
+                            borderRadius="8px"
+                        >
+                            <Box display="flex" alignItems="center" gap="1rem">
+                                <Avatar src={request.picturePath} alt={request.firstName} />
+                                <Box>
+                                    <Typography variant="body1" fontWeight="bold">
+                                        {request.firstName} {request.lastName}
+                                    </Typography>
+                                    <Typography variant="body2" color="textSecondary">
+                                        {request.email}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                            <Box display="flex" gap="0.5rem">
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => handleAcceptRequest(request._id)}
+                                >
+                                    Accept
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    color="secondary"
+                                    onClick={() => handleRejectRequest(request._id)}
+                                >
+                                    Reject
+                                </Button>
                             </Box>
                         </Box>
-                        <Box display="flex" gap="0.5rem">
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() => handleAcceptRequest(request._id)}
-                            >
-                                Accept
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                color="secondary"
-                                onClick={() => handleRejectRequest(request._id)}
-                            >
-                                Reject
-                            </Button>
-                        </Box>
-                    </Box>
-                ))
+                    ))
+                )
             )}
         </Box>
     );

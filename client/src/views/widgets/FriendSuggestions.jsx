@@ -1,87 +1,99 @@
-import { Box, Typography, useTheme } from "@mui/material";
-import MakeFriend from "components/MakeFriend";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setFriends } from "state";
+// src/views/widgets/FriendSuggestions.jsx
+import React, { useState, useEffect } from 'react';
+import { Box, Button, Typography, Paper, Avatar } from '@mui/material';
+import { useSelector } from 'react-redux';
 
-const FriendListWidget = ({ userId }) => {
-  const dispatch = useDispatch();
-  const { palette } = useTheme();
-  const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends || []); // Initialize empty array if no friends data
+const FriendSuggestions = ({ userId }) => {
+    const [suggestions, setSuggestions] = useState([]);
+    const token = useSelector((state) => state.token);
 
-  const getFriends = async () => {
-    const response = await fetch(
-      `http://localhost:3001/users/${userId}/friends`,
-      {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      }
+    // Fetch the friend suggestions
+    const fetchSuggestions = async () => {
+        try {
+            const response = await fetch(`http://localhost:3001/friends/${userId}/suggestions`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+            setSuggestions(data);
+        } catch (error) {
+            console.error('Failed to fetch friend suggestions:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchSuggestions();
+    }, [userId]);
+
+    // Function to send a friend request
+    const sendFriendRequest = async (targetUserId) => {
+        try {
+            await fetch(`http://localhost:3001/friends/send-request`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId, targetUserId }),
+            });
+            // Remove the user from the suggestions after sending a request
+            setSuggestions(suggestions.filter((suggestion) => suggestion._id !== targetUserId));
+        } catch (error) {
+            console.error('Failed to send friend request:', error);
+        }
+    };
+
+    if (suggestions.length === 0) {
+        return (
+            <Box padding="1rem">
+                <Typography variant="h6" color="textSecondary">
+                    No friend suggestions available.
+                </Typography>
+            </Box>
+        );
+    }
+
+    return (
+        <Box>
+            <Typography
+                variant="h4"
+                fontWeight="600"
+                sx={{
+                    mb: "1.5rem",
+                    textAlign: 'center',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1.5px',
+                }}
+            >
+                Friend Suggestions
+            </Typography>
+            {suggestions.map((user) => (
+                <Paper key={user._id} elevation={2} sx={{ marginBottom: '1rem', padding: '1rem' }}>
+                    <Box display="flex" alignItems="center" gap="1rem">
+                        <Avatar src={user.picturePath} alt={`${user.firstName} ${user.lastName}`} />
+                        <Box flex="1">
+                            <Typography variant="h6">
+                                {user.firstName} {user.lastName}
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                {user.occupation}
+                            </Typography>
+                        </Box>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => sendFriendRequest(user._id)}
+                        >
+                            Add Friend
+                        </Button>
+                    </Box>
+                </Paper>
+            ))}
+        </Box>
     );
-    const data = await response.json();
-    dispatch(setFriends({ friends: data }));
-  };
-
-  useEffect(() => {
-    getFriends();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  return (
-    <Box>
-      {/* Title Section */}
-      <Typography
-        color={palette.neutral.dark}
-        variant="h4"  // Increased font size for better hierarchy
-        fontWeight="600"  // Bolder font for title
-        sx={{
-          mb: "1.5rem",
-          textAlign: 'center',  // Center align the title for better UI balance
-          textTransform: 'uppercase',  // Add uppercase style for a modern look
-          letterSpacing: '1.5px',  // Slight letter spacing for improved readability
-        }}
-      >
-        Friend List
-      </Typography>
-
-      {/* Friend List Section */}
-      <Box
-        display="flex"
-        flexDirection="column"
-        gap="1.25rem"  // Add gap between each friend component for better spacing
-        maxHeight="400px"  // Set a max height for scrollable list
-        overflowY="auto"  // Enable scrolling if list exceeds max height
-        sx={{
-          "&::-webkit-scrollbar": { width: "8px" },  // Customize scrollbar width
-          "&::-webkit-scrollbar-thumb": { backgroundColor: "#888", borderRadius: "10px" },  // Customize scrollbar thumb with rounded edges
-          "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "#555" },  // Change scrollbar thumb color on hover
-          padding: "0 0.5rem",  // Add padding for content
-        }}
-      >
-        {friends.length > 0 ? (
-          friends.map((friend) => (
-            <MakeFriend
-              key={friend._id}
-              friendId={friend._id}
-              name={`${friend.firstName} ${friend.lastName}`}
-              subtitle={friend.occupation}
-              userPicturePath={friend.picturePath}
-            />
-          ))
-        ) : (
-          <Typography
-            color={palette.neutral.medium}
-            sx={{
-              textAlign: "center",
-              fontStyle: "italic",
-              color: palette.neutral.light,
-            }}
-          >
-            No friends to display.
-          </Typography>
-        )}
-      </Box>
-    </Box>
-  );
 };
 
-export default FriendListWidget;
+export default FriendSuggestions;
