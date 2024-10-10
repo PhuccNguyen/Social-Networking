@@ -1,87 +1,137 @@
-import { Box, Typography, useTheme } from "@mui/material";
-import MakeFriend from "components/MakeFriend";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setFriends } from "state";
+import { Box, Typography, Button, Avatar, useTheme } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
-const FriendListWidget = ({ userId }) => {
-  const dispatch = useDispatch();
-  const { palette } = useTheme();
-  const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends || []); // Initialize empty array if no friends data
+const FriendRequests = ({ userId }) => {
+    const [friendRequests, setFriendRequests] = useState([]);
+    const token = useSelector((state) => state.token);
+    const theme = useTheme();
+    const { palette } = theme;
+    const main = palette.neutral.main;
 
-  const getFriends = async () => {
-    const response = await fetch(
-      `http://localhost:3001/users/${userId}/friends`,
-      {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      }
+    // Fetch the friend requests for the current user
+    const fetchFriendRequests = async () => {
+        try {
+            const response = await fetch(`http://localhost:3001/friends/${userId}/requests`, {
+                method: 'GET',
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setFriendRequests(data);
+            } else {
+                console.error('Failed to fetch friend requests');
+            }
+        } catch (error) {
+            console.error('Error fetching friend requests:', error);
+        }
+    };
+
+    // Accept friend request
+    const handleAcceptRequest = async (requesterId) => {
+        try {
+            const response = await fetch(`http://localhost:3001/friends/accept-request`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId, requesterId }),
+            });
+
+            if (response.ok) {
+                // Remove the accepted request from the list
+                setFriendRequests(friendRequests.filter(request => request._id !== requesterId));
+                console.log('Friend request accepted');
+            } else {
+                console.error('Failed to accept friend request');
+            }
+        } catch (error) {
+            console.error('Error accepting friend request:', error);
+        }
+    };
+
+    // Reject friend request
+    const handleRejectRequest = async (requesterId) => {
+        try {
+            const response = await fetch(`http://localhost:3001/friends/reject-request`, {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId, requesterId }),
+            });
+
+            if (response.ok) {
+                // Remove the rejected request from the list
+                setFriendRequests(friendRequests.filter(request => request._id !== requesterId));
+                console.log('Friend request rejected'); 
+            } else {
+                console.error('Failed to reject friend request');
+            }
+        } catch (error) {
+            console.error('Error rejecting friend request:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchFriendRequests();
+    }, []); // Fetch on component mount
+
+    return (
+        <Box>
+            <Typography variant="h5" fontWeight="bold" color={main} mb="1rem">
+                Friend Requests
+            </Typography>
+            {friendRequests.length === 0 ? (
+                <Typography>No pending friend requests.</Typography>
+            ) : (
+                friendRequests.map((request) => (
+                    <Box
+                        key={request._id}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        mb="1rem"
+                        p="0.5rem"
+                        border="1px solid"
+                        borderColor={palette.divider}
+                        borderRadius="8px"
+                    >
+                        <Box display="flex" alignItems="center" gap="1rem">
+                            <Avatar src={request.picturePath} alt={request.firstName} />
+                            <Box>
+                                <Typography variant="body1" fontWeight="bold">
+                                    {request.firstName} {request.lastName}
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    {request.email}
+                                </Typography>
+                            </Box>
+                        </Box>
+                        <Box display="flex" gap="0.5rem">
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => handleAcceptRequest(request._id)}
+                            >
+                                Accept
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                color="secondary"
+                                onClick={() => handleRejectRequest(request._id)}
+                            >
+                                Reject
+                            </Button>
+                        </Box>
+                    </Box>
+                ))
+            )}
+        </Box>
     );
-    const data = await response.json();
-    dispatch(setFriends({ friends: data }));
-  };
-
-  useEffect(() => {
-    getFriends();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  return (
-    <Box>
-      {/* Title Section */}
-      <Typography
-        color={palette.neutral.dark}
-        variant="h4"  // Increased font size for better hierarchy
-        fontWeight="600"  // Bolder font for title
-        sx={{
-          mb: "1.5rem",
-          textAlign: 'center',  // Center align the title for better UI balance
-          textTransform: 'uppercase',  // Add uppercase style for a modern look
-          letterSpacing: '1.5px',  // Slight letter spacing for improved readability
-        }}
-      >
-        Friend List
-      </Typography>
-
-      {/* Friend List Section */}
-      <Box
-        display="flex"
-        flexDirection="column"
-        gap="1.25rem"  // Add gap between each friend component for better spacing
-        maxHeight="400px"  // Set a max height for scrollable list
-        overflowY="auto"  // Enable scrolling if list exceeds max height
-        sx={{
-          "&::-webkit-scrollbar": { width: "8px" },  // Customize scrollbar width
-          "&::-webkit-scrollbar-thumb": { backgroundColor: "#888", borderRadius: "10px" },  // Customize scrollbar thumb with rounded edges
-          "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "#555" },  // Change scrollbar thumb color on hover
-          padding: "0 0.5rem",  // Add padding for content
-        }}
-      >
-        {friends.length > 0 ? (
-          friends.map((friend) => (
-            <MakeFriend
-              key={friend._id}
-              friendId={friend._id}
-              name={`${friend.firstName} ${friend.lastName}`}
-              subtitle={friend.occupation}
-              userPicturePath={friend.picturePath}
-            />
-          ))
-        ) : (
-          <Typography
-            color={palette.neutral.medium}
-            sx={{
-              textAlign: "center",
-              fontStyle: "italic",
-              color: palette.neutral.light,
-            }}
-          >
-            No friends to display.
-          </Typography>
-        )}
-      </Box>
-    </Box>
-  );
 };
 
-export default FriendListWidget;
+export default FriendRequests;
