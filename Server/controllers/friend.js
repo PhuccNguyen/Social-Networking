@@ -308,3 +308,26 @@ export const getUserFriendRequests = async (req, res) => {
         res.status(500).json({ message: 'Error fetching friend requests' });
     }
 };
+
+// Get the list of sent friend requests
+export const getSentFriendRequests = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findById(userId);
+
+        const sentRequests = await Promise.all(
+            user.friendRequestsSent.map((friendId) => User.findById(friendId))
+        );
+
+        const formattedRequests = sentRequests.map(({ _id, firstName, lastName, picturePath }) => ({
+            _id,
+            firstName,
+            lastName,
+            picturePath,
+        }));
+
+        res.status(200).json(formattedRequests);
+    } catch (err) {
+        res.status(404).json({ message: err.message });
+    }
+};

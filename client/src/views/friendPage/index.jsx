@@ -9,12 +9,11 @@ import FriendRequests from "views/widgets/FriendRequests";
 import FriendSuggestions from "views/widgets/FriendSuggestions";
 import FriendRequestsSent from "views/widgets/FriendRequestsSent";
 
-
 const FriendPage = () => {
     const { _id, picturePath, userName } = useSelector((state) => state.user);
     const navigate = useNavigate();
     const [tabValue, setTabValue] = useState(0);
-    const theme = useTheme(); // Lấy theme để xác định chế độ màu
+    const theme = useTheme(); 
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
@@ -90,6 +89,7 @@ const FriendPage = () => {
                                         textTransform: 'none',
                                         padding: '0.75rem 1.5rem',
                                         transition: 'background-color 0.3s ease, color 0.3s ease',
+                                        color: theme.palette.mode === 'dark' ? 'white' : 'black',
                                     },
                                     '& .Mui-selected': {
                                         background: theme.palette.mode === 'dark' 

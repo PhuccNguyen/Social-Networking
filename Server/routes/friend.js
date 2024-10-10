@@ -12,7 +12,8 @@ import {
     getFriendRequestsReceived,
     getFriendRequestsSent,
     getFriendSuggestions,
-    getUserFriendRequests
+    getUserFriendRequests,
+    getSentFriendRequests
 } from '../controllers/friend.js';
 
 const router = express.Router();
@@ -28,6 +29,8 @@ router.get("/:userId/requests-received", getFriendRequestsReceived);
 router.get("/:userId/requests-sent", getFriendRequestsSent);
 router.get("/:userId/suggestions", getFriendSuggestions);
 router.get('/:userId/requests', getUserFriendRequests);
+router.get('/:userId/sent-requests', getSentFriendRequests);
+
 
 
 export default router;
