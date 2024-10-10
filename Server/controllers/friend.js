@@ -140,7 +140,7 @@ export const getUserFriends = async (req, res) => {
         res.status(200).json(formattedFriends);
     } catch (err) {
         res.status(404).json({ message: err.message });
-    }
+    }   
 };
 
 /* ADD OR REMOVE FRIEND */
@@ -233,5 +233,62 @@ export const deleteFriend = async (req, res) => {
         res.status(200).json({ message: "Friend deleted successfully" });
     } catch (error) {
         res.status(500).json({ message: "Error deleting friend" });
+    }
+};
+
+
+/* GET FRIEND REQUESTS RECEIVED */
+export const getFriendRequestsReceived = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findById(userId).populate('friendRequestsReceived', 'firstName lastName userName picturePath');
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json(user.friendRequestsReceived);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching friend requests" });
+    }
+};
+
+/* GET FRIEND REQUESTS SENT */
+export const getFriendRequestsSent = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findById(userId).populate('friendRequestsSent', 'firstName lastName userName picturePath');
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json(user.friendRequestsSent);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching friend requests" });
+    }
+};
+
+/* GET FRIEND SUGGESTIONS */
+export const getFriendSuggestions = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Gợi ý bạn bè là những người dùng không nằm trong danh sách bạn bè hoặc yêu cầu gửi và nhận
+        const suggestions = await User.find({
+            _id: { $ne: userId },
+            friends: { $nin: [userId] },
+            friendRequestsSent: { $nin: [userId] },
+            friendRequestsReceived: { $nin: [userId] }
+        }).select('firstName lastName userName picturePath');
+
+        res.status(200).json(suggestions);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching friend suggestions" });
     }
 };

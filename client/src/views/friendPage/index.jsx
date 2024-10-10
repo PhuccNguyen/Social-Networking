@@ -1,49 +1,58 @@
-import { Box, Typography, Breadcrumbs, Link } from '@mui/material';
+import { Box, Typography, Breadcrumbs, Link, Button, Tabs, Tab } from '@mui/material';
 import Navbar from "views/navbar";
 import { useSelector } from 'react-redux';
 import UserWidget from 'views/widgets/UserWidget';
-import FriendPageWidget from "views/widgets/friendpagewidget"; // This is your SavedPosts component
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import FriendList from "views/widgets/FriendList";
+import FriendRequests from "views/widgets/FriendRequests";
+import FriendSuggestions from "views/widgets/FriendSuggestions";
+
 
 const FriendPage = () => {
     const { _id, picturePath, userName } = useSelector((state) => state.user);
     const navigate = useNavigate();
 
+    const [tabValue, setTabValue] = useState(0);
+
+    const handleTabChange = (event, newValue) => {
+        setTabValue(newValue);
+    };
+
     return (
         <Box>
             <Navbar />
-            <Box 
-                display="flex" 
-                justifyContent="space-between" 
-                marginTop="2.8rem" // Adjust for fixed navbar height
+            <Box
+                display="flex"
+                justifyContent="space-between"
+                marginTop="2.8rem" 
             >
                 {/* Fixed Left Section: UserWidget */}
-                <Box 
-                    flexBasis="300px" // Fixed width for the UserWidget
+                <Box
+                    flexBasis="300px"
                     position="fixed"
                     left="0"
-                    top="90px" // Adjust this according to your Navbar height
-                    height="100%" 
-                    padding="1rem" 
-                    zIndex={1000} // Ensure it stays on top
-                    boxShadow="2px 0 5px rgba(0, 0, 0, 0.1)" // Optional: Shadow for better visibility
+                    top="90px" 
+                    height="100%"
+                    padding="1rem"
+                    zIndex={1000} 
+                    boxShadow="2px 0 5px rgba(0, 0, 0, 0.1)" 
                 >
                     <UserWidget userId={_id} picturePath={picturePath} userName={userName} />
                 </Box>
 
-                {/* Main Content: SavedPosts */}
-                <Box 
-                    flex="1" 
-                    marginLeft="330px" // Leave space for the fixed UserWidget
+                {/* Main Content: Friends Management */}
+                <Box
+                    flex="1"
+                    marginLeft="330px" 
                     padding="2rem"
-                    overflow="auto" // Ensure SavedPosts content scrolls if too long
+                    overflow="auto" 
                 >
-                    {/* Breadcrumbs for navigation */}
-                    <Breadcrumbs aria-label="breadcrumb"  marginLeft="30px" marginTop="28px"  sx={{ marginBottom: "" }}>
-                        <Link 
-                            underline="hover" 
-                            color="inherit" 
-                            onClick={() => navigate('/Home')} // Navigate to HomePage
+                    <Breadcrumbs aria-label="breadcrumb" marginLeft="30px" marginTop="28px" sx={{ marginBottom: "1rem" }}>
+                        <Link
+                            underline="hover"
+                            color="inherit"
+                            onClick={() => navigate('/Home')}
                             sx={{ cursor: "pointer" }}
                         >
                             Home
@@ -51,8 +60,19 @@ const FriendPage = () => {
                         <Typography color="textPrimary">Friends</Typography>
                     </Breadcrumbs>
 
-                    {/* Render SavedPosts component */}
-                    <FriendPageWidget />
+                    {/* Tabs for Friend Management */}
+                    <Tabs value={tabValue} onChange={handleTabChange} aria-label="friend management tabs">
+                        <Tab label="Requests Received" />
+                        <Tab label="Requests Sent" />
+                        <Tab label="Suggestions" />
+                        <Tab label="Friends" />
+                    </Tabs>
+
+                    {/* Content for each tab */}
+                    {tabValue === 0 && <FriendRequests userId={_id} />}
+                    {tabValue === 1 && <FriendRequests userId={_id} type="sent" />}
+                    {tabValue === 2 && <FriendSuggestions userId={_id} />}
+                    {tabValue === 3 && <FriendList userId={_id} />}
                 </Box>
             </Box>
         </Box>
