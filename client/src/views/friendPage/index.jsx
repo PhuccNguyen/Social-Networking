@@ -71,7 +71,7 @@ const FriendPage = () => {
                         <Paper
                             elevation={3}
                             sx={{
-                                borderRadius: "8px",
+                                borderRadius: "4px",
                                 overflow: "hidden",
                                 marginBottom: "1rem",
                             }}
@@ -110,7 +110,7 @@ const FriendPage = () => {
                         </Paper>
 
                         {/* Content for each tab */}
-                        <Paper elevation={3} sx={{ borderRadius: "8px", padding: "1rem", minHeight: "470px" }}>
+                        <Paper elevation={3} sx={{ borderRadius: "4px", padding: "1rem", minHeight: "470px" }}>
                             {tabValue === 0 && <FriendRequests userId={_id} />}
                             {tabValue === 1 && <FriendRequestsSent userId={_id} />}
                             {tabValue === 2 && <FriendSuggestions userId={_id} />}
