@@ -21,24 +21,47 @@ export const getUser = async (req, res) => {
 export const getUserFriends = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findById(id).populate("friends", "firstName lastName picturePath occupation");
+        const user = await User.findById(id);
+    
+        // Lấy danh sách bạn của người dùng
+        const friends = await Promise.all(
+            user.friends.map((friendId) => User.findById(friendId))
+        );
 
-        const mutualFriends = {}; // Tạo đối tượng để lưu số lượng bạn chung
-        user.friends.forEach(friend => {
-            // Lấy danh sách bạn bè của mỗi người bạn và so sánh với user
-            mutualFriends[friend._id] = friend.friends.filter(f => user.friends.includes(f)).length;
+        // Tính toán số lượng bạn chung cho mỗi người bạn
+        const mutualFriendsCount = friends.map((friend) => {
+            const mutualFriends = friend.friends.filter((f) => user.friends.includes(f));
+            return mutualFriends.length;
         });
 
-        const friendsList = user.friends.map(friend => ({
-            ...friend._doc,
-            mutualFriends: mutualFriends[friend._id] || 0, // Thêm số lượng bạn chung
-        }));
+        // Định dạng lại thông tin bạn bè và thêm số lượng bạn chung
+        const formattedFriends = friends.map(
+            ({ _id, firstName, lastName, userName, mobile, email, intro, gender, birthday, status, occupation, location, picturePath }, index) => {
+                return { 
+                    _id, 
+                    firstName, 
+                    lastName, 
+                    userName, 
+                    mobile, 
+                    email, 
+                    intro, 
+                    gender, 
+                    birthday, 
+                    status, 
+                    occupation, 
+                    location, 
+                    picturePath,
+                    mutualFriends: mutualFriendsCount[index], // Thêm số lượng bạn chung
+                };
+            }
+        );
 
-        res.status(200).json(friendsList);
-    } catch (error) {
-        res.status(500).json({ message: "Failed to get friends", error });
+        res.status(200).json(formattedFriends);
+    } catch (err) {
+        res.status(500).json({ message: "Failed to get friends", error: err.message });
     }
 };
+
 
 // /* UPDATE */  
 // export const addRemoveFriends = async (req, res) => {

@@ -1,12 +1,16 @@
 // src/views/widgets/FriendListWidget.jsx
 import React, { useEffect } from 'react';
-import { Box, Typography, Button, useTheme } from "@mui/material";
+import { Box, Typography, Button, useTheme, Paper } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { setFriends } from "state";
+import UserImage from "components/UserImage";
+import { motion } from "framer-motion";
 
 const FriendListWidget = ({ userId }) => {
     const dispatch = useDispatch();
     const { palette } = useTheme();
+    const navigate = useNavigate();
     const token = useSelector((state) => state.token);
     const friends = useSelector((state) => state.user.friends || []);
 
@@ -21,7 +25,7 @@ const FriendListWidget = ({ userId }) => {
 
     useEffect(() => {
         getFriends();
-    }, [userId]); // Re-fetch when userId changes
+    }, [userId]);
 
     const removeFriend = async (friendId) => {
         try {
@@ -34,7 +38,6 @@ const FriendListWidget = ({ userId }) => {
             });
 
             if (response.ok) {
-                // Update the friends list in Redux
                 dispatch(setFriends({ friends: friends.filter(f => f._id !== friendId) }));
             } else {
                 console.error("Failed to remove friend");
@@ -74,39 +77,68 @@ const FriendListWidget = ({ userId }) => {
             >
                 {friends.length > 0 ? (
                     friends.map((friend) => (
-                        <Box
+                        <motion.div
                             key={friend._id}
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="space-between"
-                            p="0.75rem"
-                            sx={{
-                                borderRadius: "0.5rem",
-                                boxShadow: "0 3px 8px rgba(0, 0, 0, 0.1)",
-                                transition: "all 0.2s ease-in-out",
-                                "&:hover": {
-                                    transform: "scale(1.02)",
-                                    boxShadow: "0 5px 12px rgba(0, 0, 0, 0.15)",
-                                },
-                            }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.3 }}
                         >
-                            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                                {`${friend.firstName} ${friend.lastName}`}
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                color="error"
-                                onClick={() => removeFriend(friend._id)}
-                                sx={{
-                                    backgroundColor: "red",
-                                    '&:hover': {
-                                        backgroundColor: "darkred",
-                                    },
+                            <Paper 
+                                elevation={3} 
+                                sx={{ 
+                                    marginBottom: '1rem', 
+                                    padding: '1rem', 
+                                    borderRadius: "0.5rem", 
+                                    background: palette.background.default,
+                                    "&:hover": { 
+                                        background: palette.background.paper,
+                                        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.15)"
+                                    }
                                 }}
                             >
-                                Remove Friend
-                            </Button>
-                        </Box>
+                                <Box 
+                                    display="flex" 
+                                    alignItems="center" 
+                                    justifyContent="space-between"
+                                    onClick={() => navigate(`/profile/${friend._id}`)}
+                                    sx={{ cursor: "pointer" }}
+                                >
+                                    <Box display="flex" alignItems="center" gap="1rem">
+                                        <UserImage image={friend.picturePath} size="45px" />
+                                        <Box>
+                                            <Typography variant="h6" sx={{ fontWeight: "bold", color: palette.neutral.main }}>
+                                                {friend.firstName} {friend.lastName}
+                                            </Typography>
+                                            <Typography variant="body2" color={palette.neutral.medium}>
+                                                {friend.occupation}
+                                            </Typography>
+                                            <Typography variant="body2" color={palette.neutral.light}>
+                                                {friend.mutualFriends || 0} mutual friends
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Button
+                                        variant="contained"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            removeFriend(friend._id);
+                                        }}
+                                        sx={{
+                                            background: 'linear-gradient(310deg, #FF0080 0%, #7928CA 100%)',
+                                            color: 'white',
+                                            '&:hover': {
+                                                background: 'linear-gradient(310deg, #7928CA 0%, #FF0080 100%)',
+                                            },
+                                            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+                                            borderRadius: "8px",
+                                            padding: '0.5rem 1.5rem',
+                                        }}
+                                    >
+                                        Remove Friend
+                                    </Button>
+                                </Box>
+                            </Paper>
+                        </motion.div>
                     ))
                 ) : (
                     <Typography color={palette.neutral.medium} sx={{ textAlign: "center", fontStyle: "italic" }}>
