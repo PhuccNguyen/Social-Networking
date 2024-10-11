@@ -2,14 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Typography, Paper, Avatar } from '@mui/material';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import Loader from "components/Loader";
+import { motion } from 'framer-motion'; // Import framer-motion for animations
 
 const FriendSuggestions = ({ userId }) => {
     const [suggestions, setSuggestions] = useState([]);
+    const [loading, setLoading] = useState(true);
     const token = useSelector((state) => state.token);
+    const navigate = useNavigate();
 
     // Fetch the friend suggestions
     const fetchSuggestions = async () => {
         try {
+            setLoading(true);
             const response = await fetch(`http://localhost:3001/friends/${userId}/suggestions`, {
                 method: 'GET',
                 headers: {
@@ -21,6 +27,8 @@ const FriendSuggestions = ({ userId }) => {
             setSuggestions(data);
         } catch (error) {
             console.error('Failed to fetch friend suggestions:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -45,6 +53,19 @@ const FriendSuggestions = ({ userId }) => {
             console.error('Failed to send friend request:', error);
         }
     };
+
+    if (loading) {
+        return (
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="50vh" // Center the loader vertically
+            >
+                <Loader />
+            </Box>
+        );
+    }
 
     if (suggestions.length === 0) {
         return (
@@ -71,26 +92,61 @@ const FriendSuggestions = ({ userId }) => {
                 Friend Suggestions
             </Typography>
             {suggestions.map((user) => (
-                <Paper key={user._id} elevation={2} sx={{ marginBottom: '1rem', padding: '1rem' }}>
-                    <Box display="flex" alignItems="center" gap="1rem">
-                        <Avatar src={user.picturePath} alt={`${user.firstName} ${user.lastName}`} />
-                        <Box flex="1">
-                            <Typography variant="h6">
-                                {user.firstName} {user.lastName}
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary">
-                                {user.occupation}
-                            </Typography>
+                <motion.div
+                    key={user._id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <Paper
+                        elevation={2}
+                        sx={{
+                            marginBottom: '1rem',
+                            padding: '0.7rem',
+                            cursor: 'pointer', // Change cursor to pointer
+                            transition: 'box-shadow 0.3s',
+                            '&:hover': {
+                                boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                            },
+                        }}
+                        onClick={() => navigate(`/profile/${user._id}`)} // Navigate to user's profile on click
+                    >
+                        <Box display="flex" alignItems="center" gap="1rem">
+                            <Avatar
+                                src={`http://localhost:3001/assets/${user.picturePath}`}
+                                alt={`${user.firstName} ${user.lastName}`}
+                                sx={{ width: 56, height: 56 }}
+                            />
+                            <Box flex="1">
+                                <Typography variant="h6">
+                                    {user.firstName} {user.lastName}
+                                </Typography>
+                                <Typography variant="body2" color="textSecondary">
+                                    {user.occupation}
+                                </Typography>
+                            </Box>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Prevent parent click event
+                                    sendFriendRequest(user._id);
+                                }}
+                                sx={{
+                                    background: 'linear-gradient(310deg, #7928CA 0%, #FF0080 100%)',
+                                    color: 'white',
+                                    '&:hover': {
+                                        background: 'linear-gradient(310deg, #FF0080 0%, #7928CA 100%)',
+                                    },
+                                }}
+                            >
+                                Add Friend
+                            </Button>
                         </Box>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => sendFriendRequest(user._id)}
-                        >
-                            Add Friend
-                        </Button>
-                    </Box>
-                </Paper>
+                    </Paper>
+                </motion.div>
             ))}
         </Box>
     );
