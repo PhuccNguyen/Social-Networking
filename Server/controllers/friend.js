@@ -269,29 +269,52 @@ export const getFriendRequestsSent = async (req, res) => {
     }
 };
 
-/* GET FRIEND SUGGESTIONS */
+// controllers/friends.js
+
 export const getFriendSuggestions = async (req, res) => {
     try {
         const { userId } = req.params;
         const user = await User.findById(userId);
 
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
+        // Find friends of the current user
+        const userFriends = user.friends;
 
-        // Gợi ý bạn bè là những người dùng không nằm trong danh sách bạn bè hoặc yêu cầu gửi và nhận
-        const suggestions = await User.find({
+        // Find users who are not already friends with the current user
+        // Exclude the current user from the suggestions
+        const allUsers = await User.find({
             _id: { $ne: userId },
             friends: { $nin: [userId] },
-            friendRequestsSent: { $nin: [userId] },
-            friendRequestsReceived: { $nin: [userId] }
-        }).select('firstName lastName userName picturePath');
+        });
 
-        res.status(200).json(suggestions);
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching friend suggestions" });
+        // Filter out the users that have common friends or similar attributes
+        const suggestions = allUsers.filter((potentialFriend) => {
+            // Check if they have common friends
+            const commonFriends = potentialFriend.friends.filter((friendId) =>
+                userFriends.includes(friendId)
+            ).length;
+
+            // Check if they have the same occupation
+            const sameOccupation = potentialFriend.occupation === user.occupation;
+
+            // Suggest if they have at least one common friend or the same occupation
+            return commonFriends > 0 || sameOccupation;
+        });
+
+        // Format the suggestions to send back only necessary details
+        const formattedSuggestions = suggestions.map(({ _id, firstName, lastName, picturePath, occupation }) => ({
+            _id,
+            firstName,
+            lastName,
+            picturePath,
+            occupation,
+        }));
+
+        res.status(200).json(formattedSuggestions);
+    } catch (err) {
+        res.status(404).json({ message: err.message });
     }
 };
+
 
 // Controller function
 export const getUserFriendRequests = async (req, res) => {
