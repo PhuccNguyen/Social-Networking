@@ -1,34 +1,25 @@
 import { Box, Typography, useTheme } from "@mui/material";
-import Boxfriend from "components/MakeFriend";
-import { useEffect, useState } from "react";
+import MakeFriend from "components/MakeFriend";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFriends } from "state";
-import Loader from "components/Loader"; // Thêm loader
 
 const FriendListWidget = ({ userId }) => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
   const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends || []);
-  const [loading, setLoading] = useState(true);
+  const friends = useSelector((state) => state.user.friends || []); // Initialize empty array if no friends data
 
   const getFriends = async () => {
-    try {
-      setLoading(true); // Bắt đầu tải
-      const response = await fetch(
-        `http://localhost:3001/users/${userId}/friends`,
-        {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const data = await response.json();
-      dispatch(setFriends({ friends: data }));
-    } catch (error) {
-      console.error("Failed to fetch friends", error);
-    } finally {
-      setLoading(false); // Kết thúc tải
-    }
+    const response = await fetch(
+      `http://localhost:3001/users/${userId}/friends`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    const data = await response.json();
+    dispatch(setFriends({ friends: data }));
   };
 
   useEffect(() => {
@@ -37,40 +28,38 @@ const FriendListWidget = ({ userId }) => {
 
   return (
     <Box>
+      {/* Title Section */}
       <Typography
         color={palette.neutral.dark}
-        variant="h4"
-        fontWeight="600"
+        variant="h4"  // Increased font size for better hierarchy
+        fontWeight="600"  // Bolder font for title
         sx={{
           mb: "1.5rem",
-          textAlign: 'center',
-          textTransform: 'uppercase',
-          letterSpacing: '1.5px',
+          textAlign: 'center',  // Center align the title for better UI balance
+          textTransform: 'uppercase',  // Add uppercase style for a modern look
+          letterSpacing: '1.5px',  // Slight letter spacing for improved readability
         }}
       >
         Friend List
       </Typography>
 
+      {/* Friend List Section */}
       <Box
         display="flex"
         flexDirection="column"
-        gap="1.25rem"
-        maxHeight="400px"
-        overflowY="auto"
+        gap="1.25rem"  // Add gap between each friend component for better spacing
+        maxHeight="400px"  // Set a max height for scrollable list
+        overflowY="auto"  // Enable scrolling if list exceeds max height
         sx={{
-          "&::-webkit-scrollbar": { width: "8px" },
-          "&::-webkit-scrollbar-thumb": { backgroundColor: "#888", borderRadius: "10px" },
-          "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "#555" },
-          padding: "0 0.5rem",
+          "&::-webkit-scrollbar": { width: "8px" },  // Customize scrollbar width
+          "&::-webkit-scrollbar-thumb": { backgroundColor: "#888", borderRadius: "10px" },  // Customize scrollbar thumb with rounded edges
+          "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "#555" },  // Change scrollbar thumb color on hover
+          padding: "0 0.5rem",  // Add padding for content
         }}
       >
-        {loading ? (
-          <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
-            <Loader />
-          </Box>
-        ) : friends.length > 0 ? (
+        {friends.length > 0 ? (
           friends.map((friend) => (
-            <Boxfriend
+            <MakeFriend
               key={friend._id}
               friendId={friend._id}
               name={`${friend.firstName} ${friend.lastName}`}

@@ -121,26 +121,15 @@ export const cancelFriendRequest = async (req, res) => {
     }
 };
 
-/* GET FRIEND LIST */
+// In controllers/friend.js
 export const getUserFriends = async (req, res) => {
     try {
-        const { id } = req.params;
-        const user = await User.findById(id);
-
-        const friends = await Promise.all(
-            user.friends.map(friendId => User.findById(friendId))
-        );
-
-        const formattedFriends = friends.map(
-            ({ _id, firstName, lastName, userName, picturePath }) => {
-                return { _id, firstName, lastName, userName, picturePath };
-            }
-        );
-
-        res.status(200).json(formattedFriends);
+        const { userId } = req.params;
+        const user = await User.findById(userId).populate('friends'); // Assuming friends are stored in a relation
+        res.status(200).json(user.friends);
     } catch (err) {
-        res.status(404).json({ message: err.message });
-    }   
+        res.status(404).json({ message: 'Friends not found', error: err });
+    }
 };
 
 /* ADD OR REMOVE FRIEND */

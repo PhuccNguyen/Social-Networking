@@ -129,6 +129,31 @@ export const updateUserRole = async (req, res) => {
           res.status(500).json({ message: err.message });
       }
   };
+
+  // controllers/users.js
+
+export const deleteUserFriend = async (req, res) => {
+    try {
+        const { id, friendId } = req.params;
+
+        // Find the user and remove the friend from the list
+        const user = await User.findById(id);
+        user.friends = user.friends.filter(friend => friend.toString() !== friendId);
+
+        // Update the user's friends list in the database
+        await user.save();
+
+        // Optionally, remove the current user from the friend's friends list
+        const friend = await User.findById(friendId);
+        friend.friends = friend.friends.filter(f => f.toString() !== id);
+        await friend.save();
+
+        res.status(200).json({ message: "Friend removed successfully", friends: user.friends });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to remove friend", error });
+    }
+};
+
   
  // Save or unsave a post
 export const savePosts = async (req, res) => {

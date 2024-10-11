@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import UserWidget from 'views/widgets/UserWidget';
 import { useNavigate } from "react-router-dom";
 import { useState } from 'react';
-import FriendList from "views/widgets/FriendList";
+import MakeFriendPost from "views/widgets/MakeFriendPost";
 import FriendRequests from "views/widgets/FriendRequests";
 import FriendSuggestions from "views/widgets/FriendSuggestions";
 import FriendRequestsSent from "views/widgets/FriendRequestsSent";
@@ -114,7 +114,7 @@ const FriendPage = () => {
                             {tabValue === 0 && <FriendRequests userId={_id} />}
                             {tabValue === 1 && <FriendRequestsSent userId={_id} />}
                             {tabValue === 2 && <FriendSuggestions userId={_id} />}
-                            {tabValue === 3 && <FriendList userId={_id} />}
+                            {tabValue === 3 && <MakeFriendPost userId={_id} />}
                         </Paper>
                     </Box>
                 </Box>

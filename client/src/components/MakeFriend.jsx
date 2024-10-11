@@ -1,5 +1,5 @@
 import { PersonAddOutlined, PersonRemoveOutlined } from "@mui/icons-material";
-import { Box, IconButton, Typography, useTheme, Button } from "@mui/material";
+import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setFriends } from "state";
@@ -35,26 +35,6 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
     }
   };
 
-  const handleRemoveFriend = async () => {
-    try {
-      const response = await fetch(`http://localhost:3001/users/${_id}/${friendId}/remove`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        dispatch(setFriends({ friends: data }));
-      } else {
-        console.error("Failed to remove friend");
-      }
-    } catch (error) {
-      console.error("Error removing friend:", error);
-    }
-  };
-
   return (
     <Box
       display="flex"
@@ -71,7 +51,7 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
       }}
     >
       <UserImage image={userPicturePath} size="45px" />
-
+      
       <Box
         flex={1}
         ml="0.75rem"
@@ -86,39 +66,9 @@ const Boxfriend = ({ friendId, name, subtitle, userPicturePath }) => {
         </Typography>
       </Box>
 
-      {isFriend ? (
-        <Button
-          variant="contained"
-          color="error"
-          onClick={handleRemoveFriend}
-          sx={{
-            background: "linear-gradient(310deg, #FF4B2B 0%, #FF416C 100%)",
-            color: "white",
-            "&:hover": {
-              background: "linear-gradient(310deg, #FF416C 0%, #FF4B2B 100%)",
-            },
-            borderRadius: "8px",
-            padding: "0.5rem 1rem",
-          }}
-        >
-          Remove Friend
-        </Button>
-      ) : (
-        <IconButton
-          onClick={handleFriendToggle}
-          sx={{
-            backgroundColor: "linear-gradient(310deg, #21D4FD 0%, #B721FF 100%)",
-            color: "white",
-            "&:hover": {
-              backgroundColor: "linear-gradient(310deg, #B721FF 0%, #21D4FD 100%)",
-            },
-            borderRadius: "50%",
-            padding: "0.5rem",
-          }}
-        >
-          <PersonAddOutlined />
-        </IconButton>
-      )}
+      <IconButton >
+        HH
+      </IconButton>
     </Box>
   );
 };

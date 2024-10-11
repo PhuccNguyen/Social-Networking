@@ -2,7 +2,7 @@ import express from 'express';
 import {
     getUser,
     getUserFriends,
-    // addRemoveFriends,
+    deleteUserFriend, 
     updateUser,
     savePosts,
     getSavedPosts,
@@ -16,6 +16,9 @@ router.get("/:id", verifyToken, getUser);
 
 // Update Infor user 
 router.patch("/:id", verifyToken, updateUser);
+
+// Delete a friend
+router.delete("/:id/friends/:friendId", verifyToken, deleteUserFriend); // Add this route
 
 // Get user friends
 router.get("/:id/friends", verifyToken, getUserFriends);
