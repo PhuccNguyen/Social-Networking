@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 import PostUserWidget from "./PostUserWidget";
+import Loader from "components/Loader";
 import { Box, CircularProgress, Typography } from "@mui/material";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
@@ -70,7 +71,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
     // Display loading spinner while fetching data
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
-        <CircularProgress />
+        <Loader /> {/* Use your custom Loader component here */}
       </Box>
     );
   }
