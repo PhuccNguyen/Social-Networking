@@ -60,6 +60,31 @@ export const getUserPosts = async (req, res) => {
   };
 
 
+export const getFriendPosts = async (req, res) => {
+  try {
+    const { id: userId } = req.user; 
+    
+    // Fetch the user to get the list of friends
+    const user = await User.findById(userId).populate('friends'); 
+
+    // If the user has no friends, return an empty array
+    if (!user || !user.friends || user.friends.length === 0) {
+      return res.status(200).json([]); // No friends, no posts to show
+    }
+
+    // Retrieve posts where the userId is in the user's friends list
+    const friendIds = user.friends.map((friend) => friend._id);
+    
+    // Fetch posts from friends, sorted by creation date
+    const posts = await Post.find({ userId: { $in: friendIds } }).sort({ createdAt: -1 });
+
+    return res.status(200).json(posts);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch friend posts", error: err.message });
+  }
+};
+
+
 // Like or unlike a post
 export const likePost = async (req, res) => {
     try {
