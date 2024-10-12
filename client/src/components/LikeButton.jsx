@@ -1,8 +1,32 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { FavoriteBorderOutlined, FavoriteOutlined } from "@mui/icons-material";
 
+// Import the like sound file
+import likeSound from 'Audio/button-pop_z12C8_Nd_NWM.mp3';
+
 const LikeButton = ({ isLiked, handleLikeToggle }) => {
+  const audioRef = useRef(null); // Ref for audio element
+
+  useEffect(() => {
+    // Initialize the audio ref on mount
+    if (!audioRef.current) {
+      audioRef.current = new Audio(likeSound);
+    }
+  }, []);
+
+  const handleLikeWithSound = () => {
+    if (!isLiked) {
+      // Play sound only if the current state is unliked and we are liking the post
+      audioRef.current.play().catch((error) => {
+        console.error("Audio playback failed:", error);
+      });
+    }
+
+    // Toggle the like state (this should call your actual like/unlike logic)
+    handleLikeToggle();
+  };
+
   return (
     <StyledWrapper>
       <div className="heart-container" title="Like">
@@ -11,7 +35,7 @@ const LikeButton = ({ isLiked, handleLikeToggle }) => {
           className="checkbox"
           id="Give-It-An-Id"
           checked={isLiked}
-          onChange={handleLikeToggle} // This ensures the heart fills when clicked
+          onChange={handleLikeWithSound} // Call the like function with sound
         />
         <div className="svg-container">
           {/* Outline of the heart */}

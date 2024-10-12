@@ -2,63 +2,111 @@ import React from "react";
 import styled from "styled-components";
 import { BookmarkBorderOutlined, BookmarkOutlined } from "@mui/icons-material";
 
-const SaveButton = ({ isSaved, handleSaveToggle }) => {
+const SaveButton = ({ isSaved, handleSaveToggle, postId }) => {
   return (
     <StyledWrapper>
-      <div className="save-container" title="Save">
+      <>
         <input
           type="checkbox"
-          className="checkbox"
-          id="save-checkbox"
           checked={isSaved}
+          id={`save-${postId}`} // Ensure a unique id for each post's save button
+          name={`save-checkbox-${postId}`}
           onChange={handleSaveToggle}
         />
-        <div className="svg-container">
-          <BookmarkBorderOutlined className="svg-outline" />
-          <BookmarkOutlined className="svg-filled" />
-        </div>
-      </div>
+        <label htmlFor={`save-${postId}`} className="container">
+          {isSaved ? (
+            <BookmarkOutlined className="icon" />
+          ) : (
+            <BookmarkBorderOutlined className="icon" />
+          )}
+          <div className="action">
+            <span className="option-1">Save to Favorites</span>
+            <span className="option-2">Saved to Favorites</span>
+          </div>
+        </label>
+      </>
     </StyledWrapper>
   );
 };
 
 const StyledWrapper = styled.div`
-  .save-container {
-    position: relative;
-    width: 50px;
-    height: 50px;
-    transition: .3s;
-  }
-
-  .checkbox {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    z-index: 20;
-    cursor: pointer;
-  }
-
-  .svg-container {
-    width: 100%;
-    height: 100%;
+  label {
+    background-color: white;
     display: flex;
-    justify-content: center;
     align-items: center;
+    gap: 14px;
+    padding: 10px 15px 10px 10px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 10px;
+    color: black;
   }
 
-  .svg-outline,
-  .svg-filled {
-    fill: var(--bookmark-color, black);
-    position: absolute;
-  }
-
-  .svg-filled {
+  input {
     display: none;
   }
 
-  .checkbox:checked ~ .svg-container .svg-filled {
-    display: block;
+  .icon {
+    font-size: 24px;
+    transition: fill 0.5s ease;
+  }
+
+  input:checked + label .icon {
+    fill: hsl(0deg 100% 50%);
+    stroke: hsl(0deg 100% 50%);
+    animation: bookmarkButton 1s;
+  }
+
+  @keyframes bookmarkButton {
+    0% {
+      transform: scale(1);
+    }
+    25% {
+      transform: scale(1.3);
+    }
+    50% {
+      transform: scale(1);
+    }
+    75% {
+      transform: scale(1.3);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  input + label .action {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+  }
+
+  input + label .action span {
+    grid-column-start: 1;
+    grid-column-end: 1;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    transition: all 0.5s;
+  }
+
+  input + label .action span.option-1 {
+    transform: translate(0px, 0%);
+    opacity: 1;
+  }
+
+  input:checked + label .action span.option-1 {
+    transform: translate(0px, -100%);
+    opacity: 0;
+  }
+
+  input + label .action span.option-2 {
+    transform: translate(0px, 100%);
+    opacity: 0;
+  }
+
+  input:checked + label .action span.option-2 {
+    transform: translate(0px, 0%);
+    opacity: 1;
   }
 `;
 

@@ -1,10 +1,6 @@
-
-import {
-  ChatBubbleOutlineOutlined,
-} from "@mui/icons-material";
-
 import React, { useState } from "react";
 import { Box, Typography, Divider, TextField, Button, IconButton } from "@mui/material";
+import { ChatBubbleOutlineOutlined } from "@mui/icons-material";
 import LikeButton from "components/LikeButton";
 import SaveButton from "components/SaveButton";
 import FlexBetween from "components/Adjustment";
@@ -117,7 +113,7 @@ const PostUserWidget = ({
   };
 
   return (
-    <WidgetWrapper>
+    <WidgetWrapper sx={{ width: "90%", margin: "1rem auto" }}>
       <Boxfriend
         friendId={postUserId}
         lastName={lastName}
@@ -149,26 +145,55 @@ const PostUserWidget = ({
         />
       )}
 
-      <FlexBetween sx={{ mt: "0.75rem" }}>
-        {/* Like Button */}
-        <LikeButton isLiked={isLiked} handleLikeToggle={handleLikeToggle} />
-        <Typography sx={{ fontSize: "0.85rem" }}>{likeCount}</Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mt: "1rem",
+          width: "100%",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+          }}
+        >
+          <LikeButton isLiked={isLiked} handleLikeToggle={handleLikeToggle} />
+          <Typography sx={{ fontSize: "0.85rem" }}>{likeCount}</Typography>
+        </Box>
 
-        {/* Save Button */}
-        <SaveButton isSaved={saved} handleSaveToggle={handleSavePost} />
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+          }}
+        >
+          <IconButton onClick={() => setIsCommentsVisible(!isCommentsVisible)}>
+            <ChatBubbleOutlineOutlined sx={{ color: "gray" }} />
+          </IconButton>
+          <Typography sx={{ fontSize: "0.85rem" }}>{comments.length}</Typography>
+        </Box>
 
-        {/* Comment Button */}
-        <IconButton onClick={() => setIsCommentsVisible(!isCommentsVisible)}>
-          <ChatBubbleOutlineOutlined sx={{ color: "gray" }} />
-        </IconButton>
-        <Typography sx={{ fontSize: "0.85rem" }}>
-          {comments.length}
-        </Typography>
-      </FlexBetween>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {/* Pass postId to ensure unique save button */}
+          <SaveButton postId={postId} isSaved={saved} handleSaveToggle={handleSavePost} />
+        </Box>
+      </Box>
 
-      {/* Render Comments */}
       {isCommentsVisible && (
-        <Box mt="0.5rem">
+        <Box mt="1rem">
           {comments.map(({ userId, lastName, firstName, userPicturePath, commentText, createdAt }, i) => (
             <Box key={`${userId}-${i}`} mt="0.5rem">
               <Divider />
