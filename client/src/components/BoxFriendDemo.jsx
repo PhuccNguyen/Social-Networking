@@ -230,17 +230,16 @@ const BoxFriend = ({ friendId, postUserId, firstName, lastName, subtitle, userPi
   >
     Edit Post
   </DialogTitle>
-
   {/* Header Section with Profile Image and Name */}
   <Box
-    display="flex"
-    alignItems="center"
-    justifyContent="center"
-    flexDirection="column"
-    sx={{
-      marginBottom: "1.5rem",
-      textAlign: "center",
-    }}
+    // display="flex"
+    // alignItems="center"
+    // justifyContent="center"
+    // flexDirection="column"
+    // sx={{
+    //   marginBottom: "1.5rem",
+    //   textAlign: "center",
+    // }}
   >
     <UserImage image={userPicturePath} size="80px" sx={{ marginBottom: "1rem" }} />
     <Typography color={main} variant="h5" fontWeight="600">
