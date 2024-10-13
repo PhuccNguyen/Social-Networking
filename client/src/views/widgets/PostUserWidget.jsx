@@ -4,7 +4,7 @@ import { ChatBubbleOutlineOutlined } from "@mui/icons-material";
 import LikeButton from "components/LikeButton";
 import SaveButton from "components/SaveButton";
 import FlexBetween from "components/Adjustment";
-import Boxfriend from "components/BoxFriendDemo";
+import BoxFriend from "components/BoxFriendDemo";
 import Boxcomment from "components/BoxComment";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useDispatch, useSelector } from "react-redux";
@@ -37,6 +37,7 @@ const PostUserWidget = ({
   const loggedInUserId = loggedInUser._id;
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
+  
 
   const handleLikeToggle = async () => {
     try {
@@ -113,13 +114,17 @@ const PostUserWidget = ({
   };
 
   return (
-    <WidgetWrapper sx={{ width: "90%", margin: "1rem auto" }}>
-      <Boxfriend
-        friendId={postUserId}
+    <WidgetWrapper sx={{ width: "90%", margin: "1rem auto",  boxShadow: "0px 6px 13px 3px rgba(0, 0, 0, 0.1)", borderRadius: "7px" }}>
+      <BoxFriend
+        friendId={postUserId} 
         lastName={lastName}
         firstName={firstName}
         subtitle={location}
         userPicturePath={userPicturePath}
+        postId={postId} 
+        description={description}
+        location={location}
+        destination={destination}
       />
       <Divider />
       <Typography sx={{ mt: "1rem", fontSize: "0.95rem", fontWeight: 500 }}>

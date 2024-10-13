@@ -158,3 +158,56 @@ export const addComment = async (req, res) => {
 
 
 
+// Controller to get trending posts based on interactions
+export const getTrendingPosts = async (req, res) => {
+  try {
+    // Fetch all posts from the database
+    const posts = await Post.find();
+
+    // Calculate interaction counts (likes + comments) for each post
+    const trendingPosts = posts
+      .map((post) => {
+        const likeCount = post.likes ? Object.keys(post.likes).length : 0;
+        const commentCount = post.comments ? post.comments.length : 0;
+        const interactionCount = likeCount + commentCount;
+        return { ...post.toObject(), interactionCount }; // Include interactionCount in the post
+      })
+      .sort((a, b) => b.interactionCount - a.interactionCount) // Sort by interactionCount (descending)
+      .slice(0, 3); // Limit to top 3 posts
+
+    res.status(200).json(trendingPosts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+// Edit a specific post
+export const editPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { description, destination, location } = req.body;
+    
+    const post = await Post.findById(postId);
+
+    // Ensure the logged-in user owns the post
+    if (req.user.id !== post.userId.toString()) {
+      return res.status(403).json({ message: "You do not have permission to edit this post." });
+    }
+
+    // Update post details
+    post.description = description || post.description;
+    post.destination = destination || post.destination;
+    post.location = location || post.location;
+
+    await post.save();
+    res.status(200).json(post);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+
+
+
