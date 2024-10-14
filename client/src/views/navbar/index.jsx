@@ -56,7 +56,7 @@ const Navbar = () => {
           {isNonMobileScreens && (
             <FlexBetween
               backgroundColor={neutralLight}
-              borderRadius="9px"
+              borderRadius="5px"
               padding="0.1rem 1.5rem"
               gap="1rem"
               sx={{
@@ -76,6 +76,7 @@ const Navbar = () => {
           <ButtonNavbar label="Profile" path={`/profile/${userId}`} /> {/* Profile button with dynamic userId */}
           <ButtonNavbar label="Home" path="/home" />
           <ButtonNavbar label="Volunteer" path="/volunteer" />
+          <ButtonNavbar label="admin" path="/admin" />
         </Textnavbar>
 
         {/* Desktop Icons and Profile */}
@@ -143,6 +144,8 @@ const Navbar = () => {
               <ButtonNavbar label="Profile" path={`/profile/${userId}`} /> {/* Mobile Profile button */}
               <ButtonNavbar label="Home" path="/home" />
               <ButtonNavbar label="Volunteer" path="/volunteer" />
+              <ButtonNavbar label="admin" path="/admin" />
+
               <IconButton onClick={() => dispatch(setMode())}>
                 {theme.palette.mode === "dark" ? <DarkMode /> : <LightMode />}
               </IconButton>

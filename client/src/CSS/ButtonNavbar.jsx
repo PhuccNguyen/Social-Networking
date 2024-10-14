@@ -12,9 +12,9 @@ const ButtonNavbar = ({ label, path }) => {
     <Button
       onClick={() => navigate(path)}
       sx={{
-        fontSize: "13px",
-        width: "150px", // Ensures all buttons have the same width
-        height: "50px", // Ensures all buttons have the same height
+        fontSize: "12px",
+        width: "130px", // Ensures all buttons have the same width
+        height: "47px", // Ensures all buttons have the same height
         background: isActive
           ? "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)"
           : "transparent",
