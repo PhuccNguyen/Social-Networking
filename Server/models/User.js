@@ -26,9 +26,16 @@ const UserSchema = new mongoose.Schema(
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
     // Friend Requests
-    friendRequestsSent: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], 
-    friendRequestsReceived: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], 
+    friendRequestsSent: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    friendRequestsReceived: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
+    // Chiến dịch đã tham gia (cho User)
+    joinedCampaigns: [{ type: mongoose.Schema.Types.ObjectId, ref: "Campaign" }], 
+
+    // Chiến dịch được quản lý (cho Admin và Assistant Admin)
+    managedCampaigns: [{ type: mongoose.Schema.Types.ObjectId, ref: "Campaign" }],
+
+    // Bài viết đã lưu
     savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
   },
   { timestamps: true }
