@@ -2,7 +2,6 @@ import express from "express";
 import { createEvent } from "../controllers/event.js";
 import { updateUserRole } from "../controllers/users.js";
 import { verifyToken } from "../middleware/auth.js";
-import { verifyRole } from "../middleware/auth.js";
 
 const router = express.Router();
 
