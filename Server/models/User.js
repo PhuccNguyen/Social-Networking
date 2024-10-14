@@ -35,7 +35,7 @@ const UserSchema = new mongoose.Schema(
     // Chiến dịch được quản lý (cho Admin và Assistant Admin)
     managedCampaigns: [{ type: mongoose.Schema.Types.ObjectId, ref: "Campaign" }],
 
-    // Bài viết đã lưu
+    // Save post
     savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
   },
   { timestamps: true }

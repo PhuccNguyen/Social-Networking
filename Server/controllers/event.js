@@ -1,4 +1,4 @@
-import Event from "../models/Event.js";
+import Event from "../models/Campaign.js";
 import User from "../models/User.js";
 
 // Create a new event (Admin and Assistant Admin)
