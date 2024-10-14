@@ -1,29 +1,40 @@
-// src/views/VolunteerPage.js
-import { Box, Typography } from '@mui/material';
+import { Box, useMediaQuery } from '@mui/material';
 import Navbar from "views/navbar";
 import { useSelector } from 'react-redux';
+import UserWidget from 'views/widgets/UserWidget';
+import MyPostWidget from "views/widgets/MyPostWidget";
+import PostsWidget from "views/widgets/PostsWidget";
+import EventVolunteer from "views/widgets/AdsEventVolunteer";
 
 const VolunteerPage = () => {
-    const { _id, picturePath, userName } = useSelector((state) => state.user);
+  const isNonMobileScreen = useMediaQuery("(min-width:1000px)");
+  const { _id, picturePath, userName } = useSelector((state) => state.user);
 
-    return (
-        <Box>
-            <Navbar />
-            <Box
-                width="100%"
-                padding="2rem 6%"
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                marginTop="4rem" // Adjust for fixed navbar height
-            >
-                <Typography variant="h4" gutterBottom>
-                    Volunteer Opportunities
-                </Typography>
-                {/* Add content for volunteer opportunities here */}
-            </Box>
+  return (
+    <Box>
+      <Navbar />
+      <Box
+        width="100%"
+        padding="2rem 6%"
+        display={isNonMobileScreen ? "flex" : "block"}
+        gap="0.5rem"
+        justifyContent="space-between"
+        marginTop="70px"
+      >
+        <Box flexBasis={isNonMobileScreen ? "26%" : undefined}>
+          <UserWidget userId={_id} picturePath={picturePath} userName={userName} />
         </Box>
-    );
+        
+        <Box flexBasis={isNonMobileScreen ? "26%" : undefined} mt={isNonMobileScreen ? undefined : "2rem"}>
+          <MyPostWidget picturePath={picturePath} />
+          <PostsWidget userId={_id} />
+        </Box>
+        <Box flexBasis="26%" maxHeight="80vh" overflow="auto">
+          <EventVolunteer />
+        </Box>
+      </Box>
+    </Box>
+  );
 };
 
 export default VolunteerPage;

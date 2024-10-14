@@ -32,7 +32,7 @@ function App() {
             <Route path="/profile/:userId" element={isAuth ? <ProfilePage /> : <Navigate to="/" />} />
             <Route path="/savepost/:userId" element={isAuth ? <SavePost /> : <Navigate to="/" />} />
             {/* Wildcard route for 404 page */}
-            <Route path="*" element={<NotFoundPage />} />
+            <Route  path="*" element={<NotFoundPage />} />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>

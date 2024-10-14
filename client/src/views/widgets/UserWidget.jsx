@@ -58,7 +58,12 @@ const UserWidget = ({ userId, picturePath }) => {
        <AdjustContent
         gap="0.5rem"
         mb="0.4rem"
-        onClick={() => navigate (`/profile/${userId}`)}>
+        onClick={() => navigate (`/profile/${userId}`)}
+        sx = {{ "&:hover": 
+          {
+           cursor: "pointer",
+          },
+       }}>
         <AdjustContent gap="1.5rem">
         <UserImage image={picturePath} />  
          <Box>
