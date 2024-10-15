@@ -23,6 +23,7 @@ const Navbar = () => {
 
   const fullName = `${user.firstName} ${user.lastName}`;
   const userId = user._id; // Retrieve userId from the user object
+  const userRole = user.role; // Lấy role của người dùng từ Redux
 
   return (
     <Box
@@ -76,7 +77,11 @@ const Navbar = () => {
           <ButtonNavbar label="Profile" path={`/profile/${userId}`} /> {/* Profile button with dynamic userId */}
           <ButtonNavbar label="Home" path="/home" />
           <ButtonNavbar label="Volunteer" path="/volunteer" />
-          <ButtonNavbar label="admin" path="/admin" />
+
+          {/* Hiển thị nút Admin nếu role là admin */}
+          {userRole === "admin" && (
+            <ButtonNavbar label="Admin" path="/admin" />
+          )}
         </Textnavbar>
 
         {/* Desktop Icons and Profile */}
@@ -134,6 +139,7 @@ const Navbar = () => {
             minWidth="200px"
             backgroundColor={background}
           >
+            
             <Box display="flex" justifyContent="flex-end" p="1rem">
               <IconButton onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}>
                 <Close />
@@ -144,11 +150,16 @@ const Navbar = () => {
               <ButtonNavbar label="Profile" path={`/profile/${userId}`} /> {/* Mobile Profile button */}
               <ButtonNavbar label="Home" path="/home" />
               <ButtonNavbar label="Volunteer" path="/volunteer" />
-              <ButtonNavbar label="admin" path="/admin" />
+
+              {/* Hiển thị nút Admin nếu role là admin */}
+              {userRole === "admin" && (
+                <ButtonNavbar label="Admin" path="/admin" />
+              )}
 
               <IconButton onClick={() => dispatch(setMode())}>
                 {theme.palette.mode === "dark" ? <DarkMode /> : <LightMode />}
               </IconButton>
+              
               <Message sx={{ fontSize: "25px" }} />
               <Notifications sx={{ fontSize: "25px" }} />
               <FormControl variant="standard" value={fullName}>
