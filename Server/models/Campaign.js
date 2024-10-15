@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 // Tạo Schema cho Campaign
 const CampaignSchema = new mongoose.Schema({
-  title: { type: String, required: true }, // Tiêu đề chiến dịch (dọn rác, giúp trẻ em nghèo, ...)
+  title: { type: String, required: true }, // Tiêu đề chiến dịch
   description: { type: String, required: true }, // Mô tả chi tiết chiến dịch
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Người tạo chiến dịch (AssistantAdmin hoặc Admin)
   createdAt: { type: Date, default: Date.now }, // Ngày tạo chiến dịch
@@ -77,9 +77,14 @@ const CampaignSchema = new mongoose.Schema({
     required: true 
   },
 
+  // Thuộc tính bổ sung: theo dõi các trạng thái cột mốc
+  preparationCompleted: { type: Boolean, default: false }, // Đánh dấu việc chuẩn bị hoàn tất
+  volunteersFull: { type: Boolean, default: false },       // Đánh dấu khi số tình nguyện viên đầy đủ
+  campaignStarted: { type: Boolean, default: false },      // Đánh dấu khi chiến dịch bắt đầu
+  campaignCompleted: { type: Boolean, default: false },    // Đánh dấu khi chiến dịch hoàn thành
+
 }, { timestamps: true });
 
-// Middleware để kiểm tra tiến độ và cột mốc khi cập nhật Campaign
 CampaignSchema.pre('save', function (next) {
   const campaign = this;
 
@@ -90,20 +95,20 @@ CampaignSchema.pre('save', function (next) {
       totalProgress += milestone.percentage;
     }
   });
-  
+
   // Cập nhật tiến độ tổng thể (progress)
   campaign.progress = totalProgress;
 
   // Kiểm tra nếu số lượng tình nguyện viên đã đạt tối đa
   if (campaign.volunteerCount >= campaign.maxVolunteers) {
-    // Nếu số lượng tình nguyện viên đã đầy, không cho phép đăng ký thêm
-    campaign.status = 'completed';
+    campaign.volunteersFull = true;
   }
 
   // Kiểm tra ngày kết thúc chiến dịch để đánh dấu hoàn thành
   const now = new Date();
   if (now > campaign.campaignEndDate) {
     campaign.status = 'completed'; // Nếu chiến dịch đã kết thúc, đặt trạng thái thành "hoàn thành"
+    campaign.campaignCompleted = true;
   }
 
   next();
