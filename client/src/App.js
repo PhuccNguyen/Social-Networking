@@ -4,6 +4,7 @@ import LoginPage from "views/loginPage";
 import ProfilePage from "views/ProfilePage";
 import SavePost from "views/savepost";
 import VolunteerPage from "views/VolunteerPage";
+import Admin from "views/Admin";
 import SavedPostsPage from "views/SavedPostsPage";
 import FriendPage from "views/friendPage";
 import NotFoundPage from "views/NotFoundPage"; // Import the new NotFoundPage
@@ -31,6 +32,8 @@ function App() {
             <Route path="/home" element={isAuth ? <HomePage /> : <Navigate to="/" />} />
             <Route path="/profile/:userId" element={isAuth ? <ProfilePage /> : <Navigate to="/" />} />
             <Route path="/savepost/:userId" element={isAuth ? <SavePost /> : <Navigate to="/" />} />
+            <Route path="/Admin" element={isAuth ? <Admin /> : <Navigate to="/" />} />
+
             {/* Wildcard route for 404 page */}
             <Route  path="*" element={<NotFoundPage />} />
           </Routes>

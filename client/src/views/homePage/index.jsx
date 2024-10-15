@@ -29,6 +29,7 @@ const HomePage = () => {
           <MyPostWidget picturePath={picturePath} />
           <PostsWidget userId={_id} />
         </Box>
+        
         <Box flexBasis="26%" maxHeight="80vh" overflow="auto">
           <EventVolunteer />
         </Box>

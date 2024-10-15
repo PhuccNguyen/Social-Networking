@@ -57,6 +57,12 @@ const CampaignSchema = new mongoose.Schema({
     required: true 
   },
 
+  // Danh sách tình nguyện viên đã tham gia
+  volunteers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User' // Tham chiếu đến User schema
+  }],
+
   // Địa điểm và thời gian diễn ra chiến dịch
   location: { 
     type: String, 

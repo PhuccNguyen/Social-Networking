@@ -1,6 +1,7 @@
-import Campaign from '../models/Campaign.js';
+import Campaign from '../models/Campaign.js';  // Import model Campaign
+import User from '../models/User.js';  // Import model User
 
-// Controller để tạo một chiến dịch mới
+// Controller để tạo chiến dịch mới
 export const createCampaign = async (req, res) => {
   try {
     const {
@@ -12,17 +13,23 @@ export const createCampaign = async (req, res) => {
       location,
       campaignStartDate,
       campaignEndDate,
-      milestones,
+      milestones
     } = req.body;
 
-    // Lấy đường dẫn ảnh từ multer (nếu có)
-    const imagePath = req.file ? `/assets/${req.file.filename}` : "";
+    const createdBy = req.user._id;  // Lấy thông tin người tạo chiến dịch từ req.user (có được sau khi xác thực qua token)
+    const imagePath = req.file ? `/assets/${req.file.filename}` : ""; // Lấy đường dẫn của ảnh nếu có upload
+
+    // Kiểm tra xem người tạo có tồn tại không
+    const user = await User.findById(createdBy);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
     // Tạo một chiến dịch mới với các thông tin đã nhận từ body của request
     const newCampaign = new Campaign({
       title,
       description,
-      imagePath,  // Lưu đường dẫn ảnh
+      createdBy,
       registrationStartDate,
       registrationEndDate,
       maxVolunteers,
@@ -30,7 +37,11 @@ export const createCampaign = async (req, res) => {
       campaignStartDate,
       campaignEndDate,
       milestones,
-      createdBy: req.user._id,  // Lấy thông tin người tạo từ req.user (được xác thực qua token)
+      imagePath,
+      volunteerCount: 0,  // Ban đầu chưa có ai tham gia
+      progress: 0,        // Ban đầu tiến độ bằng 0
+      status: 'ongoing',  // Trạng thái ban đầu là ongoing
+      volunteers: [],     // Mảng rỗng, chưa có tình nguyện viên nào
     });
 
     // Lưu chiến dịch vào database
