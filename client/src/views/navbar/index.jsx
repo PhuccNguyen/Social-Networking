@@ -7,7 +7,9 @@ import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/Adjustment";
 import Textnavbar from "components/Textnavbar";
 import SetMode from "components/SetMode";
+import Bell from "components/BellNavbar";
 import ButtonNavbar from "CSS/ButtonNavbar";
+
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -91,7 +93,7 @@ const Navbar = () => {
              <SetMode /> {/* Thay thế IconButton thành Switch SetMode */}
 
 
-            <Notifications sx={{ fontSize: "25px" }} />
+            <Bell />
             
             <FormControl variant="standard" value={fullName}>
               <Select
