@@ -6,6 +6,7 @@ import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/Adjustment";
 import Textnavbar from "components/Textnavbar";
+import SetMode from "components/SetMode";
 import ButtonNavbar from "CSS/ButtonNavbar";
 
 const Navbar = () => {
@@ -22,8 +23,8 @@ const Navbar = () => {
   const alt = theme.palette.background.alt;
 
   const fullName = `${user.firstName} ${user.lastName}`;
-  const userId = user._id; // Retrieve userId from the user object
-  const userRole = user.role; // Lấy role của người dùng từ Redux
+  const userId = user._id; 
+  const userRole = user.role; 
 
   return (
     <Box
@@ -79,7 +80,7 @@ const Navbar = () => {
           <ButtonNavbar label="Volunteer" path="/volunteer" />
 
           {/* Hiển thị nút Admin nếu role là admin */}
-          {userRole === "admin" && (
+          {userRole === "user" && (
             <ButtonNavbar label="Admin" path="/admin" />
           )}
         </Textnavbar>
@@ -87,15 +88,11 @@ const Navbar = () => {
         {/* Desktop Icons and Profile */}
         {isNonMobileScreens ? (
           <FlexBetween gap="2rem">
-            <IconButton onClick={() => dispatch(setMode())}>
-              {theme.palette.mode === "dark" ? (
-                <DarkMode sx={{ fontSize: "25px" }} />
-              ) : (
-                <LightMode sx={{ color: dark, fontSize: "25px" }} />
-              )}
-            </IconButton>
-            <Message sx={{ fontSize: "25px" }} />
+             <SetMode /> {/* Thay thế IconButton thành Switch SetMode */}
+
+
             <Notifications sx={{ fontSize: "25px" }} />
+            
             <FormControl variant="standard" value={fullName}>
               <Select
                 value={fullName}
@@ -151,8 +148,8 @@ const Navbar = () => {
               <ButtonNavbar label="Home" path="/home" />
               <ButtonNavbar label="Volunteer" path="/volunteer" />
 
-              {/* Hiển thị nút Admin nếu role là admin */}
-              {userRole === "admin" && (
+              {/* display button if admin*/}
+              {userRole === "user" && (
                 <ButtonNavbar label="Admin" path="/admin" />
               )}
 
@@ -160,8 +157,9 @@ const Navbar = () => {
                 {theme.palette.mode === "dark" ? <DarkMode /> : <LightMode />}
               </IconButton>
               
-              <Message sx={{ fontSize: "25px" }} />
               <Notifications sx={{ fontSize: "25px" }} />
+              
+
               <FormControl variant="standard" value={fullName}>
                 <Select
                   value={fullName}
