@@ -156,7 +156,7 @@ const MyPostWidget = ({ picturePath }) => {
 
   return (
     <>
-      <WidgetWrapper margin="-0.5rem 0rem 0rem 0rem">
+      <WidgetWrapper boxShadow= "0px 6px 13px 3px rgba(0, 0, 0, 0.1)" margin="-0.5rem 0rem 0rem 0rem">
         <Box>
           <Adjustment gap="1.5rem" width="600px" marginBottom="10px">
             <UserImage image={picturePath} />

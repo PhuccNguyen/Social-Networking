@@ -17,6 +17,7 @@ const AdvertWidget = () => {
     <WidgetWrapper
       position="fixed"
       margin="-0.5rem 1rem 1rem 1rem"
+      boxShadow= "0px 6px 13px 3px rgba(0, 0, 0, 0.1)"
       top="14.5%"
       zIndex={1000}
       left="74%"

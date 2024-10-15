@@ -54,7 +54,7 @@ const UserWidget = ({ userId, picturePath }) => {
   } = user;
 
   return (
-    <WidgetWrapper position="fixed" margin="-0.5rem 1rem 1rem 1rem" top="14.5%" zIndex={1000} right="74%" width="370px" >
+    <WidgetWrapper position="fixed" margin="-0.5rem 1rem 1rem 1rem" top="14.5%" zIndex={1000} right="74%" width="370px" boxShadow= "0px 6px 13px 3px rgba(0, 0, 0, 0.1)" >
        {/******** One *******/}
        <AdjustContent
         gap="0.5rem"
@@ -89,7 +89,7 @@ const UserWidget = ({ userId, picturePath }) => {
        <Divider />
 
        {/******** Two *******/}
-       <Box gap="1.5rem" p="1rem 0" >
+       <Box gap="1.5rem" p="1rem 0rem 0rem 0" >
 
        <Typography fontSize="1rem" color={main} fontWeight="500" mb="0.6rem">
            Profiles
@@ -155,10 +155,10 @@ const UserWidget = ({ userId, picturePath }) => {
         </Box>
         
        </Box>
-        <Divider />
+        <Divider p="4rem 0" />
 
        
-             {/******** Four *******/}
+             {/******** Shortcut *******/}
         <Box p="1rem 0">
   <Typography fontSize="1rem" color={main} fontWeight="500" mb="1rem">
     Shortcut
@@ -174,7 +174,7 @@ const UserWidget = ({ userId, picturePath }) => {
       sx={{ 
         backgroundColor: "transparent", 
         color: main, 
-        padding: "0.1rem 0.8rem", 
+        padding: "0.1rem 0.8rem",   
         borderRadius: "1px", 
         width: "100%",
         textAlign: "start", 
