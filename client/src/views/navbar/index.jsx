@@ -119,7 +119,7 @@ const Navbar = () => {
           <ButtonNavbar label="Volunteer" path="/volunteer" />
 
           {/* Hiển thị nút Admin nếu role là admin */}
-          {userRole === "user" && (
+          {userRole === "admin" && (
             <ButtonNavbar label="Admin" path="/admin" />
           )}
         </Textnavbar>

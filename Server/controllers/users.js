@@ -51,7 +51,7 @@ export const getUserFriends = async (req, res) => {
                     occupation, 
                     location, 
                     picturePath,
-                    mutualFriends: mutualFriendsCount[index], // Thêm số lượng bạn chung
+                    mutualFriends: mutualFriendsCount[index], 
                 };
             }
         );

@@ -48,6 +48,16 @@ export const register = async (req, res) => {
             // impressions: Math.floor(Math.random() * 1000),
         });
         const savedUser = await newUser.save();
+
+
+            // Create JWT token including user role
+    const token = jwt.sign(
+        { id: savedUser._id, role: savedUser.role },  // Include role in the token
+        process.env.JWT_SECRET,
+        { expiresIn: '5h' }
+      );
+
+      
         res.status(201).json(savedUser);
     } catch (err) {
         console.error(err);
@@ -57,40 +67,47 @@ export const register = async (req, res) => {
 
 
 
-// LOGIN USER 
 export const login = async (req, res) => {
     try {
-        const { identifier, password } = req.body;
-
-        // Find the user by email, mobile or username
-        const user = await User.findOne({ 
-            $or: [{ email: identifier }, { mobile: identifier }, { userName: identifier }]
-        });
-
-        if (!user) {
-            return res.status(404).json({ msg: "User does not exist!" });
-        }
-
-        // Check if the password is correct
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ msg: "Invalid credentials" });
-        }
-
-        // Update last login time
-        user.lastLogin = new Date();
-        await user.save();
-
-        // Create JWT token
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '5h' });
-
-        // Remove password before returning user data
-        const { password: _, ...userWithoutPassword } = user.toObject();
-        
-        // Send token and user info in the response
-        res.status(200).json({ token, user: userWithoutPassword });
-
+      const { identifier, password } = req.body;
+  
+      // Find the user by email, mobile or username
+      const user = await User.findOne({ 
+        $or: [{ email: identifier }, { mobile: identifier }, { userName: identifier }]
+      });
+  
+      if (!user) {
+        return res.status(404).json({ msg: "User does not exist!" });
+      }
+  
+      // Check if the password is correct
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ msg: "Invalid credentials" });
+      }
+  
+      // Update last login time
+      user.lastLogin = new Date();
+      await user.save();
+  
+      // Create JWT token including user role
+      const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '5h' });
+  
+      // Remove password before returning user data
+      const { password: _, ...userWithoutPassword } = user.toObject();
+      
+      // Send token and user info in the response
+      res.status(200).json({ token, user: userWithoutPassword });
+  
     } catch (err) {
-        res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ error: "Internal server error" });
     }
-};
+  };
+  
+//   // Create JWT token including user role
+// const token = jwt.sign(
+//     { id: user._id, role: user.role },  // Make sure 'role' is included in the token
+//     process.env.JWT_SECRET, 
+//     { expiresIn: '5h' }
+//   );
+  
