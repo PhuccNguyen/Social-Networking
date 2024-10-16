@@ -233,7 +233,7 @@ const MyPostWidget = ({ picturePath }) => {
               >
           <LocationOnOutlined sx={{ marginRight: "0.5rem" }} /> 
           Check In
-      </Typography>
+         </Typography>
           </Button>
         </Box>
       </WidgetWrapper>

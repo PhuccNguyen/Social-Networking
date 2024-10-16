@@ -6,6 +6,10 @@ import MyPostWidget from "views/widgets/MyPostWidget";
 import PostsWidget from "views/widgets/PostsWidget";
 import EventVolunteer from "views/widgets/VolunteerAdsEvent";
 
+import VolunteerPost from "views/widgets/VolunteerPost";
+import VolunteerPostsWidget from "views/widgets/PostsWidget";
+
+
 const VolunteerPage = () => {
   const isNonMobileScreen = useMediaQuery("(min-width:1000px)");
   const { _id, picturePath, userName } = useSelector((state) => state.user);
@@ -26,12 +30,16 @@ const VolunteerPage = () => {
         </Box>
         
         <Box flexBasis={isNonMobileScreen ? "26%" : undefined} mt={isNonMobileScreen ? undefined : "2rem"}>
-          <MyPostWidget picturePath={picturePath} />
+          {/* <MyPostWidget picturePath={picturePath} /> */}
+          <VolunteerPost picturePath={picturePath} />
+
           <PostsWidget userId={_id} />
         </Box>
+
         <Box flexBasis="26%" maxHeight="80vh" overflow="auto">
           <EventVolunteer />
         </Box>
+        
       </Box>
     </Box>
   );

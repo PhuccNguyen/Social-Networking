@@ -42,6 +42,10 @@ export const createCampaign = async (req, res) => {
       progress: 0,        // Ban đầu tiến độ bằng 0
       status: 'ongoing',  // Trạng thái ban đầu là ongoing
       volunteers: [],     // Mảng rỗng, chưa có tình nguyện viên nào
+      preparationCompleted: false, // Mặc định chưa chuẩn bị xong
+      volunteersFull: false,       // Mặc định số tình nguyện viên chưa đầy
+      campaignStarted: false,      // Mặc định chưa bắt đầu
+      campaignCompleted: false,    // Mặc định chưa hoàn thành
     });
 
     // Lưu chiến dịch vào database
