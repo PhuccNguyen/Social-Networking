@@ -24,7 +24,7 @@ const VolunteerPage = () => {
         marginTop="70px"
       >
         <Box flexBasis={isNonMobileScreen ? "26%" : undefined}>
-          <UserWidget userId={_id} picturePath={picturePath} userName={userName} />
+          <UserWidget userId={_id} picturePath={picturePath} userName={userName} role={role}/>
         </Box>
         
         <Box flexBasis={isNonMobileScreen ? "26%" : undefined} mt={isNonMobileScreen ? undefined : "2rem"}>

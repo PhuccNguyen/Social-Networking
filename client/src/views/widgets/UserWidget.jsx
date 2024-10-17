@@ -6,18 +6,27 @@ import UserImage from "components/UserImage";
 import AdjustContent from "components/Adjustment";
 import WidgetWrapper from "components/WidgetWrapper";
 import Settingprofile from "components/settingprofile";
+import IdentifyRoleAdmin from "components/IdentifyRoleAdmin";
+import IdentifyRoleAsistantAdmin from "components/IdentifyRoleAsistantAdmin";
+
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const UserWidget = ({ userId, picturePath }) => {
+const UserWidget = ({ userId, picturePath, role  }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
   const { palette } = useTheme();
+
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
+
+  // Use the 'role' passed as a prop
+  const userRole = role;
+
+
 
   const getUser = async () => {
       const response = await fetch(`http://localhost:3001/users/${userId}`, {
@@ -64,9 +73,11 @@ const UserWidget = ({ userId, picturePath }) => {
           {
            cursor: "pointer",
           },
-       }}>
+       }}>  
         <AdjustContent gap="1.5rem">
         <UserImage image={picturePath} />  
+        {userRole === "assistantAdmin" && <IdentifyRoleAsistantAdmin />}
+        {userRole === "admin" && <IdentifyRoleAdmin />}
          <Box>
             <Typography
             variant="h5"
@@ -215,6 +226,7 @@ const UserWidget = ({ userId, picturePath }) => {
   </Box>
 
    {/* Saved Button */}
+   {userRole === "assistantAdmin" && 
    <Box display="flex" alignItems="center" gap="0.5rem" mb="0.5rem" width="100%">
     <FcBookmark fontSize="1.5rem" width="1.2em" height="1.2em" />
     <Button 
@@ -237,7 +249,7 @@ const UserWidget = ({ userId, picturePath }) => {
       Manage Post
     </Button>
   </Box>
-
+   }
 
 </Box>
 

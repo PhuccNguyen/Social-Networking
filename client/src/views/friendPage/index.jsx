@@ -10,7 +10,7 @@ import FriendSuggestions from "views/widgets/FriendSuggestions";
 import FriendRequestsSent from "views/widgets/FriendRequestsSent";
 
 const FriendPage = () => {
-    const { _id, picturePath, userName } = useSelector((state) => state.user);
+    const { _id, picturePath, userName, role } = useSelector((state) => state.user);
     const navigate = useNavigate();
     const [tabValue, setTabValue] = useState(0);
     const theme = useTheme(); 
@@ -25,7 +25,7 @@ const FriendPage = () => {
             <Box display="flex" justifyContent="space-between" marginTop="2.8rem" padding="1rem">
                 {/* Fixed Left Section: UserWidget */}
                 <Box>
-                    <UserWidget userId={_id} picturePath={picturePath} userName={userName} />
+                    <UserWidget userId={_id} picturePath={picturePath} userName={userName}  role={role} />
                 </Box>
 
                 {/* Main Content: Friends Management */}

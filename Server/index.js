@@ -78,7 +78,7 @@ app.post("/posts", verifyToken, upload.single("picture"), createPost); // Verify
 app.use("/auth", authRoutes);
 app.use("/users", usersRoutes);
 app.use("/posts", postsRoutes);
-app.use("/friends", friendRoutes);
+app.use("/friends",verifyToken, friendRoutes);
 app.use('/volunteer', volunteerRoutes);
 // app.use("/event", eventsRoutes);
 // app.use("/admin", adminRoutes);

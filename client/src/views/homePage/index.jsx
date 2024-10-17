@@ -8,7 +8,7 @@ import EventVolunteer from "views/widgets/VolunteerAdsEvent";
 
 const HomePage = () => {
   const isNonMobileScreen = useMediaQuery("(min-width:1000px)");
-  const { _id, picturePath, userName } = useSelector((state) => state.user);
+  const { _id, picturePath, userName, role} = useSelector((state) => state.user);
 
   return (
     <Box>
@@ -22,7 +22,7 @@ const HomePage = () => {
         marginTop="70px"
       >
         <Box flexBasis={isNonMobileScreen ? "26%" : undefined}>
-          <UserWidget userId={_id} picturePath={picturePath} userName={userName} />
+          <UserWidget userId={_id} picturePath={picturePath} userName={userName}  role={role} />
         </Box>
         
         <Box flexBasis={isNonMobileScreen ? "26%" : undefined} mt={isNonMobileScreen ? undefined : "2rem"}>
@@ -31,7 +31,7 @@ const HomePage = () => {
         </Box>
         
         <Box flexBasis="26%" maxHeight="80vh" overflow="auto">
-          <EventVolunteer />
+          <EventVolunteer userId={_id} picturePath={picturePath} userName={userName}  role={role}/>
         </Box>
       </Box>
     </Box>

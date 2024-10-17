@@ -6,7 +6,7 @@ import SavedPosts from "views/savepost"; // This is your SavedPosts component
 import { useNavigate } from "react-router-dom";
 
 const SavedPostsPage = () => {
-    const { _id, picturePath, userName } = useSelector((state) => state.user);
+    const { _id, picturePath, userName, role } = useSelector((state) => state.user);
     const navigate = useNavigate();
 
     return (
@@ -28,7 +28,7 @@ const SavedPostsPage = () => {
                     zIndex={1000} // Ensure it stays on top
                     boxShadow="2px 0 5px rgba(0, 0, 0, 0.1)" // Optional: Shadow for better visibility
                 >
-                    <UserWidget userId={_id} picturePath={picturePath} userName={userName} />
+                    <UserWidget userId={_id} picturePath={picturePath} userName={userName}  role={role} />
                 </Box>
 
                 {/* Main Content: SavedPosts */}

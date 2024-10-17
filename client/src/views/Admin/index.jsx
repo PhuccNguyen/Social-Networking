@@ -2,9 +2,8 @@ import { Box, useMediaQuery } from '@mui/material';
 import Navbar from "views/navbar";
 import { useSelector } from 'react-redux';
 import UserWidget from 'views/widgets/UserWidget';
-import AdminManager from "views/widgets/AdminManager';";
-import PostsWidget from "views/widgets/PostsWidget";
-import EventVolunteer from "views/widgets/VolunteerAdsEvent";
+import AdminManager from "views/widgets/AdminManager";
+
 
 const AdminControll = () => {
   const isNonMobileScreen = useMediaQuery("(min-width:1000px)");
@@ -21,13 +20,12 @@ const AdminControll = () => {
         justifyContent="space-between"
         marginTop="70px"
       >
-        {/* flexBasis="26%" maxHeight="80vh" overflow="auto" */}
-        <Box flexBasis={isNonMobileScreen ? "26%" : undefined} mt={isNonMobileScreen ? undefined : "2rem"}>
-        <PostsWidget userId={_id} />
+        <Box flexBasis={isNonMobileScreen ? "26%" : undefined}>
+          <UserWidget userId={_id} picturePath={picturePath} userName={userName}  role={role}/>
         </Box>
-        {/* <Box >
-          <AdminManager picturePath={picturePath} role={role}/>
-        </Box> */}
+        <Box >
+          <AdminManager picturePath={picturePath} role={role} userId={_id} userName={userName}/>
+        </Box>
       </Box>
     </Box>
   );

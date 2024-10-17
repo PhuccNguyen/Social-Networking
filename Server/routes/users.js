@@ -18,7 +18,7 @@ router.get("/:id", verifyToken, getUser);
 router.patch("/:id", verifyToken, updateUser);
 
 // Delete a friend
-router.delete("/:id/friends/:friendId", verifyToken, deleteUserFriend); // Add this route
+router.delete("/:id/friends/:friendId", verifyToken, deleteUserFriend);
 
 // Get user friends
 router.get("/:id/friends", verifyToken, getUserFriends);

@@ -11,7 +11,7 @@ const AdvertWidget = () => {
   const medium = palette.neutral.medium;
 
   // Pulling user data from Redux state
-  const { _id, picturePath, userName } = useSelector((state) => state.user);
+  const { _id, picturePath, userName, role} = useSelector((state) => state.user);
 
   return (
     <WidgetWrapper
@@ -71,7 +71,7 @@ const AdvertWidget = () => {
         }}
       >
         {/* Friend List - passing the userId to fetch friend's data */}
-        <FriendListWidget userId={_id} />
+        <FriendListWidget userId={_id}  role={role} />
       </Box>
     </WidgetWrapper>
   );

@@ -1,16 +1,32 @@
 import React, { useState } from "react";
-import { Box, Typography, Grid, Paper, InputBase, IconButton, Avatar, Button, Table, TableHead, TableBody, TableRow, TableCell, LinearProgress } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Grid,
+  Paper,
+  InputBase,
+  IconButton,
+  Avatar,
+  Button,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  LinearProgress,
+} from "@mui/material";
 import { Search } from "@mui/icons-material";
-import { RadialBarChart, RadialBar, Legend, PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { RadialBarChart, RadialBar, Legend, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { useNavigate } from "react-router-dom";
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 
-// Fake data cho AssistantAdmin và campaigns
+// Fake data for assistantAdmins, users, and campaigns
 const assistantAdmins = [
   { _id: "admin1", username: "AssistantAdmin 1", picturePath: "/assets/admin1.png" },
   { _id: "admin2", username: "AssistantAdmin 2", picturePath: "/assets/admin2.png" },
 ];
 
-// Fake data cho Users
 const users = [
   { _id: "user1", firstName: "John", lastName: "Doe", gender: "male" },
   { _id: "user2", firstName: "Jane", lastName: "Smith", gender: "female" },
@@ -18,7 +34,6 @@ const users = [
   { _id: "user4", firstName: "Emily", lastName: "Johnson", gender: "female" },
 ];
 
-// Fake data cho campaigns
 const campaigns = [
   {
     _id: "1",
@@ -48,58 +63,122 @@ const campaigns = [
   },
 ];
 
-// Màu cho pie chart
+// Custom component for stat cards
+const StatCard = ({ title, value, percentage, color, icon }) => (
+  <Paper sx={{ padding: "1rem", display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Box>
+      <Typography variant="h6">{title}</Typography>
+      <Typography variant="h3">{value}</Typography>
+    </Box>
+    <Box 
+      sx={{ 
+        backgroundColor: color.bgColor, 
+        padding: '0.3rem 0.7rem', 
+        borderRadius: '8px', 
+        display: 'flex', 
+        alignItems: 'center',
+        color: color.textColor 
+      }}
+    >
+      {icon}
+      <Typography variant="body1" sx={{ ml: 0.5 }}>
+        {percentage}
+      </Typography>
+    </Box>
+  </Paper>
+);
+
+// COLORS for charts
 const COLORS = ['#0088FE', '#FFBB28'];
 
-// Component AdminDashboard
 const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredCampaigns, setFilteredCampaigns] = useState(campaigns);
   const [selectedCampaign, setSelectedCampaign] = useState(null); // Chiến dịch được chọn
   const navigate = useNavigate();
 
-  // Tổng số chiến dịch và tình nguyện viên
+  // Calculated data
   const totalCampaigns = campaigns.length;
   const totalVolunteers = campaigns.reduce((acc, campaign) => acc + campaign.volunteerCount, 0);
+  const totalRegisteredUsers = users.length;
+  const totalRegisteredVolunteers = users.filter(user =>
+    campaigns.some(campaign => campaign.volunteers.includes(user))
+  ).length;
 
-  // Xử lý tìm kiếm chiến dịch bằng ID hoặc tên
+  // Handle campaign search
   const handleSearch = () => {
     const searchResults = campaigns.filter((campaign) =>
       campaign.title.toLowerCase().includes(searchQuery.toLowerCase()) || campaign._id.includes(searchQuery)
     );
     setFilteredCampaigns(searchResults);
-    setSelectedCampaign(null); // Reset selected campaign khi tìm kiếm mới
+    setSelectedCampaign(null); // Reset selected campaign when performing a new search
   };
 
-  // Xử lý khi click vào một chiến dịch
+
+// Custom BarChartIcon for representing the small bar chart, with dynamic colors
+const BarChartIcon = ({ fillColor }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="12" width="2" height="8" fill={fillColor} />
+    <rect x="8" y="8" width="2" height="12" fill={fillColor} />
+    <rect x="12" y="10" width="2" height="10" fill={fillColor} />
+    <rect x="16" y="6" width="2" height="14" fill={fillColor} />
+    <rect x="20" y="9" width="2" height="11" fill={fillColor} />
+  </svg>
+);
+
+  // Handle campaign click
   const handleCampaignClick = (campaign) => {
-    setSelectedCampaign(campaign); // Hiển thị chi tiết tiến độ chiến dịch khi click
+    setSelectedCampaign(campaign); // Display campaign progress details when clicked
   };
 
-  // Xử lý khi click vào profile của AssistantAdmin
+  // Handle admin click to view profile
   const handleAdminClick = (adminId) => {
-    navigate(`/profile/${adminId}`); // Điều hướng đến trang profile của AssistantAdmin
+    navigate(`/profile/${adminId}`);
   };
 
   return (
     <Box padding="2rem">
-      {/* Tổng số chiến dịch và tình nguyện viên */}
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ padding: "1rem" }}>
-            <Typography variant="h6">Tổng số Chiến dịch</Typography>
-            <Typography variant="h3">{totalCampaigns}</Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ padding: "1rem" }}>
-            <Typography variant="h6">Tổng số Tình nguyện viên</Typography>
-            <Typography variant="h3">{totalVolunteers}</Typography>
-          </Paper>
-        </Grid>
-      </Grid>
+      {/* Display stat cards */}
+<Grid container spacing={4}>
+  <Grid item xs={12} md={3}>
+    <StatCard 
+      title="Total Campaigns" 
+      value={totalCampaigns} 
+      percentage="+10%" 
+      color={{ bgColor: "#E6F4EA", textColor: "#34A853" }} 
+      icon={<BarChartIcon fillColor="#34A853" />} // Dynamic color for the bar chart
+    />
+  </Grid>
+  <Grid item xs={12} md={3}>
+    <StatCard 
+      title="Total Volunteers" 
+      value={totalVolunteers} 
+      percentage="-7%" 
+      color={{ bgColor: "#FCE8E6", textColor: "#EA4335" }} 
+      icon={<BarChartIcon fillColor="#EA4335" />} // Dynamic color for the bar chart
+    />
+  </Grid>
+  <Grid item xs={12} md={3}>
+    <StatCard 
+      title="Registered Users" 
+      value={totalRegisteredUsers} 
+      percentage="~12%" 
+      color={{ bgColor: "#F3E5F5", textColor: "#9C27B0" }} 
+      icon={<BarChartIcon fillColor="#9C27B0" />}  // Dynamic color for the bar chart
+    />
+  </Grid>
+  <Grid item xs={12} md={3}>
+    <StatCard 
+      title="Registered Volunteers" 
+      value={totalRegisteredVolunteers} 
+      percentage="33%" 
+      color={{ bgColor: "#E3F2FD", textColor: "#2196F3" }} 
+      icon={<BarChartIcon fillColor="#2196F3" />} // Dynamic color for the bar chart
+    />
+  </Grid>
+</Grid>
 
-      {/* Tìm kiếm chiến dịch */}
+      {/* Campaign search */}   
       <Box display="flex" alignItems="center" mt={4}>
         <InputBase
           placeholder="Tìm kiếm chiến dịch bằng ID hoặc tên..."
@@ -112,7 +191,7 @@ const AdminDashboard = () => {
         </IconButton>
       </Box>
 
-      {/* Nếu đã chọn một chiến dịch, hiển thị chi tiết tiến độ của chiến dịch đó */}
+      {/* Display selected campaign progress */}
       {selectedCampaign ? (
         <Box mt={4}>
           <Typography variant="h4" gutterBottom>
@@ -120,12 +199,19 @@ const AdminDashboard = () => {
           </Typography>
 
           <Grid container spacing={4}>
-            {/* Biểu đồ tiến độ (RadialBarChart) */}
+            {/* RadialBarChart for campaign progress */}
             <Grid item xs={12} md={4}>
               <Paper sx={{ padding: "1rem" }}>
                 <Typography variant="h6">Tiến độ chiến dịch</Typography>
                 <ResponsiveContainer width="100%" height={300}>
-                  <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="90%" barSize={10} data={[{ name: 'Progress', progress: selectedCampaign.progress }]}>
+                  <RadialBarChart
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="20%"
+                    outerRadius="90%"
+                    barSize={10}
+                    data={[{ name: 'Progress', progress: selectedCampaign.progress }]}
+                  >
                     <RadialBar minAngle={15} label={{ position: 'insideStart', fill: '#fff' }} background clockWise dataKey="progress" />
                     <Legend />
                   </RadialBarChart>
@@ -133,16 +219,24 @@ const AdminDashboard = () => {
               </Paper>
             </Grid>
 
-            {/* Tỷ lệ nam/nữ (PieChart) */}
+            {/* PieChart for volunteer ratio */}
             <Grid item xs={12} md={4}>
               <Paper sx={{ padding: "1rem" }}>
                 <Typography variant="h6">Tỷ lệ tình nguyện viên</Typography>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
-                    <Pie data={[
-                      { name: 'Nam', value: selectedCampaign.maleVolunteers },
-                      { name: 'Nữ', value: selectedCampaign.femaleVolunteers }
-                    ]} dataKey="value" cx="50%" cy="50%" outerRadius={100} fill="#8884d8" label>
+                    <Pie
+                      data={[
+                        { name: 'Nam', value: selectedCampaign.maleVolunteers },
+                        { name: 'Nữ', value: selectedCampaign.femaleVolunteers }
+                      ]}
+                      dataKey="value"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      fill="#8884d8"
+                      label
+                    >
                       {['Nam', 'Nữ'].map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
@@ -153,27 +247,26 @@ const AdminDashboard = () => {
               </Paper>
             </Grid>
 
-            {/* Danh sách tình nguyện viên */}
+            {/* List of Volunteers */}
             <Grid item xs={12} md={4}>
-  <Paper sx={{ padding: "1rem" }}>
-    <Typography variant="h6">
-      Danh sách Tình nguyện viên ({selectedCampaign.volunteers.length}) {/* Hiển thị tổng số lượng */}
-    </Typography>
-    <ul>
-      {selectedCampaign.volunteers.map(volunteer => (
-        <li key={volunteer._id}>
-          {volunteer.firstName} {volunteer.lastName}
-        </li>
-      ))}
-    </ul>
-  </Paper>
-</Grid>
-
+              <Paper sx={{ padding: "1rem" }}>
+                <Typography variant="h6">
+                  Danh sách Tình nguyện viên ({selectedCampaign.volunteers.length}) {/* Display total count */}
+                </Typography>
+                <ul>
+                  {selectedCampaign.volunteers.map(volunteer => (
+                    <li key={volunteer._id}>
+                      {volunteer.firstName} {volunteer.lastName}
+                    </li>
+                  ))}
+                </ul>
+              </Paper>
+            </Grid>
           </Grid>
         </Box>
       ) : (
         <Box mt={4}>
-          {/* Hiển thị bảng chiến dịch tổng quan */}
+          {/* Display a table with campaigns if no campaign is selected */}
           <Typography variant="h4" gutterBottom>
             Chi tiết Chiến dịch
           </Typography>
@@ -186,12 +279,16 @@ const AdminDashboard = () => {
                 <TableCell>Ngày Kết thúc</TableCell>
                 <TableCell>Tình trạng</TableCell>
                 <TableCell>Tiến độ</TableCell>
-                <TableCell>AssistantAdmin</TableCell>
+                <TableCell>Assistant Admin</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredCampaigns.map((campaign) => (
-                <TableRow key={campaign._id} onClick={() => handleCampaignClick(campaign)} style={{ cursor: "pointer" }}>
+                <TableRow
+                  key={campaign._id}
+                  onClick={() => handleCampaignClick(campaign)}
+                  style={{ cursor: "pointer" }}
+                >
                   <TableCell>{campaign._id}</TableCell>
                   <TableCell>{campaign.title}</TableCell>
                   <TableCell>{campaign.campaignStartDate}</TableCell>
@@ -201,8 +298,18 @@ const AdminDashboard = () => {
                     <LinearProgress variant="determinate" value={campaign.progress} />
                   </TableCell>
                   <TableCell>
-                    <Button onClick={() => handleAdminClick(campaign.createdBy._id)} style={{ textTransform: 'none' }}>
-                      <Avatar src={campaign.createdBy.picturePath} alt={campaign.createdBy.username} sx={{ width: 30, height: 30, mr: 1 }} />
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAdminClick(campaign.createdBy._id);
+                      }}
+                      style={{ textTransform: "none" }}
+                    >
+                      <Avatar
+                        src={campaign.createdBy.picturePath}
+                        alt={campaign.createdBy.username}
+                        sx={{ width: 30, height: 30, mr: 1 }}
+                      />
                       {campaign.createdBy.username}
                     </Button>
                   </TableCell>
