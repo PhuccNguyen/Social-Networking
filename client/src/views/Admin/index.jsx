@@ -1,7 +1,7 @@
 import { Box, useMediaQuery } from '@mui/material';
 import Navbar from "views/navbar";
 import { useSelector } from 'react-redux';
-import UserWidget from 'views/widgets/UserWidget';
+import AdminWidget from 'views/widgets/AdminWidget';
 import AdminManager from "views/widgets/AdminManager";
 
 
@@ -20,11 +20,8 @@ const AdminControll = () => {
         justifyContent="space-between"
         marginTop="70px"
       >
-        <Box flexBasis={isNonMobileScreen ? "26%" : undefined}>
-          <UserWidget userId={_id} picturePath={picturePath} userName={userName}  role={role}/>
-        </Box>
-        <Box >
-          <AdminManager picturePath={picturePath} role={role} userId={_id} userName={userName}/>
+        <Box flexBasis={isNonMobileScreen ? "100%" : undefined}>
+          <AdminWidget userId={_id} picturePath={picturePath} userName={userName}  role={role}/>
         </Box>
       </Box>
     </Box>
