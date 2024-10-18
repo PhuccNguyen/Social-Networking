@@ -2,26 +2,29 @@ import { Box, useMediaQuery } from '@mui/material';
 import Navbar from "views/navbar";
 import { useSelector } from 'react-redux';
 import AdminWidget from 'views/widgets/AdminWidget';
-import AdminManager from "views/widgets/AdminManager";
-
 
 const AdminControll = () => {
   const isNonMobileScreen = useMediaQuery("(min-width:1000px)");
-  const { _id, picturePath, userName, role } = useSelector((state) => state.user); // Ensure 'role' is in state
+  const { _id, picturePath, userName, role } = useSelector((state) => state.user);
 
   return (
     <Box>
-      <Navbar />
+      <Navbar  />
       <Box
         width="100%"
-        padding="2rem 6%"
-        display={isNonMobileScreen ? "flex" : "block"}
-        gap="0.5rem"
+        padding="0" // Set padding to zero to make sections reach the edge
+        display="flex"
         justifyContent="space-between"
         marginTop="70px"
       >
-        <Box flexBasis={isNonMobileScreen ? "100%" : undefined}>
-          <AdminWidget userId={_id} picturePath={picturePath} userName={userName}  role={role}/>
+        <Box
+          sx={{
+            width: isNonMobileScreen ? "100%" : "100%",
+            display: "flex",
+            justifyContent: "space-between"
+          }}
+        >
+          <AdminWidget userId={_id} picturePath={picturePath} userName={userName} role={role} />
         </Box>
       </Box>
     </Box>
