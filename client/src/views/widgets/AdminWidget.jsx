@@ -8,6 +8,7 @@ import WidgetWrapper from "components/WidgetWrapper";
 import Settingprofile from "components/settingprofile";
 import Dasdboard from 'views/widgets/AdminManager';
 import AssistantAdmin from 'views/widgets/AssistantAdmin';
+import AdminRole from 'views/widgets/AdminRole';
 import IdentifyRoleAdmin from "components/IdentifyRoleAdmin";
 import IdentifyRoleAsistantAdmin from "components/IdentifyRoleAsistantAdmin";
 import { useSelector } from "react-redux";
@@ -86,7 +87,7 @@ const AdminWidget = ({ userId, picturePath, role }) => {
         return (
           <Box>
             <Typography variant="body1" color={medium}>
-              This page allows admins to manage user roles.
+              <AdminRole />
             </Typography>
           </Box>
         );
@@ -139,13 +140,12 @@ const AdminWidget = ({ userId, picturePath, role }) => {
         {firstName} {lastName}
       </Typography>
 
-      {/* Role Badges */}
  {/* Role Badges */}
  {userRole === "admin" && (
         <Box
           sx={{
-            position: "absolute", // Make it position relative to the Box
-            left: "110px", // Align it to the left (or adjust as needed)
+            position: "absolute", 
+            left: "110px", 
             bottom: "600px",
           }}
         >
