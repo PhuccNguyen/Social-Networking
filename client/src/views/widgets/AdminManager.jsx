@@ -190,9 +190,9 @@ const AdminDashboard = () => {
 
       {/* Campaign search */}
 {/* Search Bar */}
-<Box display="flex" justifyContent="flex-start" marginBottom="1.5rem">
+<Box display="flex" justifyContent="flex-start" marginBottom="0rem" marginTop="2.5rem">
   <TextField
-    label="Search Assistant Admins"
+    label="Search Campaign"
     variant="outlined"
     value={searchQuery}
     onChange={(e) => setSearchQuery(e.target.value)}

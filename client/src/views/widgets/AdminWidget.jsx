@@ -7,6 +7,7 @@ import AdjustContent from "components/Adjustment";
 import WidgetWrapper from "components/WidgetWrapper";
 import Settingprofile from "components/settingprofile";
 import Dasdboard from 'views/widgets/AdminManager';
+import AdminCampain from 'views/widgets/AdminCampain';
 import AssistantAdmin from 'views/widgets/AssistantAdmin';
 import AdminRole from 'views/widgets/AdminRole';
 import IdentifyRoleAdmin from "components/IdentifyRoleAdmin";
@@ -95,7 +96,7 @@ const AdminWidget = ({ userId, picturePath, role }) => {
         return (
           <Box>
             <Typography variant="body1" color={medium}>
-              This page shows ongoing and completed campaigns in EX.
+              <AdminCampain />
             </Typography>
           </Box>
         );
@@ -292,7 +293,6 @@ const AdminWidget = ({ userId, picturePath, role }) => {
         flexGrow={1}
         padding="2rem"
         marginLeft="30%" // Adjust the margin to ensure content aligns with the sidebar
-        boxShadow="0px 6px 13px 3px rgba(0, 0, 0, 0.1)"
         height="100%" // Full height for scrollability
         overflowY="auto" // Enable vertical scrolling for the main content
       >
