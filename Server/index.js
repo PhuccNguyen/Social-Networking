@@ -17,7 +17,8 @@ import friendRoutes from "./routes/friend.js";
 import volunteerRoutes from './routes/volunteer.js'; 
 import { createPost } from "./controllers/post.js";
 import { register } from "./controllers/auth.js";
-import { verifyToken } from './middleware/auth.js';
+import { createCampaign  } from './controllers/campaign.js';
+import { verifyToken, verifyAssistantAdmin } from './middleware/auth.js';
 // import User  from "./models/User.js";
 // import Post from "./models/Post.js";
 // import { users, posts } from "./data/index.js"
@@ -69,10 +70,14 @@ const upload = multer({
   }
 });
 
+
+
 // Routes With Files
 app.post("/auth/register", upload.single("picture"), register); // No
 app.post("/posts", verifyToken, upload.single("picture"), createPost); // VerifyToken middleware here
 
+// This is the corrected version:
+app.post('/campaigns', verifyToken, verifyAssistantAdmin, upload.single("imageCampaing"), createCampaign);
 
 // Routes
 app.use("/auth", authRoutes);
@@ -80,8 +85,6 @@ app.use("/users", usersRoutes);
 app.use("/posts", postsRoutes);
 app.use("/friends",verifyToken, friendRoutes);
 app.use('/volunteer', volunteerRoutes);
-// app.use("/event", eventsRoutes);
-// app.use("/admin", adminRoutes);
 
 
 // Mongoose connection

@@ -3,7 +3,7 @@ import Navbar from "views/navbar";
 import { useSelector } from 'react-redux';
 import UserWidget from 'views/widgets/UserWidget';
 import MyPostWidget from "views/widgets/MyPostWidget";
-import PostsWidget from "views/widgets/PostsWidget";
+import CampaignWidget from "views/widgets/CampaignWidget";
 import EventVolunteer from "views/widgets/VolunteerAdsEvent";
 import VolunteerPost from "views/widgets/VolunteerPost";
 import VolunteerPostsWidget from "views/widgets/PostsWidget";
@@ -29,7 +29,7 @@ const VolunteerPage = () => {
         
         <Box flexBasis={isNonMobileScreen ? "26%" : undefined} mt={isNonMobileScreen ? undefined : "2rem"}>
         <VolunteerPost picturePath={picturePath} role={role} />
-        <PostsWidget userId={_id} />
+        <CampaignWidget userId={_id}  />
         </Box>
 
         <Box flexBasis="26%" maxHeight="80vh" overflow="auto">

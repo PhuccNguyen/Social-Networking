@@ -38,7 +38,7 @@ import {
       campaignStartTime: "",
       campaignEndDate: "",
       campaignEndTime: "",
-      image: null,
+      imageCampaing: null,
       milestones: [], // Initialize milestones as an empty array
     });
   
@@ -105,7 +105,7 @@ import {
           campaignForm.append("createdBy", createdBy);  // This is critical
     
           // Send POST request to the API
-          const response = await fetch("http://localhost:3001/volunteer/campaigns", {
+          const response = await fetch("http://localhost:3001/campaigns", {
             method: "POST",
             headers: {
               Authorization: `Bearer ${token}`,  // Ensure the token is sent

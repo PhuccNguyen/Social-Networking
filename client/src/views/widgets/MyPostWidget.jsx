@@ -314,74 +314,74 @@ const MyPostWidget = ({ picturePath }) => {
             </Button>
           </Box>
 
-          {image && (
-            <Box
-              border={`1px solid ${medium}`}
-              borderRadius="5px"
-              mt="1rem"
-              p="1rem"
-            >
-              <Dropzone
-                acceptedFiles=".jpg,.jpeg,.png"
-                multiple={false}
-                onDrop={(acceptedFiles) => {
-                  const file = acceptedFiles[0];
-                  setImage(file);
-                  setPreview(URL.createObjectURL(file)); // Generate preview URL
-                }}
+            {image && (
+              <Box
+                border={`1px solid ${medium}`}
+                borderRadius="5px"
+                mt="1rem"
+                p="1rem"
               >
-                {({ getRootProps, getInputProps }) => (
-                  <Box
-                    {...getRootProps()}
-                    border={`2px dashed ${palette.primary.main}`}
-                    p="1rem"
-                    sx={{ "&:hover": { cursor: "pointer" } }}
-                  >
-                    <input {...getInputProps()} />
-                    {!preview ? (
-                      <Typography>Add Image Here</Typography>
-                    ) : (
-                      <Box
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <img
-                          src={preview}
-                          alt="Preview"
-                          style={{ maxWidth: "100px", maxHeight: "100px" }}
-                        />
-                        <Typography>{image.name}</Typography>
-                        <EditOutlined />
-                      </Box>
-                    )}
-                  </Box>
-                )}
-              </Dropzone>
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={resetPostForm} sx={{ marginRight: "auto" }}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handlePost}
-            disabled={!post && !image}
-            sx={{
-              color: "white", 
-              background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)", 
-              borderRadius: "2rem", 
-              padding: "0.5rem 0.5rem",
-              "&:hover": {
-                background: "linear-gradient(310deg, #FF0080 0%, #7928CA 100%)",
-              },
-            }}
-          >
-            Post
-          </Button>
-        </DialogActions>
-      </Dialog>
+                <Dropzone
+                  acceptedFiles=".jpg,.jpeg,.png"
+                  multiple={false}
+                  onDrop={(acceptedFiles) => {
+                    const file = acceptedFiles[0];
+                    setImage(file);
+                    setPreview(URL.createObjectURL(file)); // Generate preview URL
+                  }}
+                >
+                  {({ getRootProps, getInputProps }) => (
+                    <Box
+                      {...getRootProps()}
+                      border={`2px dashed ${palette.primary.main}`}
+                      p="1rem"
+                      sx={{ "&:hover": { cursor: "pointer" } }}
+                    >
+                      <input {...getInputProps()} />
+                      {!preview ? (
+                        <Typography>Add Image Here</Typography>
+                      ) : (
+                        <Box
+                          display="flex"
+                          justifyContent="space-between"
+                          alignItems="center"
+                        >
+                          <img
+                            src={preview}
+                            alt="Preview"
+                            style={{ maxWidth: "100px", maxHeight: "100px" }}
+                          />
+                          <Typography>{image.name}</Typography>
+                          <EditOutlined />
+                        </Box>
+                      )}
+                    </Box>
+                  )}
+                </Dropzone>
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={resetPostForm} sx={{ marginRight: "auto" }}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handlePost}
+              disabled={!post && !image}
+              sx={{
+                color: "white", 
+                background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)", 
+                borderRadius: "2rem", 
+                padding: "0.5rem 0.5rem",
+                "&:hover": {
+                  background: "linear-gradient(310deg, #FF0080 0%, #7928CA 100%)",
+                },
+              }}
+            >
+              Post
+            </Button>
+          </DialogActions>
+        </Dialog>
 
       <Dialog
         open={isLocationDialogOpen}

@@ -5,6 +5,7 @@ const initialState = {
   user: null,
   token: null,
   posts: [],
+  campaigns: [], // Adding campaigns array to the initial state
   followedUsers: [], // Adding followed users
 };
 
@@ -23,7 +24,6 @@ export const authSlice = createSlice({
       state.user = null;
       state.token = null;
     },
-    
     setFriends: (state, action) => {
       if (state.user) {
         state.user.friends = action.payload.friends;
@@ -31,7 +31,6 @@ export const authSlice = createSlice({
         console.error("User not found when setting friends.");
       }
     },
-    
     setFollowedUsers: (state, action) => {
       if (state.user) {
         state.user.following = action.payload.followedUsers;
@@ -39,7 +38,6 @@ export const authSlice = createSlice({
         console.error("User not found when setting followed users.");
       }
     },
-    
     setPosts: (state, action) => {
       state.posts = action.payload.posts;
     },
@@ -57,6 +55,18 @@ export const authSlice = createSlice({
         console.error("User not logged in.");
       }
     },
+
+    // Campaign-related reducers
+    setCampaigns: (state, action) => {
+      state.campaigns = action.payload.campaigns;
+    },
+    setCampaign: (state, action) => {
+      const updatedCampaigns = state.campaigns.map((campaign) => {
+        if (campaign._id === action.payload.campaign._id) return action.payload.campaign;
+        return campaign;
+      });
+      state.campaigns = updatedCampaigns;
+    },
   },
 });
 
@@ -69,5 +79,8 @@ export const {
   setPosts,
   setPost,
   setSavedPosts,
+  setCampaigns, // Exporting the new action for setting campaigns
+  setCampaign,  // Exporting the new action for setting individual campaigns
 } = authSlice.actions;
+
 export default authSlice.reducer;

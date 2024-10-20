@@ -45,9 +45,8 @@ const CampaignSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
-  image: {
+  imageCampaing: {
     type: String,  // This stores the image filename
-    default: null,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
