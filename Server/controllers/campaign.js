@@ -1,5 +1,5 @@
-import Campaign from '../models/Campaign.js'; // Import the Campaign model
-import User from '../models/User.js';
+import mongoose from 'mongoose';
+import Campaign from '../models/Campaign.js';
 
 // Controller for creating a new campaign
 export const createCampaign = async (req, res) => {
@@ -19,6 +19,15 @@ export const createCampaign = async (req, res) => {
       createdBy
     } = req.body;
 
+    // Parse milestones if needed
+    let parsedMilestones = [];
+    if (milestones) {
+      parsedMilestones = JSON.parse(milestones);
+    }
+
+    // Handle the image upload (from multer)
+    const imageCampaing = req.file ? req.file.filename : null;
+
     // Create a new Campaign document
     const newCampaign = new Campaign({
       title,
@@ -27,16 +36,15 @@ export const createCampaign = async (req, res) => {
       registrationEndDate,
       maxVolunteers,
       location,
-      campaignStartDate,
+      campaignStartDate,          
       campaignStartTime,
       campaignEndDate,
       campaignEndTime,
-      milestones: JSON.parse(milestones),
-      createdBy: mongoose.Types.ObjectId(createdBy),  // Ensure that this is an ObjectId
-      imageCampaing,  
+      milestones: parsedMilestones,
+      createdBy: new mongoose.Types.ObjectId(createdBy),  // Ensure that this is an ObjectId
+      imageCampaing,  // Handle image upload
     });
-    
-    
+
     // Save the campaign to the database
     const savedCampaign = await newCampaign.save();
     res.status(201).json(savedCampaign);
@@ -45,6 +53,8 @@ export const createCampaign = async (req, res) => {
     res.status(500).json({ error: "Failed to create campaign" });
   }
 };
+
+
 
 // Controller to get all campaigns
 export const getAllCampaigns = async (req, res) => {

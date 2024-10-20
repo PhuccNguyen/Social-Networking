@@ -65,7 +65,7 @@ import {
       setFormData({ ...formData, image: file });
     };
   
-    const addMilestone = () => {
+    const addMilestone = () => {    
       setFormData({
         ...formData,
         milestones: [
@@ -84,52 +84,47 @@ import {
     };
   
     const handleSubmit = async () => {
-        try {
-          const campaignForm = new FormData();
-      
-          // Append all form data to FormData object
-          Object.keys(formData).forEach((key) => {
-            if (key === "milestones") {
-              campaignForm.append(key, JSON.stringify(formData[key]));
-            } else {
-              campaignForm.append(key, formData[key]);
-            }
-          });
-      
-          // Append the image file if it exists
-          if (formData.image) {
-            campaignForm.append("image", formData.image);  // Make sure the field name is 'image'
-          }
-    
-          // Append the `createdBy` field, which should be the current user's ID
-          campaignForm.append("createdBy", createdBy);  // This is critical
-    
-          // Send POST request to the API
-          const response = await fetch("http://localhost:3001/campaigns", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,  // Ensure the token is sent
-            },
-            body: campaignForm,  // Send the formData object
-          });
-      
-          if (response.ok) {
-            const result = await response.json();
-            console.log("Campaign created successfully:", result);
-            setIsDialogOpen(false);  // Close the dialog on success
+      try {
+        const campaignForm = new FormData();
+        
+        // Append form data
+        Object.keys(formData).forEach((key) => {
+          if (key === "milestones") {
+            campaignForm.append(key, JSON.stringify(formData[key]));  // Milestones should be stringified
           } else {
-            const errorResponse = await response.json();
-            console.error("Failed to create campaign:", errorResponse);
+            campaignForm.append(key, formData[key]);
           }
-        } catch (error) {
-          console.error("Error creating campaign:", error);
-        }
-    };
+        });
     
-           
-      
-      
-  
+        // Append image file if it exists
+        if (image) {
+          campaignForm.append("imageCampaing", image);  // Append image with the correct field name
+        }
+    
+        // Append createdBy field
+        campaignForm.append("createdBy", createdBy);
+    
+        // Send POST request to the API
+        const response = await fetch("http://localhost:3001/campaigns", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,  // Include the token in the headers
+          },
+          body: campaignForm,  // Send formData
+        });
+    
+        if (response.ok) {
+          const result = await response.json();
+          console.log("Campaign created successfully:", result);
+          setIsDialogOpen(false);  // Close the dialog on success
+        } else {
+          const errorResponse = await response.json();
+          console.error("Failed to create campaign:", errorResponse);
+        }
+      } catch (error) {
+        console.error("Error creating campaign:", error);
+      }
+    };
     return (
       <>
                 {/* Hiển thị nút Admin nếu role là admin */}
