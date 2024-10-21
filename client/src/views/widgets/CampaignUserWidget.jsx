@@ -7,8 +7,13 @@ import {
   CardContent,
   Avatar,
   Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { styled, useTheme } from "@mui/system"; // Import useTheme
+import React, { useState } from "react";
 
 // Custom styled components for a more modern look
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -58,12 +63,38 @@ const CampaignUserWidget = ({
   createdBy,
   imageCampaing,
 }) => {
+
   const { palette } = useTheme(); // Use the theme palette
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
 
+  const [openDialog, setOpenDialog] = useState(false); // State for the success dialog
+
+  const handleRegister = async () => {
+    try {
+      // Send request to backend to register the user for the campaign
+      const response = await fetch(`http://localhost:3001/volunteer/register/${campaignId}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`, // Pass the token for authentication
+        },
+      });
+
+      if (response.ok) {
+        // If registration successful, open the success dialog
+        setOpenDialog(true);
+      } else {
+        console.error("Failed to register for the campaign");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+
   return (
+    <>
     <StyledCard>
       {imageCampaing ? (
         <CardMedia
@@ -159,11 +190,34 @@ const CampaignUserWidget = ({
           </Box>
         </Box>
 
-        <StyledButton onClick={() => console.log(`Register for campaign ${campaignId}`)}>
+        <StyledButton onClick={handleRegister} >
           Register Now
         </StyledButton>
+
       </CardContent>
     </StyledCard>
+
+    {/* Registration Success Dialog */}
+    <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+    <DialogTitle>Registration Successful!</DialogTitle>
+    <DialogContent>
+      <Typography variant="body1">
+        Thank you for registering for the campaign: <strong>{title}</strong>.
+      </Typography>
+      <Typography variant="body2" sx={{ marginTop: "1rem" }}>
+        Please remember to arrive on time. The campaign starts on{" "}
+        <strong>{new Date(campaignStartDate).toLocaleDateString()}</strong> at{" "}
+        <strong>{campaignStartTime}</strong>.
+      </Typography>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => setOpenDialog(false)} color="primary">
+        Close
+      </Button>
+    </DialogActions>
+  </Dialog>
+      </>
+
   );
 };
 

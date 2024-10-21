@@ -11,29 +11,34 @@ const CampaignWidget = ({ userId }) => {
   const token = useSelector((state) => state.token);
   const [loading, setLoading] = useState(true);
 
-  // Fetch campaigns from backend
-  const getCampaigns = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("http://localhost:3001/volunteer/campaigns", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) throw new Error("Failed to fetch campaigns");
-  
-      const data = await response.json();
-      console.log(data); // Log the full response to check if createdBy is populated
-      dispatch(setCampaigns({ campaigns: Array.isArray(data) ? data : [] }));
-    } catch (error) {
-      console.error(error.message);
-    } finally {
-      setLoading(false); // End loading
-    }
-  };
+// Fetch campaigns from backend
+const getCampaigns = async () => {
+  if (!token) {
+    console.error("No token available in state");
+    return;
+  }
 
-  useEffect(() => { 
-    getCampaigns();
-  }, [token, dispatch]);
+  setLoading(true);
+  try {
+    const response = await fetch("http://localhost:3001/volunteer/campaigns", {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` }, // Ensure token is attached correctly
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch campaigns");
+
+    const data = await response.json();
+    dispatch(setCampaigns({ campaigns: Array.isArray(data) ? data : [] }));
+  } catch (error) {
+    console.error("Error fetching campaigns:", error.message);
+  } finally {
+    setLoading(false); // End loading
+  }
+};
+
+useEffect(() => {
+  getCampaigns();
+}, [token, dispatch]);
 
   const renderedCampaigns = useMemo(
     () =>
