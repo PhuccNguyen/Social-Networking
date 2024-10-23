@@ -104,3 +104,22 @@ export const registerCampaign = async (req, res) => {
   }
 };
 
+
+export const getManagedCampaigns = async (req, res) => {
+  try {
+    const userId = req.user.id; 
+
+    // Find campaigns created by the logged-in assistant admin or admin
+    const campaigns = await Campaign.find({ createdBy: userId });
+
+    if (!campaigns || campaigns.length === 0) {
+      return res.status(404).json({ message: "No campaigns found for this user" });
+    }
+
+    res.status(200).json(campaigns);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+

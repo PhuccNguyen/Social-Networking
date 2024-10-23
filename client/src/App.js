@@ -6,6 +6,7 @@ import SavePost from "views/savepost";
 import VolunteerPage from "views/VolunteerPage";
 import Admin from "views/Admin";
 import SavedPostsPage from "views/SavedPostsPage";
+import ManageCampaign from "views/ManageCampaign";
 import FriendPage from "views/friendPage";
 import NotFoundPage from "views/NotFoundPage"; // Import the new NotFoundPage
 import { useMemo } from "react";
@@ -33,7 +34,9 @@ function App() {
             <Route path="/profile/:userId" element={isAuth ? <ProfilePage /> : <Navigate to="/" />} />
             <Route path="/savepost/:userId" element={isAuth ? <SavePost /> : <Navigate to="/" />} />
             <Route path="/Admin" element={isAuth ? <Admin /> : <Navigate to="/" />} />
+            <Route path="/ManageCampaign" element={isAuth ? <ManageCampaign /> : <Navigate to="/" />} />
 
+            
             {/* Wildcard route for 404 page */}
             <Route  path="*" element={<NotFoundPage />} />
           </Routes>

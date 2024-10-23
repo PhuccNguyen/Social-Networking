@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema(
     joinedCampaigns: [{ type: mongoose.Schema.Types.ObjectId, ref: "Campaign" }], 
 
     // Chiến dịch được quản lý (cho Admin và Assistant Admin)
-    managedCampaigns: [{ type: mongoose.Schema.Types.ObjectId, ref: "Campaign" }],
+    // managedCampaigns: [{ type: mongoose.Schema.Types.ObjectId, ref: "Campaign" }],
 
     // Save post
     savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],

@@ -226,11 +226,11 @@ const UserWidget = ({ userId, picturePath, role  }) => {
   </Box>
 
    {/* Saved Button */}
-   {userRole === "assistantAdmin" && 
+   {(userRole === "assistantAdmin" || userRole === "admin") && (
    <Box display="flex" alignItems="center" gap="0.5rem" mb="0.5rem" width="100%">
     <FcBookmark fontSize="1.5rem" width="1.2em" height="1.2em" />
     <Button 
-      onClick={() => navigate(`/SavedPostsPage`)}
+      onClick={() => navigate(`/ManageCampaign`)}
       sx={{ 
         backgroundColor: "transparent", 
         color: main, 
@@ -249,7 +249,7 @@ const UserWidget = ({ userId, picturePath, role  }) => {
       Manage Post
     </Button>
   </Box>
-   }
+   )}
 
 </Box>
 
