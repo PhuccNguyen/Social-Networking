@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 import Campaign from '../models/Campaign.js';
+import User from '../models/User.js';
+
 
 // Controller for creating a new campaign
 export const createCampaign = async (req, res) => {
@@ -76,7 +78,7 @@ export const getAllCampaigns = async (req, res) => {
 export const registerCampaign = async (req, res) => {
   try {
     const { campaignId } = req.params;
-    const userId = req.user.id; // Extract the userId from the authenticated user
+    const userId = req.user.id; // Extract the userId from the verified JWT token
 
     // Find the campaign by ID
     const campaign = await Campaign.findById(campaignId);
@@ -101,3 +103,4 @@ export const registerCampaign = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
