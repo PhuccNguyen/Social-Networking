@@ -8,7 +8,7 @@ import Admin from "views/Admin";
 import SavedPostsPage from "views/SavedPostsPage";
 import ManageCampaign from "views/ManageCampaign";
 import FriendPage from "views/friendPage";
-import NotFoundPage from "views/NotFoundPage"; // Import the new NotFoundPage
+import NotFoundPage from "views/NotFoundPage"; 
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";

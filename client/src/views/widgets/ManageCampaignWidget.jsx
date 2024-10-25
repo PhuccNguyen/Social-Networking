@@ -1,36 +1,66 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Box, Typography, CircularProgress } from "@mui/material";
+// ManageCampaignWidget.js
+
+import React, { useState, useEffect } from "react";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import ManageCampaign from "./ManageCampaign";
+import { useSelector } from "react-redux";
 
 const ManageCampaignWidget = () => {
-  const token = useSelector((state) => state.token);
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
+  const token = useSelector((state) => state.token);
 
-  const fetchManagedCampaigns = async () => {
+  const fetchCampaigns = async () => {
+    setLoading(true);
     try {
       const response = await fetch("http://localhost:3001/volunteer/manage", {
-        method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch campaigns");
-      }
-
       const data = await response.json();
       setCampaigns(data);
     } catch (error) {
-      console.error("Error:", error.message);
+      console.error("Error fetching campaigns:", error);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleEdit = async (campaignId, updatedData) => {
+    try {
+      const response = await fetch(`http://localhost:3001/volunteer/edit/${campaignId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+      if (!response.ok) throw new Error("Failed to edit campaign");
+      const updatedCampaign = await response.json();
+      setCampaigns((prev) =>
+        prev.map((campaign) => (campaign._id === campaignId ? updatedCampaign : campaign))
+      );
+    } catch (error) {
+      console.error("Error editing campaign:", error);
+    }
+  };
+
+  const handleDelete = async (campaignId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/volunteer/delete/${campaignId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("Failed to delete campaign");
+      setCampaigns((prev) => prev.filter((campaign) => campaign._id !== campaignId));
+    } catch (error) {
+      console.error("Error deleting campaign:", error);
+    }
+  };
+
   useEffect(() => {
-    fetchManagedCampaigns();
-  }, [token]);
+    fetchCampaigns();
+  }, []);
 
   if (loading) {
     return (
@@ -40,34 +70,22 @@ const ManageCampaignWidget = () => {
     );
   }
 
-  if (!campaigns || campaigns.length === 0) {
-    return (
-      <Typography variant="h6" align="center" color="textSecondary">
-        You haven't posted any campaigns yet.
-      </Typography>
-    );
-  }
-
   return (
     <Box>
-      {campaigns.map((campaign) => (
-        <ManageCampaign
-          key={campaign._id}
-          campaignId={campaign._id}
-          title={campaign.title}
-          description={campaign.description}
-          location={campaign.location}
-          campaignStartDate={campaign.campaignStartDate}
-          campaignStartTime={campaign.campaignStartTime}
-          campaignEndDate={campaign.campaignEndDate}
-          campaignEndTime={campaign.campaignEndTime}
-          registrationStartDate={campaign.registrationStartDate}
-          registrationEndDate={campaign.registrationEndDate}
-          maxVolunteers={campaign.maxVolunteers}
-          imageCampaing={campaign.imageCampaing}
-          createdBy={campaign.createdBy}
-        />
-      ))}
+      {campaigns.length > 0 ? (
+        campaigns.map((campaign) => (
+          <ManageCampaign
+            key={campaign._id}
+            {...campaign}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+          />
+        ))
+      ) : (
+        <Typography variant="h6" align="center" color="textSecondary">
+          No campaigns found.
+        </Typography>
+      )}
     </Box>
   );
 };

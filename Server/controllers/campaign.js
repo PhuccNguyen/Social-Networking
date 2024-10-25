@@ -123,3 +123,29 @@ export const getManagedCampaigns = async (req, res) => {
 };
 
 
+// Edit a specific campaign
+export const editCampaign = async (req, res) => {
+  const { campaignId } = req.params;
+  const updatedData = req.body;
+
+  try {
+    const updatedCampaign = await Campaign.findByIdAndUpdate(campaignId, updatedData, { new: true });
+    if (!updatedCampaign) return res.status(404).json({ error: 'Campaign not found' });
+    res.status(200).json(updatedCampaign);
+  } catch (error) {
+    res.status(500).json({ error: 'Error editing campaign' });
+  }
+};
+
+// Delete a specific campaign
+export const deleteCampaign = async (req, res) => {
+  const { campaignId } = req.params;
+
+  try {
+    const deletedCampaign = await Campaign.findByIdAndDelete(campaignId);
+    if (!deletedCampaign) return res.status(404).json({ error: 'Campaign not found' });
+    res.status(200).json({ message: 'Campaign deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error deleting campaign'});
+  }
+};
