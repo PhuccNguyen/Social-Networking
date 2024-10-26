@@ -44,15 +44,22 @@ const ManageCampaign = ({
     location,
   });
 
-  const openDeleteDialog = () => setDeleteDialogOpen(true);
+  const openDeleteDialog = () =>  {
+     console.log("Deleting campaign with ID:", campaignId); 
+  setDeleteDialogOpen(true); 
+  };
+
+  const saveEditChanges = () => {
+    console.log("Editing campaign with ID:", campaignId); // Log campaignId
+    handleEdit(campaignId, editableFields);
+    closeEditDialog();
+  };
+
   const closeDeleteDialog = () => setDeleteDialogOpen(false);
   const openEditDialog = () => setEditDialogOpen(true);
   const closeEditDialog = () => setEditDialogOpen(false);
 
-  const saveEditChanges = () => {
-    handleEdit(campaignId, editableFields);
-    closeEditDialog();
-  };
+
 
   // Custom styled components for a more modern look
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -77,12 +84,13 @@ const StyledCard = styled(Card)(({ theme }) => ({
             {title}
           </Typography>
           <Box>
-            <IconButton onClick={openEditDialog}>
-              <EditIcon color="primary" />
-            </IconButton>
-            <IconButton onClick={openDeleteDialog}>
-              <DeleteIcon color="error" />
-            </IconButton>
+          <IconButton onClick={() => openEditDialog()}>
+           <EditIcon color="primary" />
+          </IconButton>
+
+          <IconButton onClick={() => openDeleteDialog()}>
+            <DeleteIcon color="error" />
+          </IconButton>
           </Box>
         </Box>
 
@@ -146,8 +154,12 @@ const StyledCard = styled(Card)(({ theme }) => ({
       <Dialog open={editDialogOpen} onClose={closeEditDialog} maxWidth="sm" fullWidth>
         <DialogTitle>Edit Campaign</DialogTitle>
         <DialogContent>
-          <TextField label="Campaign Title" defaultValue={editableFields.title} fullWidth variant="outlined" onChange={(e) => setEditableFields({...editableFields, title: e.target.value })} 
-/>
+          <TextField label="Campaign Title" 
+          defaultValue={editableFields.title} 
+          fullWidth variant="outlined" 
+          sx={{ marginTop: "0.5rem" }}            
+          onChange={(e) => setEditableFields({...editableFields, 
+          title: e.target.value })}/>
 <TextField
   label="Description"
   defaultValue={editableFields.description}
@@ -178,17 +190,17 @@ const StyledCard = styled(Card)(({ theme }) => ({
 {/* Add any other fields for editing as needed */}
 </DialogContent>
 <DialogActions>
+
 <Button onClick={closeEditDialog} color="primary">
   Cancel
 </Button>
 <Button onClick={saveEditChanges} color="primary">
   Save Changes
 </Button>
+
 </DialogActions>
 </Dialog>
 </>
-);
-};
-
+);};
 export default ManageCampaign;
 

@@ -76,6 +76,7 @@ const ManageCampaignWidget = () => {
         campaigns.map((campaign) => (
           <ManageCampaign
             key={campaign._id}
+            campaignId={campaign._id}  
             {...campaign}
             handleEdit={handleEdit}
             handleDelete={handleDelete}

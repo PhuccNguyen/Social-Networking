@@ -246,7 +246,7 @@ const UserWidget = ({ userId, picturePath, role  }) => {
         },
       }}
     >
-      Manage Post
+      Manage Campaign
     </Button>
   </Box>
    )}
