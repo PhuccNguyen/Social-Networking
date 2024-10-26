@@ -225,10 +225,43 @@ const UserWidget = ({ userId, picturePath, role  }) => {
     </Button>
   </Box>
 
+  {/* Saved Button */}
+  <Box display="flex" alignItems="center" gap="0.5rem" mb="0.5rem" width="100%">
+  <svg xmlns="http://www.w3.org/2000/svg" fontSize="1.5rem" width="1.2em" height="1.2em" ><path fill="#6529d6" d="M3 10V4h2v2.35q1.275-1.6
+   3.113-2.475T12 3q3.75 0 6.375 2.625T21 12h-2q0-2.925-2.037-4.962T12 5q-1.725 0-3.225.8T6.25 8H9v2zm.05 3H5.1q.3 2.325 1.913
+    3.938t3.862 1.962l1.2 2.1q-3.45 0-6.05-2.287T3.05 13m10.3 1.75L11 12.4V7h2v4.6l1.4 1.4zM17.975
+     24l-.3-1.5q-.3-.125-.562-.262t-.538-.338l-1.45.45l-1-1.7l1.15-1q-.05-.325-.05-.65t.05-.65l-1.15-1l1-1.7l1.45.45q.275-.2.538
+     -.337t.562-.263l.3-1.5h2l.3 1.5q.3.125.575.288t.525.362l1.45-.5l1 1.75l-1.15 1q.05.325.05.625t-.05.625l1.15 1l-1
+      1.7l-1.45-.45q-.275.2-.537.338t-.563.262l-.3 1.5zm1-3q.825 0 1.413-.587T20.975 19t-.587-1.412T18.975 17t-1.412.588T16.975 19t.588 1.413t1.412.587"/></svg>
+    {/* <FcBookmark fontSize="1.5rem" width="1.2em" height="1.2em" /> */}
+    <Button 
+      onClick={() => navigate(`/UserRegisterCampaign`)}
+      sx={{ 
+        backgroundColor: "transparent", 
+        color: main, 
+        padding: "0.1rem 0.8rem", 
+        borderRadius: "1px", 
+        width: "100%",
+        textAlign: "start",
+        fontSize: "0.8rem",
+        transition: 'background-color 0.2s ease, color 0.2s ease',
+        '&:hover': {
+          background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+          color: "#fff",
+        },
+      }}
+    >
+      Volunteer Registered
+    </Button>
+  </Box>
+
    {/* Saved Button */}
    {(userRole === "assistantAdmin" || userRole === "admin") && (
    <Box display="flex" alignItems="center" gap="0.5rem" mb="0.5rem" width="100%">
-    <FcBookmark fontSize="1.5rem" width="1.2em" height="1.2em" />
+    <svg xmlns="http://www.w3.org/2000/svg" fontSize="1.5rem" width="1.2em" height="1.2em" viewBox="0 0 32 32"><path fill="#6529d6" d="M18 23h-2v-2a3.003
+     3.003 0 0 0-3-3H9a3.003 3.003 0 0 0-3 3v2H4v-2a5.006 5.006 0 0 1 5-5h4a5.006 5.006 0 0 1 5 5zM11 6a3 3 0 1 1-3 3a3 3 0
+      0 1 3-3m0-2a5 5 0 1 0 5 5a5 5 0 0 0-5-5M2 26h28v2H2zM22 4v2h4.586L20 12.586L21.414 14L28 7.414V12h2V4z"/></svg>
+    {/* <FcBookmark fontSize="1.5rem" width="1.2em" height="1.2em" /> */}
     <Button 
       onClick={() => navigate(`/ManageCampaign`)}
       sx={{ 

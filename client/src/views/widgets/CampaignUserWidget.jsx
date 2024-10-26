@@ -12,7 +12,7 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import { styled, useTheme } from "@mui/system"; // Import useTheme
+import { styled, useTheme } from "@mui/system"; 
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -71,32 +71,36 @@ const CampaignUserWidget = ({
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
   const token = useSelector((state) => state.token);
+  const userId = useSelector((state) => state.user._id); 
 
 
   const [openDialog, setOpenDialog] = useState(false); // State for the success dialog
 
   const handleRegister = async () => {
-
-  try {
-    const response = await fetch(`http://localhost:3001/volunteer/register/${campaignId}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`, // Pass the token for authentication
-        "Content-Type": "application/json"
-      },
-    });
-
-    if (response.ok) {
-      // If registration successful, open the success dialog
-      setOpenDialog(true);
-    } else {
-      const errorData = await response.json();
-      console.error("Failed to register for the campaign", errorData);
+    console.log("userId:", userId); // Debugging: Confirm userId before making the request
+  
+    try {
+      const response = await fetch(`http://localhost:3001/volunteer/register/${campaignId}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId }), 
+      });
+  
+      if (response.ok) {
+        setOpenDialog(true);
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to register for the campaign:", errorData);
+      }
+    } catch (error) {
+      console.error("Error registering for campaign:", error);
     }
-  } catch (error) {
-    console.error("Error registering for campaign:", error);
-  }
-};
+  };
+  
+  
 
 
 
