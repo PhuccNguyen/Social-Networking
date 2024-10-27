@@ -1,6 +1,6 @@
 import express from 'express';
 import { verifyToken, verifyAssistantAdmin } from '../middleware/auth.js';
-import {  getAllCampaigns , registerCampaign, getManagedCampaigns, editCampaign, deleteCampaign } from '../controllers/campaign.js';
+import {  getAllCampaigns , registerCampaign, getManagedCampaigns, editCampaign, deleteCampaign, getCampaignCounts, getCampaignsByStatus} from '../controllers/campaign.js';
 
 const router = express.Router();
 
@@ -18,5 +18,13 @@ router.put('/edit/:campaignId', verifyToken, verifyAssistantAdmin, editCampaign)
 
 // Route to delete a specific campaign
 router.delete('/delete/:campaignId', verifyToken, verifyAssistantAdmin, deleteCampaign);
+
+// New route to fetch campaign counts by status
+router.get('/campaign-counts', verifyToken, getCampaignCounts);
+
+// Add to routes/campaign.js
+router.get('/campaigns-by-status', verifyToken, getCampaignsByStatus);
+
+
 
 export default router;

@@ -1,11 +1,9 @@
-// ManageCampaignWidget.js
-
 import React, { useState, useEffect } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import ManageCampaign from "./ManageCampaign";
 import { useSelector } from "react-redux";
 
-const ManageCampaignWidget = () => {
+const ManageCampaignWidget = ({ status }) => {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = useSelector((state) => state.token);
@@ -13,7 +11,11 @@ const ManageCampaignWidget = () => {
   const fetchCampaigns = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3001/volunteer/manage", {
+      const url = status 
+        ? `http://localhost:3001/volunteer/campaigns-by-status?status=${status}`
+        : `http://localhost:3001/volunteer/campaigns`;
+
+      const response = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
@@ -24,6 +26,10 @@ const ManageCampaignWidget = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchCampaigns();
+  }, [status]);
 
   const handleEdit = async (campaignId, updatedData) => {
     try {
@@ -58,10 +64,6 @@ const ManageCampaignWidget = () => {
     }
   };
 
-  useEffect(() => {
-    fetchCampaigns();
-  }, []);
-
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
@@ -76,7 +78,7 @@ const ManageCampaignWidget = () => {
         campaigns.map((campaign) => (
           <ManageCampaign
             key={campaign._id}
-            campaignId={campaign._id}  
+            campaignId={campaign._id}
             {...campaign}
             handleEdit={handleEdit}
             handleDelete={handleDelete}

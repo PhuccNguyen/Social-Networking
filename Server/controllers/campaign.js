@@ -58,12 +58,14 @@ export const createCampaign = async (req, res) => {
 
 
 
-// Controller to get all campaigns
+// Controller to get all campaigns created by the logged-in user
 export const getAllCampaigns = async (req, res) => {
   try {
-    // Fetch all campaigns and populate the 'createdBy' field with assistant admin details
-    const campaigns = await Campaign.find()
-      .populate('createdBy', 'firstName lastName picturePath') // Populate these fields
+    const userId = req.user.id; // Get the logged-in user's ID
+
+    // Fetch all campaigns where createdBy matches the logged-in user's ID
+    const campaigns = await Campaign.find({ createdBy: userId })
+      .populate('createdBy', 'firstName lastName picturePath')
       .exec();
 
     res.status(200).json(campaigns);
@@ -149,3 +151,101 @@ export const deleteCampaign = async (req, res) => {
     res.status(500).json({ error: 'Error deleting campaign'});
   }
 };
+
+export const getCampaignCounts = async (req, res) => {
+  try {
+    const now = new Date();
+    const userId = req.user.id;
+
+    // Count Ongoing Campaigns
+    const ongoingCount = await Campaign.countDocuments({
+      createdBy: userId,
+      $or: [
+        {
+          // Within registration period
+          registrationStartDate: { $lte: now },
+          registrationEndDate: { $gte: now },
+        },
+        {
+          // After registration period but before campaign start date
+          registrationEndDate: { $lt: now },
+          campaignStartDate: { $gt: now },
+        }
+      ],
+    });
+
+    // Count Started Campaigns
+    const startedCount = await Campaign.countDocuments({
+      createdBy: userId,
+      campaignStartDate: { $lte: now },
+      campaignEndDate: { $gte: now },
+    });
+
+    // Count Ended Campaigns
+    const endedCount = await Campaign.countDocuments({
+      createdBy: userId,
+      campaignEndDate: { $lt: now },
+    });
+
+    res.status(200).json({
+      ongoing: ongoingCount,
+      started: startedCount,
+      ended: endedCount,
+    });
+  } catch (error) {
+    console.error("Error fetching campaign counts:", error);
+    res.status(500).json({ error: "Failed to fetch campaign counts" });
+  }
+};
+
+
+export const getCampaignsByStatus = async (req, res) => {
+  const { status } = req.query;
+  const now = new Date();
+  const userId = req.user.id;
+
+  try {
+    let campaigns;
+
+    if (status === "ongoing") {
+      // Ongoing campaigns (either in registration period or waiting to start)
+      campaigns = await Campaign.find({
+        createdBy: userId,
+        $or: [
+          {
+            // Within registration period
+            registrationStartDate: { $lte: now },
+            registrationEndDate: { $gte: now },
+          },
+          {
+            // After registration period but before campaign start
+            registrationEndDate: { $lt: now },
+            campaignStartDate: { $gt: now },
+          }
+        ],
+      });
+    } else if (status === "started") {
+      // Started campaigns (currently in progress)
+      campaigns = await Campaign.find({
+        createdBy: userId,
+        campaignStartDate: { $lte: now },
+        campaignEndDate: { $gte: now },
+      });
+    } else if (status === "ended") {
+      // Ended campaigns (already completed)
+      campaigns = await Campaign.find({
+        createdBy: userId,
+        campaignEndDate: { $lt: now },
+      });
+    } else {
+      return res.status(400).json({ error: "Invalid status" });
+    }
+
+    res.status(200).json(campaigns);
+  } catch (error) {
+    console.error("Error fetching campaigns by status:", error);
+    res.status(500).json({ error: "Failed to fetch campaigns" });
+  }
+};
+
+
