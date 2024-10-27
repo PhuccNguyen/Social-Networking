@@ -38,7 +38,7 @@ router.post("/:id/savedPosts", verifyToken, getSavedPosts);
 
 
 // Endpoint to get all campaigns a user has joined
-router.get("/:userId/joined-campaigns", verifyToken, getUserJoinedCampaigns);
+router.get("/:userId/joinedcampaigns", verifyToken, getUserJoinedCampaigns);
 
 
 

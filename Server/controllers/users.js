@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from 'bcryptjs';
 import Post from "../models/Post.js";
+import Campaign from '../models/Campaign.js';
 // import SignupVolunteer from "../models/SignupVolunteer.js";
 // import VolunteerEvent from "../Folder/Volunteerevent.js";
 
@@ -272,6 +273,7 @@ export const getUserJoinedCampaigns = async (req, res) => {
       res.status(500).json({ error: "Failed to retrieve joined campaigns" });
     }
   };
+  
   
 
 // // Update Password

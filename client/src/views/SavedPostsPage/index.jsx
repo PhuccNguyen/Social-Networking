@@ -1,62 +1,70 @@
-import { Box, Typography, Breadcrumbs, Link } from '@mui/material';
+import { Box, Typography, Breadcrumbs, Link} from '@mui/material';
 import Navbar from "views/navbar";
 import { useSelector } from 'react-redux';
 import UserWidget from 'views/widgets/UserWidget';
-import SavedPosts from "views/savepost"; // This is your SavedPosts component
 import { useNavigate } from "react-router-dom";
+import SavedPosts from "views/savepost"; 
 
-const SavedPostsPage = () => {
+const SavedPost = () => {
     const { _id, picturePath, userName, role } = useSelector((state) => state.user);
     const navigate = useNavigate();
 
     return (
         <Box>
             <Navbar />
-            <Box 
-                display="flex" 
-                justifyContent="space-between" 
-                marginTop="2.8rem" // Adjust for fixed navbar height
-            >
+            <Box display="flex" justifyContent="space-between" marginTop="2.8rem" padding="1rem">
                 {/* Fixed Left Section: UserWidget */}
-                <Box 
-                    flexBasis="300px" // Fixed width for the UserWidget
-                    position="fixed"
-                    left="0"
-                    top="90px" // Adjust this according to your Navbar height
-                    height="100%" 
-                    padding="1rem" 
-                    zIndex={1000} // Ensure it stays on top
-                    boxShadow="2px 0 5px rgba(0, 0, 0, 0.1)" // Optional: Shadow for better visibility
-                >
+                <Box>
                     <UserWidget userId={_id} picturePath={picturePath} userName={userName}  role={role} />
                 </Box>
 
-                {/* Main Content: SavedPosts */}
-                <Box 
-                    flex="1" 
-                    marginLeft="330px" // Leave space for the fixed UserWidget
-                    padding="2rem"
-                    overflow="auto" // Ensure SavedPosts content scrolls if too long
+                {/* Main Content: Saved Posts */}
+                <Box
+                    flex="1"
+                    marginLeft="320px"
+                    padding="1.5rem"
+                    overflow="hidden"  // Ensure main box doesn’t overflow
+                    minHeight="80vh"
                 >
-                    {/* Breadcrumbs for navigation */}
-                    <Breadcrumbs aria-label="breadcrumb"  marginLeft="30px" marginTop="28px"  sx={{ marginBottom: "" }}>
-                        <Link 
-                            underline="hover" 
-                            color="inherit" 
-                            onClick={() => navigate('/HomePage')} // Navigate to HomePage
-                            sx={{ cursor: "pointer" }}
-                        >
-                            Home
-                        </Link>
-                        <Typography color="textPrimary">SavedPostsPage</Typography>
-                    </Breadcrumbs>
+                    {/* Fixed Breadcrumbs for navigation */}
+                    <Box
+                        position="fixed"
+                        top="93px"
+                        left="390px"
+                        right="1rem"
+                        padding="0.5rem"
+                        zIndex={1000}
+                        boxShadow="0px 2px 0px 0px rgba(0, 0, 0, 0.1)"
+                    >
+                        <Breadcrumbs aria-label="breadcrumb">
+                            <Link
+                                underline="hover"
+                                color="inherit"
+                                onClick={() => navigate('/Home')}
+                                sx={{ cursor: "pointer" }}
+                            >
+                                Home
+                            </Link>
+                            <Typography color="textPrimary"> Saved</Typography>
+                        </Breadcrumbs>
+                    </Box>
 
-                    {/* Render SavedPosts component */}
-                    <SavedPosts />
+                    {/* Scrollable Saved Posts */}
+                    <Box
+                        position="relative"
+                        top="50px"
+                        left="28px"
+                        right="0"
+                        // padding="1rem"
+                        height="calc(100vh - 140px)"
+                        overflow="auto"  // Enable scrolling within this box
+                    >
+                        <SavedPosts />
+                    </Box>
                 </Box>
             </Box>
         </Box>
     );
 };
 
-export default SavedPostsPage;
+export default SavedPost;

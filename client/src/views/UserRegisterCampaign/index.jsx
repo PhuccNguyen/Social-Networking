@@ -65,7 +65,7 @@ const UserRegisterCampaign = () => {
                         zIndex={999}
                         Width="calc(100% - 420px)"
                     >
-                        <JoinedCampaignsPage />
+                        <JoinedCampaignsPage userId={_id} />
 
                     </Box>
                 </Box>
