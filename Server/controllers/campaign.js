@@ -162,26 +162,22 @@ export const getCampaignCounts = async (req, res) => {
       createdBy: userId,
       $or: [
         {
-          // Within registration period
           registrationStartDate: { $lte: now },
           registrationEndDate: { $gte: now },
         },
         {
-          // After registration period but before campaign start date
           registrationEndDate: { $lt: now },
           campaignStartDate: { $gt: now },
         }
       ],
     });
 
-    // Count Started Campaigns
     const startedCount = await Campaign.countDocuments({
       createdBy: userId,
       campaignStartDate: { $lte: now },
       campaignEndDate: { $gte: now },
     });
 
-    // Count Ended Campaigns
     const endedCount = await Campaign.countDocuments({
       createdBy: userId,
       campaignEndDate: { $lt: now },
