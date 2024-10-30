@@ -34,26 +34,16 @@ export const verifyToken = async (req, res, next) => {
 };
 
 
+// Admin Verification
+export const verifyAdmin = (req, res, next) => {
+  // Check if the user has the "admin" role
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Admin role required" });
+  }
+  next();
+};
 
-
-
-// // Verify Role Middleware (dynamic)
-// export const verifyRole = (roles) => (req, res, next) => {
-//   const user = req.user;
-//   if (!roles.includes(user.role)) {
-//     return res.status(403).json({ message: "Forbidden: Insufficient Role" });
-//   }
-//   next();
-// };
-
-// // Admin Role Verification
-// export const verifyAdmin = (req, res, next) => {
-//   if (req.user.role !== "admin") {
-//     return res.status(403).json({ message: "Admin role required" });
-//   }
-//   next();
-// };
-
+// Admin and assistantAdmin Verification
 export const verifyAssistantAdmin = (req, res, next) => {
   console.log("User role in request:", req.user.role);  // Add a log to check the role in the middleware
   if (req.user.role !== "assistantAdmin" && req.user.role !== "admin") {

@@ -4,14 +4,17 @@ import {
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
+import UserImage from "components/UserImage";
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from "react-redux";
 
-const ManageRoles = () => {
+const AdminRole = ( userId ) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [userList, setUserList] = useState([]);
   const [roleFilter, setRoleFilter] = useState('all');
   const theme = useTheme();
   const { palette } = theme;
+  const token = useSelector((state) => state.token); // Get token from Redux state
   const navigate = useNavigate();
 
   const dark = palette.neutral.dark;
@@ -20,46 +23,76 @@ const ManageRoles = () => {
   // Fetch all users when component mounts
   useEffect(() => {
     const fetchUsers = async () => {
+      if (!token) {
+        console.error("No token found in Redux state");
+        return;
+      }
+
       try {
         const response = await fetch('http://localhost:3001/admin/users', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Error fetching users:", errorData.error || response.statusText);
+          return;
+        }
+
         const data = await response.json();
+        if (!Array.isArray(data)) {
+          console.error("Expected an array but received:", data);
+          return;
+        }
+
         setUserList(data);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
-    fetchUsers();
-  }, []);
 
-  // Filter users based on search query and role filter
-  const filteredUsers = userList.filter(user =>
-    (roleFilter === 'all' || user.role === roleFilter) &&
-    (user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+    fetchUsers();
+  }, [token]); 
+
+// Filter users based on search query and role filter
+const filteredUsers = userList.filter(user =>
+  (roleFilter === 'all' || user.role === roleFilter) &&
+  (
+    (user.name && user.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+    (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase()))
+  )
+);
 
   // Promote or demote user role
-  const changeUserRole = async (userId, newRole) => {
-    try {
-      const url = `http://localhost:3001/admin/${newRole === 'assistantAdmin' ? 'promote' : 'demote'}/${userId}`;
-      const response = await fetch(url, {
-        method: 'PATCH',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
-      if (response.ok) {
-        const updatedUser = await response.json();
-        setUserList(prevState =>
-          prevState.map(user => (user.id === userId ? updatedUser.user : user))
-        );
-      } else {
-        console.error("Failed to change user role");
-      }
-    } catch (error) {
-      console.error("Error changing user role:", error);
+  // Promote or demote user role
+const changeUserRole = async (userId, newRole) => {
+  if (!userId) {
+    console.error("No user ID provided to changeUserRole.");
+    return;
+  }
+  
+  try {
+    const url = `http://localhost:3001/admin/${newRole === 'assistantAdmin' ? 'promote' : 'demote'}/${userId}`;
+    console.log(`Sending request to URL: ${url}`); // Debug log
+
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (response.ok) {
+      const updatedUser = await response.json();
+      setUserList(prevState =>
+        prevState.map(user => (user.id === userId ? updatedUser.user : user))
+      );
+    } else {
+      const errorData = await response.json();
+      console.error("Failed to change user role:", errorData.error || response.statusText);
     }
-  };
+  } catch (error) {
+    console.error("Error changing user role:", error);
+  }
+};
 
   return (
     <Box padding="2rem" sx={{ minHeight: "100vh", borderRadius: "8px", backgroundColor: palette.background.default }}>
@@ -113,8 +146,10 @@ const ManageRoles = () => {
         </TableHead>
         <TableBody>
           {filteredUsers.map(user => (
-            <TableRow key={user.id}>
-              <TableCell><Avatar src={user.picturePath} /></TableCell>
+             <TableRow key={user.id}>
+             <TableCell>
+                      <UserImage image={user.picturePath} size="45px" />
+             </TableCell>            
               <TableCell>{user.name}</TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell>{user.role}</TableCell>
@@ -147,4 +182,4 @@ const ManageRoles = () => {
   );
 };
 
-export default ManageRoles;
+export default AdminRole;

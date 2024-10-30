@@ -13,7 +13,7 @@ import IdentifyRoleAdmin from "components/IdentifyRoleAdmin";
 import IdentifyRoleAsistantAdmin from "components/IdentifyRoleAsistantAdmin";
 import { useSelector } from "react-redux";
 
-const AdminWidget = ({ userId, picturePath, role }) => {
+const AdminWidget = ({ userId, picturePath, role,}) => {
   const [user, setUser] = useState(null);
   const [activeSection, setActiveSection] = useState('Dashboard');
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -50,7 +50,7 @@ const AdminWidget = ({ userId, picturePath, role }) => {
     switch (activeSection) {
       case 'Dashboard': return <Dasdboard />;
       case 'AssistantAdmin': return <AssistantAdmin />;
-      case 'Role': return <AdminRole />;
+      case 'Role': return <AdminRole userId={userId} />;
       case 'Campaign': return <AdminCampain />;
       default: return null;
     }

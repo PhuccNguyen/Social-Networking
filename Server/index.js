@@ -14,6 +14,7 @@ import postsRoutes from "./routes/post.js";
 // import eventsRoutes from "./routes/volunteer.js";
 // import adminRoutes from "./Folder/admin.js";
 import friendRoutes from "./routes/friend.js"; 
+import adminRoutes from "./routes/admin.js"; 
 import volunteerRoutes from './routes/volunteer.js'; 
 import { createPost } from "./controllers/post.js";
 import { register } from "./controllers/auth.js";
@@ -85,6 +86,8 @@ app.use("/users", usersRoutes);
 app.use("/posts", postsRoutes);
 app.use("/friends",verifyToken, friendRoutes);
 app.use('/volunteer', volunteerRoutes);
+app.use('/admin', adminRoutes);
+
 
 
 // Mongoose connection
