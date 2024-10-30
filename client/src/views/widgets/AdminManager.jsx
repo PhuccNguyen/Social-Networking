@@ -15,7 +15,7 @@ import {
   TextField,
   InputAdornment,
 } from "@mui/material";
-import { RadialBarChart, RadialBar, Legend, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { RadialBarChart, RadialBar,BarChart, Bar, Legend, PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Search as SearchIcon } from "@mui/icons-material";
 import UserImage from "components/UserImage";
 import { useNavigate } from "react-router-dom";
@@ -154,8 +154,8 @@ const AdminDashboard = () => {
 
   return (
     <Box padding="2rem">  
-       <Grid container spacing={4}>
-        <Grid item xs={12} md={3.6}>
+       <Grid container spacing={3}>
+        <Grid item xs={12} md={3.7}>
           <StatCard
             title="Total Campaigns"
             value={totalStats.totalCampaigns}
@@ -163,7 +163,7 @@ const AdminDashboard = () => {
             changeType="increase"
           />
         </Grid>
-        <Grid item xs={12} md={3.6}>
+        <Grid item xs={12} md={3.7}>
           <StatCard
             title="Registered Users"
             value={totalStats.totalRegisteredUsers}
@@ -171,7 +171,7 @@ const AdminDashboard = () => {
             changeType="decrease"
           />
         </Grid>
-        <Grid item xs={12} md={4.1}>
+        <Grid item xs={12} md={4.5}>
           <StatCard
             title="Registered Volunteers"
             value={totalStats.totalRegisteredVolunteers}
@@ -184,16 +184,12 @@ const AdminDashboard = () => {
 <Box 
   display="flex" 
   alignItems="center" 
-  color= '#fff'
   justifyContent="center" 
   mt={4} 
   mb={2} 
   sx={{
     padding: '1rem',
     borderRadius: '12px',
-    backgroundColor: palette.background.default, // Background color adjusts with theme
-    color: palette.text.primary, // Text color adjusts with theme
-
   }}
 >
   <TextField
@@ -209,8 +205,9 @@ const AdminDashboard = () => {
       ),
     }}
     sx={{
-      backgroundColor: palette.background.default, // Background color adjusts with theme
-      color: palette.text.primary, // Text color adjusts with theme
+      backgroundColor: palette.background.paper,
+      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+
       borderRadius: '8px',
       width: '40%', // Adjust width for a smaller size compared to the full width
       mr: 2,
@@ -220,7 +217,9 @@ const AdminDashboard = () => {
     placeholder="Location" // Secondary input field for location
     variant="outlined"
     sx={{
-      backgroundColor: palette.background.default, // Background color adjusts with theme
+      backgroundColor: palette.background.paper,
+      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+
       color: palette.text.primary, // Text color adjusts with theme
       borderRadius: '8px',
       width: '40%',
@@ -246,90 +245,200 @@ const AdminDashboard = () => {
 </Box>
 
 
-      {selectedCampaign ? (
-        <Box mt={4}>
-          <Typography variant="h4" gutterBottom>
-            Campaign Progress: {selectedCampaign.title}
-          </Typography>
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
-              <ResponsiveContainer width="100%" height={300}>
-                <RadialBarChart data={[{ name: "Progress", progress: selectedCampaign.progress }]}>
-                  <RadialBar minAngle={15} background clockWise dataKey="progress" />
-                  <Legend />
-                </RadialBarChart>
-              </ResponsiveContainer>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={[
-                      { name: "Male", value: selectedCampaign.maleVolunteers },
-                      { name: "Female", value: selectedCampaign.femaleVolunteers },
-                    ]}
-                    dataKey="value"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    label
-                  >
-                    {["Male", "Female"].map((_, i) => (
-                      <Cell key={`cell-${i}`} fill={COLORS[i % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Legend verticalAlign="bottom" />
-                </PieChart>
-              </ResponsiveContainer>
-            </Grid>
+{selectedCampaign ? (
+  <Box mt={4}>
+  <Typography variant="h4" gutterBottom>Campaign Progress: {selectedCampaign.title}</Typography>
+
+  {/* Basic Campaign Information */}
+  <Grid container spacing={4}>
+    <Grid item xs={12} md={6}>
+      <StatCard title="Goal" value={selectedCampaign.goal || "N/A"} />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <StatCard title="Status" value={selectedCampaign.status || "N/A"} />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <StatCard title="Total Volunteers" value={selectedCampaign.totalVolunteers || "N/A"} />
+    </Grid>
+    <Grid item xs={12} md={6}>
+      <StatCard title="Progress" value={`${selectedCampaign.progress || 0}%`} />
+    </Grid>
+  </Grid>
+
+  {/* Milestones Section */}
+  <Box mt={4}>
+    <Typography variant="h5" gutterBottom>Milestones</Typography>
+    {selectedCampaign.milestones && selectedCampaign.milestones.length > 0 ? (
+      <Grid container spacing={3}>
+        {selectedCampaign.milestones.map((milestone, index) => (
+          <Grid item xs={12} md={6} key={index}>
+            <Paper sx={{ padding: "1rem", borderRadius: "12px", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}>
+              <Typography variant="h6">{milestone.name}</Typography>
+              <Typography variant="body2" color="textSecondary">{milestone.description}</Typography>
+              <Typography variant="body1">Progress: {milestone.percentage}%</Typography>
+              <Typography variant="body2" color={milestone.completed ? "success.main" : "error.main"}>
+                {milestone.completed ? "Completed" : "In Progress"}
+              </Typography>
+            </Paper>
           </Grid>
-        </Box>
+        ))}
+      </Grid>
+    ) : (
+      <Typography variant="body1">No milestones available</Typography>
+    )}
+  </Box>
+
+  {/* Analysis Charts */}
+  <Grid container spacing={4} mt={4}>
+
+    {/* Milestone Completion Bar Chart */}
+    <Grid item xs={12} md={6}>
+      <Paper sx={{ padding: "1rem", borderRadius: "12px", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}>
+        <Typography variant="h6" gutterBottom>Milestone Completion</Typography>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={selectedCampaign.milestones}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="percentage" fill="#3b82f6" />
+          </BarChart>
+        </ResponsiveContainer>
+      </Paper>
+    </Grid>
+
+    {/* Volunteer Engagement Over Time Line Chart */}
+    <Grid item xs={12} md={6}>
+      <Paper sx={{ padding: "1rem", borderRadius: "12px", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}>
+        <Typography variant="h6" gutterBottom>Volunteer Engagement Over Time</Typography>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={selectedCampaign.engagementData}>
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="volunteers" stroke="#0088FE" strokeWidth={2} />
+          </LineChart>
+        </ResponsiveContainer>
+      </Paper>
+    </Grid>
+
+    {/* Volunteer Demographics Pie Chart */}
+    <Grid item xs={12} md={6}>
+      <Paper sx={{ padding: "1rem", borderRadius: "12px", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}>
+        <Typography variant="h6" gutterBottom>Volunteer Demographics</Typography>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie data={selectedCampaign.demographics} dataKey="value" cx="50%" cy="50%" outerRadius={100} label>
+              {selectedCampaign.demographics.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Legend verticalAlign="bottom" />
+          </PieChart>
+        </ResponsiveContainer>
+      </Paper>
+    </Grid>
+
+    {/* Volunteer Location Distribution (Example) */}
+    <Grid item xs={12} md={6}>
+      <Paper sx={{ padding: "1rem", borderRadius: "12px", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}>
+        <Typography variant="h6" gutterBottom>Volunteer Distribution by Location</Typography>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={selectedCampaign.locationDistribution}>
+            <XAxis dataKey="location" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="count" fill="#ffbb28" />
+          </BarChart>
+        </ResponsiveContainer>
+      </Paper>
+    </Grid>
+
+  </Grid>
+</Box>
+
       ) : (
         <Box mt={4}>
-          <Typography variant="h4" gutterBottom>
-            Campaign Details
-          </Typography>
-          <Table sx={{ backgroundColor: palette.background.paper, borderRadius: "8px" }}>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Campaign Title</TableCell>
-                <TableCell>Start Date</TableCell>
-                <TableCell>End Date</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Progress</TableCell>
-                <TableCell>Assistant Admin</TableCell>
+        <Typography variant="h4" gutterBottom>Campaign Overview</Typography>
+        <Table sx={{ backgroundColor: palette.background.paper, borderRadius: "8px", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}>
+          <TableHead>
+            <TableRow>
+              <TableCell><strong>ID</strong></TableCell>
+              <TableCell><strong>Title</strong></TableCell>
+              <TableCell><strong>Start Date</strong></TableCell>
+              <TableCell><strong>End Date</strong></TableCell>
+              <TableCell><strong>Progress</strong></TableCell>
+              <TableCell><strong>Total Volunteers</strong></TableCell>
+              <TableCell><strong>Admin</strong></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredCampaigns.map((campaign) => (
+              <TableRow 
+                key={campaign._id} 
+                hover 
+                onClick={() => handleCampaignClick(campaign)}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": { backgroundColor: palette.action.hover }
+                }}
+              >
+                <TableCell>
+                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                    {campaign._id}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body1">{campaign.title}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2" color="textSecondary">
+                    {new Date(campaign.campaignStartDate).toLocaleDateString()}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2" color="textSecondary">
+                    {new Date(campaign.campaignEndDate).toLocaleDateString()}
+                  </Typography>
+                </TableCell>
+                <TableCell width="150px">
+                  <Box display="flex" alignItems="center">
+                    <LinearProgress 
+                      variant="determinate" 
+                      value={campaign.progress} 
+                      sx={{
+                        height: "8px", 
+                        borderRadius: "5px", 
+                        width: "100%", 
+                        bgcolor: palette.grey[200],
+                        "& .MuiLinearProgress-bar": {
+                          bgcolor: campaign.progress > 80 ? palette.success.main : palette.warning.main
+                        }
+                      }} 
+                    />
+                    <Typography variant="caption" sx={{ ml: 1 }}>
+                      {campaign.progress}%
+                    </Typography>
+                  </Box>
+                </TableCell>
+                <TableCell align="center">
+                  <Typography variant="body1" sx={{ fontWeight: "bold", color: palette.info.main }}>
+                    {campaign.totalVolunteers || "N/A"}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Button
+                    onClick={(e) => { e.stopPropagation(); handleAdminClick(campaign.createdBy._id); }}
+                    style={{ textTransform: "none", color: palette.primary.main }}
+                    startIcon={<UserImage image={campaign.createdBy.picturePath} alt={campaign.createdBy.username} size="30px" />}
+                  >
+                    {campaign.createdBy.username}
+                  </Button>
+                </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredCampaigns.map((campaign) => (
-                <TableRow key={campaign._id} onClick={() => handleCampaignClick(campaign)}>
-                  <TableCell>{campaign._id}</TableCell>
-                  <TableCell>{campaign.title}</TableCell>
-                  <TableCell>{campaign.campaignStartDate}</TableCell>
-                  <TableCell>{campaign.campaignEndDate}</TableCell>
-                  <TableCell>{campaign.status}</TableCell>
-                  <TableCell>
-                    <LinearProgress variant="determinate" value={campaign.progress} sx={{ height: "8px" }} />
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAdminClick(campaign.createdBy._id);
-                      }}
-                      style={{ textTransform: "none", color: main }}
-                    >
-                      <UserImage image={campaign.createdBy.picturePath} alt={campaign.createdBy.username} size="45px" />
-
-                      {campaign.createdBy.username}
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Box>
+            ))}
+          </TableBody>
+        </Table>
+      </Box>      
       )}
     </Box>
   );

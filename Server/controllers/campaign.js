@@ -245,19 +245,45 @@ export const getCampaignsByStatus = async (req, res) => {
 };
 
 
-// Get all assistant admins and their campaigns
+// Get all assistant admins and their campaigns with detailed information
 export const getAssistantAdminsAndCampaigns = async (req, res) => {
   try {
-    // Get assistant admins
+    // Fetch assistant admins with limited fields
     const assistantAdmins = await User.find({ role: "assistantAdmin" }, '_id username picturePath');
 
-    // Get campaigns created by assistant admins
-    const campaigns = await Campaign.find().populate('createdBy', 'username picturePath');
+    // Fetch campaigns and populate necessary details
+    const campaigns = await Campaign.find()
+      .populate('createdBy', 'username picturePath') // Populate createdBy with username and picturePath
+      .lean();
+
+    // Process each campaign to include extra details for frontend
+    const processedCampaigns = await Promise.all(
+      campaigns.map(async (campaign) => {
+        // Count total volunteers if joinedCampaigns is populated in the user model
+        const totalVolunteers = await User.countDocuments({ joinedCampaigns: campaign._id });
+        
+        // Calculate progress as an example (can be based on milestones or other logic)
+        const progress = calculateCampaignProgress(campaign.milestones);
+
+        // Generate a basic demographic breakdown (e.g., male vs. female volunteers)
+        const demographics = await calculateVolunteerDemographics(campaign._id);
+
+        // Structure processed campaign data
+        return {
+          ...campaign,
+          goal: campaign.maxVolunteers, // Assume maxVolunteers as goal
+          status: calculateCampaignStatus(campaign), // Calculate based on campaign dates
+          progress,
+          totalVolunteers,
+          demographics, // Demographic breakdown
+        };
+      })
+    );
 
     // Prepare the response data
     const data = {
       assistantAdmins,
-      campaigns
+      campaigns: processedCampaigns,
     };
 
     res.status(200).json(data);
@@ -265,4 +291,29 @@ export const getAssistantAdminsAndCampaigns = async (req, res) => {
     console.error("Error fetching assistant admins and campaigns:", error);
     res.status(500).json({ error: 'Failed to retrieve data' });
   }
+};
+
+// Helper function to calculate campaign progress based on milestones
+const calculateCampaignProgress = (milestones) => {
+  if (!milestones || milestones.length === 0) return 0;
+  const completedMilestones = milestones.filter(m => m.completed).length;
+  return Math.round((completedMilestones / milestones.length) * 100);
+};
+
+// Helper function to determine the status of the campaign based on start and end dates
+const calculateCampaignStatus = (campaign) => {
+  const now = new Date();
+  if (now < new Date(campaign.campaignStartDate)) return "Upcoming";
+  if (now > new Date(campaign.campaignEndDate)) return "Completed";
+  return "Ongoing";
+};
+
+// Helper function to calculate volunteer demographics for the campaign
+const calculateVolunteerDemographics = async (campaignId) => {
+  const maleVolunteers = await User.countDocuments({ joinedCampaigns: campaignId, gender: "male" });
+  const femaleVolunteers = await User.countDocuments({ joinedCampaigns: campaignId, gender: "female" });
+  return [
+    { name: "Male", value: maleVolunteers },
+    { name: "Female", value: femaleVolunteers },
+  ];
 };
