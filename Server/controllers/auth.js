@@ -80,6 +80,11 @@ export const login = async (req, res) => {
         return res.status(404).json({ msg: "User does not exist!" });
       }
   
+      // Check if the account is active
+      if (!user.isActive) {
+        return res.status(403).json({ msg: "Your account has been banned for violating platform policies. Please contact support." });
+     }
+
       // Check if the password is correct
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
@@ -91,7 +96,10 @@ export const login = async (req, res) => {
       await user.save();
   
       // Create JWT token including user role
-      const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '5h' });
+      const token = jwt.sign(
+        { id: user._id, role: user.role },
+         process.env.JWT_SECRET,
+        { expiresIn: '12h' });
   
       // Remove password before returning user data
       const { password: _, ...userWithoutPassword } = user.toObject();

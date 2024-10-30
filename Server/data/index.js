@@ -1,240 +1,77 @@
-// import mongoose from 'mongoose';
+import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 
-// // Generate unique ObjectIds for users
-// const userIds = [
-//   new mongoose.Types.ObjectId(),
-//   new mongoose.Types.ObjectId(),
-//   new mongoose.Types.ObjectId(),
-//   new mongoose.Types.ObjectId(),
-//   new mongoose.Types.ObjectId(),
-//   new mongoose.Types.ObjectId(),
-//   new mongoose.Types.ObjectId(),
-// ];
+// Helper function to generate hashed passwords
+const generatePassword = async () => await bcrypt.hash("abc123", 10);
+const hashedPassword = await generatePassword();
 
-// export const users = [
-//   {
-//     _id: userIds[0],
-//     firstName: "Sample",
-//     lastName: "Me",
-//     userName: "sample5555",
-//     mobile: "0999934234",
-//     email: "sample5555@gmail.com",
-//     intro: "Welcome to my profile",
-//     gender: "Non-binary",
-//     birthday: new Date("1999-01-01"),
-//     status: "Single",
-//     password: "$2b$10$dsasdgsagasda//G9JxQ4bQ8KXf4OAIe/X/AK9skyWUy",
-//     picturePath: "p11.jpeg",
-//     friends: [],
-//     location: "123 Test St, Ho Chi Minh City, Vietnam",
-//     occupation: "Software Engineer",
-//     viewedProfile: 14561,
-//     impressions: 888822,
-//     lastLogin: new Date(),
-//     createdAt: 1115211422,
-//     updatedAt: 1115211422,
-//   },
-//   {
-//     _id: userIds[1],
-//     firstName: "Steve",
-//     lastName: "Ralph",
-//     userName: "steveralph",
-//     mobile: "0987654321",
-//     email: "thataaa@gmail.com",
-//     intro: "Hi! I'm Steve.",
-//     gender: "Male",
-//     birthday: new Date("2000-05-10"),
-//     status: "Single",
-//     password: "$!FEAS@!O)_IDJda//G9JxQ4bQ8KXf4OAIe/X/AK9skyWUy",
-//     picturePath: "p3.jpeg",
-//     friends: [],
-//     location: "133/36 Quang Trung, Go Vap, Ho Chi Minh, Vietnam",
-//     occupation: "Degenerate",
-//     viewedProfile: 12351,
-//     impressions: 55555,
-//     lastLogin: new Date(),
-//     createdAt: 1115211422,
-//     updatedAt: 1115211422,
-//   },
-//   {
-//     _id: userIds[2],
-//     firstName: "Alice",
-//     lastName: "Wonder",
-//     userName: "alicewonder",
-//     mobile: "6789012345",
-//     email: "alicewonder@gmail.com",
-//     intro: "Hello! I'm Alice Wonder",
-//     gender: "Female",
-//     birthday: new Date("1998-04-12"),
-//     status: "Married",
-//     password: "$2b$10$dsasdgsagasda//G9JxQ4bQ8KXf4OAIe/X/AK9skyWUy",
-//     picturePath: "p10.jpeg",
-//     friends: [],
-//     location: "456 Le Loi, District 1, Ho Chi Minh City, Vietnam",
-//     occupation: "Adventurer",
-//     viewedProfile: 12345,
-//     impressions: 98765,
-//     lastLogin: new Date(),
-//   },
-//   {
-//     _id: userIds[3],
-//     firstName: "Whatcha",
-//     lastName: "Doing",
-//     userName: "whatchadoing",
-//     mobile: "04353535345",
-//     email: "whatchadoing@gmail.com",
-//     intro: "Hello! I'm Whatcha Doing",
-//     gender: "Female",
-//     birthday: new Date("1992-03-15"),
-//     status: "Divorced",
-//     password: "$2b$10$dsasdgsagasda//G9JxQ4bQ8KXf4OAIe/X/AK9skyWUy",
-//     picturePath: "p6.jpeg",
-//     friends: [],
-//     location: "789 Tran Hung Dao, District 5, Ho Chi Minh City, Vietnam",
-//     occupation: "Educator",
-//     viewedProfile: 41024,
-//     impressions: 55316,
-//     lastLogin: new Date(),
-//     createdAt: 1289897762,
-//     updatedAt: 1288075389,
-//   },
-//   {
-//     _id: userIds[4],
-//     firstName: "Jane",
-//     lastName: "Doe",
-//     userName: "janedoe",
-//     mobile: "2345678901",
-//     email: "janedoe@gmail.com",
-//     intro: "Hi! I'm Jane Doe",
-//     gender: "Female",
-//     birthday: new Date("1995-08-25"),
-//     status: "Single",
-//     password: "$2b$10$dsasdgsagasda//G9JxQ4bQ8KXf4OAIe/X/AK9skyWUy",
-//     picturePath: "p5.jpeg",
-//     friends: [],
-//     location: "101 Nguyen Hue, District 1, Ho Chi Minh City, Vietnam",
-//     occupation: "Hacker",
-//     viewedProfile: 40212,
-//     impressions: 7758,
-//     lastLogin: new Date(),
-//     createdAt: 1289897762,
-//     updatedAt: 1288075389,
-//   },
-//   {
-//     _id: userIds[5],
-//     firstName: "Hong",
-//     lastName: "Pham",
-//     userName: "hongpham7077",
-//     mobile: "0344445677",
-//     email: "hongpham7077@gmail.com",
-//     intro: "Hello! I'm Hong Pham",
-//     gender: "Female",
-//     birthday: new Date("2002-01-10"),
-//     status: "Single",
-//     password: "$2b$10$dsasdgsagasda//G9JxQ4bQ8KXf4OAIe/X/AK9skyWUy",
-//     picturePath: "p7.jpeg",
-//     friends: [],
-//     location: "789 Hai Ba Trung, District 3, Ho Chi Minh City, Vietnam",
-//     occupation: "Student",
-//     viewedProfile: 98765,
-//     impressions: 12345,
-//     lastLogin: new Date(),
-//   },
-//   {
-//     _id: userIds[6],
-//     firstName: "Carly",
-//     lastName: "Vowel",
-//     userName: "carlyvowel",
-//     mobile: "4567890123",
-//     email: "carlyvowel@gmail.com",
-//     intro: "Hi! I'm Carly Vowel",
-//     gender: "Female",
-//     birthday: new Date("1993-07-14"),
-//     status: "Single",
-//     password: "$2b$10$dsasdgsagasda//G9JxQ4bQ8KXf4OAIe/X/AK9skyWUy",
-//     picturePath: "p8.jpeg",
-//     friends: [],
-//     location: "123 Pham Ngu Lao, District 1, Ho Chi Minh City, Vietnam",
-//     occupation: "Nurse",
-//     viewedProfile: 1510,
-//     impressions: 77579,
-//     lastLogin: new Date(),
-//     createdAt: 4455697762,
-//     updatedAt: 8674475389,
-//   },
-// ];
+// Set the admin's Object ID (replace this with the actual admin's Object ID in your database)
+const adminId = new mongoose.Types.ObjectId("67101f55d1efbc79a80f0776");
 
-// export const posts = [
-//   {
-//     _id: new mongoose.Types.ObjectId(),
-//     userId: userIds[1],
-//     firstName: "Steve",
-//     lastName: "Ralph",
-//     location: "133/36 Quang Trung, Go Vap, Ho Chi Minh, Vietnam",
-//     description: "Some really long random description",
-//     picturePath: "post1.jpeg",
-//     UserpicturePath: "p3.jpeg",
-//     createDate: new Date(),
-//     status: "Published",
-//     likes: new Map([
-//       [userIds[0], true],
-//       [userIds[2], true],
-//       [userIds[3], true],
-//       [userIds[4], true],
-//     ]),
-//     comments: [
-//       "random comment",
-//       "another random comment",
-//       "yet another random comment",
-//     ],
-//   },
-//   {
-//     _id: new mongoose.Types.ObjectId(),
-//     userId: userIds[3],
-//     firstName: "Whatcha",
-//     lastName: "Doing",
-//     location: "789 Tran Hung Dao, District 5, Ho Chi Minh City, Vietnam",
-//     description: "Another really long random description. This one is longer than the previous one.",
-//     picturePath: "post2.jpeg",
-//     UserpicturePath: "p6.jpeg",
-//     createDate: new Date(),
-//     status: "Draft",
-//     likes: new Map([
-//       [userIds[6], true],
-//       [userIds[4], true],
-//       [userIds[1], true],
-//       [userIds[2], true],
-//     ]),
-//     comments: [
-//       "one more random comment",
-//       "and another random comment",
-//       "no more random comments",
-//       "I lied, one more random comment",
-//     ],
-//   },
-//   {
-//     _id: new mongoose.Types.ObjectId(),
-//     userId: userIds[4],
-//     firstName: "Jane",
-//     lastName: "Doe",
-//     location: "101 Nguyen Hue, District 1, Ho Chi Minh City, Vietnam",
-//     description: "This is the last really long random description. This one is longer than the previous one.",
-//     picturePath: "post3.jpeg",
-//     UserpicturePath: "p5.jpeg",
-//     createDate: new Date(),
-//     status: "Published",
-//     likes: new Map([
-//       [userIds[1], true],
-//       [userIds[6], true],
-//       [userIds[3], true],
-//       [userIds[5], true],
-//     ]),
-//     comments: [
-//       "one more random comment",
-//       "I lied, one more random comment",
-//       "I lied again, one more random comment",
-//       "Why am I doing this?",
-//       "I'm bored",
-//     ],
-//   },
-// ];
+// Create a sample user array
+export const users = [
+  {
+    _id: new mongoose.Types.ObjectId(),
+    firstName: "Nguyễn",
+    lastName: "Quốc Khánh",
+    userName: "quockhanh_01",
+    mobile: "0333999999",
+    email: "quockhanh01@gmail.com",
+    intro: "Excited to connect with new professionals!",
+    gender: "male",
+    birthday: new Date(1995, 3, 25),
+    status: "married",
+    password: hashedPassword,
+    picturePath: "002129ad-fad0-4d4c-844b-38ac8bb041a7.jpg",
+    location: "District 1, Ho Chi Minh City",
+    occupation: "Software Engineer",
+    role: "user",
+    friends: [],
+    friendRequestsSent: [adminId], // Each user has sent a friend request to the admin
+    friendRequestsReceived: [],
+    savedPosts: [],
+    joinedCampaigns: [],
+  },
+];
+
+// Arrays for generating diverse user data
+const firstNames = ["Nguyễn", "Trần", "Phạm", "Đỗ", "Hoàng", "Lê", "Bùi", "Võ", "Dương", "Lâm"];
+const lastNames = ["Văn A", "Thị B", "Minh C", "Ngọc D", "Hoàng E", "An F", "Hùng G", "Bảo H", "Khánh I", "Dũng J"];
+const occupations = ["Doctor", "Engineer", "Teacher", "Designer", "Writer", "Salesperson", "Chef", "Manager", "Accountant", "Consultant"];
+const locations = [
+  "Old Quarter, Hanoi", "City Center, Da Nang", "Beachside, Nha Trang",
+  "Citadel, Hue", "Riverside, Can Tho", "Ha Long Bay, Quang Ninh", 
+  "Coastal Area, Vung Tau", "City Center, Hai Phong", "Industrial Zone, Binh Duong"
+];
+const intros = [
+  "Looking to network with amazing people!", "Let's connect and grow together.",
+  "I am passionate about my field!", "Enjoying the journey and open to new ideas.",
+  "Thrilled to be here and learn more!", "Let's achieve great things together.",
+  "Excited to make new friends and connections!", "Open to collaborations and opportunities.",
+  "Learning something new every day!", "Hello! I am here to contribute and connect."
+];
+
+for (let i = users.length; i < 40; i++) {
+  users.push({
+    _id: new mongoose.Types.ObjectId(),
+    firstName: firstNames[i % firstNames.length],
+    lastName: lastNames[i % lastNames.length],
+    userName: `user_${i}_${Math.floor(1000 + Math.random() * 9000)}`, // Unique username
+    mobile: `039${i.toString().padStart(4, "0")}`, // Unique mobile number
+    email: `user_${i}_${Math.floor(1000 + Math.random() * 9000)}@gmail.com`, // Unique email
+    intro: intros[i % intros.length],
+    gender: i % 2 === 0 ? "male" : "female",
+    birthday: new Date(1990 + (i % 10), (i % 12), (i % 28 + 1)),
+    status: i % 3 === 0 ? "single" : "married",
+    password: hashedPassword,
+    picturePath: `profile_img${i}.jpg`,
+    location: locations[i % locations.length],
+    occupation: occupations[i % occupations.length],
+    role: i % 9 === 0 ? "assistantAdmin" : "user",
+    friends: users.slice(0, i % 3).map((user) => user._id), // Randomly assign friends
+    friendRequestsSent: [adminId], // All users send friend requests to admin
+    friendRequestsReceived: users.slice(1, (i % 2) + 1).map((user) => user._id), // Random friend requests received
+    savedPosts: [new mongoose.Types.ObjectId(), new mongoose.Types.ObjectId()], // Saved post IDs
+    joinedCampaigns: [new mongoose.Types.ObjectId()], // Joined campaign ID
+  });
+}

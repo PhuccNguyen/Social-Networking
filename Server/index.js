@@ -11,8 +11,6 @@ import { fileURLToPath } from 'url';
 import authRoutes from "./routes/auth.js";
 import usersRoutes from "./routes/users.js";
 import postsRoutes from "./routes/post.js";
-// import eventsRoutes from "./routes/volunteer.js";
-// import adminRoutes from "./Folder/admin.js";
 import friendRoutes from "./routes/friend.js"; 
 import adminRoutes from "./routes/admin.js"; 
 import volunteerRoutes from './routes/volunteer.js'; 
@@ -20,10 +18,10 @@ import { createPost } from "./controllers/post.js";
 import { register } from "./controllers/auth.js";
 import { createCampaign  } from './controllers/campaign.js';
 import { verifyToken, verifyAssistantAdmin } from './middleware/auth.js';
-// import User  from "./models/User.js";
-// import Post from "./models/Post.js";
-// import { users, posts } from "./data/index.js"
 
+// import Post from "./models/Post.js";
+// import { users } from "./data/index.js"
+// import User  from "./models/User.js";
 
 // Load environment variables from .env file
 dotenv.config(); 

@@ -11,6 +11,8 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
+import { Snackbar, Alert } from '@mui/material';
+
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -71,6 +73,12 @@ const initialValuesLogin = {
 };
 
 const Form = () => {
+
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+
   const [pageType, setPageType] = useState("login");
   const [preview, setPreview] = useState(null);
   const { palette } = useTheme();
@@ -79,6 +87,13 @@ const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
+
+
+    // Handle Snackbar close
+    const handleSnackbarClose = () => {
+      setOpenSnackbar(false);
+    };
+
 
   const register = async (values, onSubmitProps) => {
     const formData = new FormData();
@@ -112,23 +127,53 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
-    const loggedIn = await loggedInResponse.json();
-    onSubmitProps.resetForm();
-    if (loggedIn) {
+    try {
+      const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+  
+      const result = await loggedInResponse.json();
+  
+      // Handle errors and display specific messages
+      if (!loggedInResponse.ok) {
+        if (result.msg) {
+          if (result.msg === "User is banned") {
+            setErrorMessage("Your account has been banned by the administrator. Please contact support.");
+          } else if (result.msg === "User does not exist!") {
+            setErrorMessage("This user does not exist. Please check your username, email, or mobile.");
+          } else if (result.msg === "Invalid credentials") {
+            setErrorMessage("Incorrect password. Please try again.");
+          } else {
+            setErrorMessage(result.msg || "Unable to log in. Please check your credentials.");
+          }
+        } else {
+          setErrorMessage("An error occurred. Please check your credentials and try again.");
+        }
+  
+        setOpenSnackbar(true); // Show Snackbar with error
+        return;
+      }
+  
+      // Reset the form on successful login
+      onSubmitProps.resetForm();
+  
+      // If login is successful, save the token and user data, and navigate to home
       dispatch(
         setLogin({
-          user: loggedIn.user,
-          token: loggedIn.token,
+          user: result.user,
+          token: result.token,
         })
       );
       navigate("/home");
+    } catch (error) {
+      console.error("Login Error:", error);
+      setErrorMessage("An error occurred during login. Please try again.");
+      setOpenSnackbar(true);
     }
   };
+  
 
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (isLogin) await login(values, onSubmitProps);
@@ -435,6 +480,20 @@ const Form = () => {
                 : "Already have an account? Login here."}
             </Typography>
           </Box>
+
+
+  {/* Snackbar Alert */}
+  <Snackbar
+            open={openSnackbar}
+            autoHideDuration={6000}
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+              {errorMessage}
+            </Alert>
+          </Snackbar>
+                
         </form>
       )}
     </Formik>

@@ -1,5 +1,5 @@
 import express from 'express';
-import { promoteToAssistantAdmin, demoteToUser, getAllUsers } from '../controllers/admin.js';
+import { promoteToAssistantAdmin, demoteToUser, getAllUsers, toggleUserActiveStatus } from '../controllers/admin.js';
 import { verifyToken, verifyAdmin } from '../middleware/auth.js';
 
 
@@ -13,5 +13,8 @@ router.patch('/promote/:id', verifyToken, verifyAdmin, promoteToAssistantAdmin);
 
 // Demote Assistant Admin to User
 router.patch('/demote/:id', verifyToken, verifyAdmin, demoteToUser);
+
+router.patch('/toggle-user-status/:id', verifyToken, verifyAdmin, toggleUserActiveStatus);
+
 
 export default router;

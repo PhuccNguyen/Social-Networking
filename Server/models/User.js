@@ -35,6 +35,9 @@ const UserSchema = new mongoose.Schema(
     // Chiến dịch được quản lý (cho Admin và Assistant Admin)
     // managedCampaigns: [{ type: mongoose.Schema.Types.ObjectId, ref: "Campaign" }],
 
+    isActive: { type: Boolean, default: true }, // Add isActive field
+
+
     // Save post
     savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
   },
