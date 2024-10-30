@@ -48,7 +48,7 @@ const AdminWidget = ({ userId, picturePath, role,}) => {
   // Function to render the active section content
   const renderSectionContent = () => {
     switch (activeSection) {
-      case 'Dashboard': return <Dasdboard />;
+      case 'Dashboard': return <Dasdboard  userId={userId} />;
       case 'AssistantAdmin': return <AssistantAdmin />;
       case 'Role': return <AdminRole userId={userId} />;
       case 'Campaign': return <AdminCampain />;

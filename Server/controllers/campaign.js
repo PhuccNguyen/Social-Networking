@@ -245,3 +245,24 @@ export const getCampaignsByStatus = async (req, res) => {
 };
 
 
+// Get all assistant admins and their campaigns
+export const getAssistantAdminsAndCampaigns = async (req, res) => {
+  try {
+    // Get assistant admins
+    const assistantAdmins = await User.find({ role: "assistantAdmin" }, '_id username picturePath');
+
+    // Get campaigns created by assistant admins
+    const campaigns = await Campaign.find().populate('createdBy', 'username picturePath');
+
+    // Prepare the response data
+    const data = {
+      assistantAdmins,
+      campaigns
+    };
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error fetching assistant admins and campaigns:", error);
+    res.status(500).json({ error: 'Failed to retrieve data' });
+  }
+};
