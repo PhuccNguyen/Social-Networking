@@ -12,9 +12,11 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
+import ErrorIcon from '@mui/icons-material/Error';
 import { styled, useTheme } from "@mui/system"; 
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 
 // Custom styled components for a more modern look
@@ -72,6 +74,7 @@ const CampaignUserWidget = ({
   const main = palette.neutral.main;
   const token = useSelector((state) => state.token);
   const userId = useSelector((state) => state.user._id); 
+  const [errorDialog, setErrorDialog] = useState({ open: false, message: "" });
 
 
   const [openDialog, setOpenDialog] = useState(false); // State for the success dialog
@@ -90,13 +93,23 @@ const CampaignUserWidget = ({
       });
   
       if (response.ok) {
-        setOpenDialog(true);
+        setOpenDialog(true); // Registration successful
+      } else if (response.status === 400) {
+        const errorData = await response.json();
+        if (errorData.message === "You are already registered for this campaign") {
+          setErrorDialog({ open: true, message: "You are already registered for this campaign." });
+        } else if (errorData.message === "This campaign has already ended") {
+          setErrorDialog({ open: true, message: "Sorry, this campaign has ended and registration is closed." });
+        } else {
+          setErrorDialog({ open: true, message: "Failed to register for the campaign. Please try again." });
+        }
       } else {
         const errorData = await response.json();
         console.error("Failed to register for the campaign:", errorData);
       }
     } catch (error) {
       console.error("Error registering for campaign:", error);
+      setErrorDialog({ open: true, message: "An unexpected error occurred. Please try again later." });
     }
   };
   
@@ -208,25 +221,45 @@ const CampaignUserWidget = ({
       </CardContent>
     </StyledCard>
 
-    {/* Registration Success Dialog */}
-    <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-    <DialogTitle>Registration Successful!</DialogTitle>
-    <DialogContent>
-      <Typography variant="body1">
-        Thank you for registering for the campaign: <strong>{title}</strong>.
-      </Typography>
-      <Typography variant="body2" sx={{ marginTop: "1rem" }}>
-        Please remember to arrive on time. The campaign starts on{" "}
-        <strong>{new Date(campaignStartDate).toLocaleDateString()}</strong> at{" "}
-        <strong>{campaignStartTime}</strong>.
-      </Typography>
-    </DialogContent>
-    <DialogActions>
-      <Button onClick={() => setOpenDialog(false)} color="primary">
-        Close
-      </Button>
-    </DialogActions>
-  </Dialog>
+     {/* Registration Success Dialog */}
+     <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <CheckCircleIcon color="success" fontSize="large" />
+          Registration Successful!
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Thank you for registering for the campaign: <strong>{title}</strong>.
+          </Typography>
+          <Typography variant="body2">
+            Please remember to arrive on time. The campaign starts on{' '}
+            <strong>{new Date(campaignStartDate).toLocaleDateString()}</strong> at{' '}
+            <strong>{campaignStartTime}</strong>.
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
+            We’re excited to have you join us! Be prepared for an impactful experience.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary" variant="contained" sx={{ mt: 1 }}>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+       {/* Error Dialog */}
+       <Dialog open={errorDialog.open} onClose={() => setErrorDialog({ open: false, message: "" })}>
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <ErrorIcon color="error" fontSize="large" />
+          Registration Error
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" color="error">{errorDialog.message}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setErrorDialog({ open: false, message: "" })} color="error" variant="contained">Close</Button>
+        </DialogActions>
+      </Dialog>
       </>
 
   );

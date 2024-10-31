@@ -27,7 +27,7 @@ const VolunteerPage = () => {
           <UserWidget userId={_id} picturePath={picturePath} userName={userName} role={role}/>
         </Box>
         
-        <Box flexBasis={isNonMobileScreen ? "26%" : undefined} mt={isNonMobileScreen ? undefined : "2rem"}>
+        <Box flexBasis={isNonMobileScreen ? "60%" : undefined} mt={isNonMobileScreen ? undefined : "2rem"}>
         <VolunteerPost picturePath={picturePath} role={role} />
         <CampaignWidget userId={_id}  role={role} />
         </Box>

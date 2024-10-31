@@ -58,17 +58,34 @@ export const createCampaign = async (req, res) => {
 
 
 
-// Controller to get all campaigns created by the logged-in user
+// Controller to get all campaigns, categorized as upcoming, ongoing, or past
 export const getAllCampaigns = async (req, res) => {
   try {
-    const userId = req.user.id; // Get the logged-in user's ID
+    const currentDate = new Date();
 
-    // Fetch all campaigns where createdBy matches the logged-in user's ID
-    const campaigns = await Campaign.find({ createdBy: userId })
+    // Fetch all campaigns and populate the creator's details
+    const campaigns = await Campaign.find()
       .populate('createdBy', 'firstName lastName picturePath')
       .exec();
 
-    res.status(200).json(campaigns);
+    // Categorize campaigns by date
+    const upcomingCampaigns = campaigns.filter(
+      (campaign) => new Date(campaign.campaignStartDate) > currentDate
+    );
+    const ongoingCampaigns = campaigns.filter(
+      (campaign) =>
+        new Date(campaign.campaignStartDate) <= currentDate &&
+        new Date(campaign.campaignEndDate) >= currentDate
+    );
+    const pastCampaigns = campaigns.filter(
+      (campaign) => new Date(campaign.campaignEndDate) < currentDate
+    );
+
+    res.status(200).json({
+      upcoming: upcomingCampaigns,
+      ongoing: ongoingCampaigns,
+      past: pastCampaigns,
+    });
   } catch (error) {
     console.error("Error fetching campaigns:", error);
     res.status(500).json({ error: "Failed to fetch campaigns" });
@@ -76,15 +93,21 @@ export const getAllCampaigns = async (req, res) => {
 };
 
 
-// Controller to handle user registration for a campaign
+
 export const registerCampaign = async (req, res) => {
   try {
     const { campaignId } = req.params;
-    const userId = req.user.id; // Extract the userId from the verified JWT token
+    const userId = req.user.id; // Extract userId from the verified JWT token
 
     // Find the campaign by ID
     const campaign = await Campaign.findById(campaignId);
     if (!campaign) return res.status(404).json({ message: "Campaign not found" });
+
+    // Check if the campaign has ended
+    const currentDate = new Date();
+    if (campaign.campaignEndDate < currentDate) {
+      return res.status(400).json({ message: "This campaign has already ended" });
+    }
 
     // Find the user by ID
     const user = await User.findById(userId);
@@ -102,9 +125,11 @@ export const registerCampaign = async (req, res) => {
     // Respond with success
     res.status(200).json({ message: "Successfully registered for the campaign" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error during campaign registration:", error);
+    res.status(500).json({ message: "An error occurred while registering for the campaign" });
   }
 };
+
 
 
 export const getManagedCampaigns = async (req, res) => {

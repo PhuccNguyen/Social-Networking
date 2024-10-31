@@ -127,8 +127,59 @@ import {
     };
     return (
       <>
+                    
+                    {userRole === "user" && (
+        <WidgetWrapper
+          boxShadow="0px 6px 13px 3px rgba(0, 0, 0, 0.1)"
+          margin="-0.5rem 0rem 0rem 0rem"
+        >
+          <Box display="flex" alignItems="center" gap="1.5rem" width="100%">
+            <UserImage image={picturePath} size="60px" />
+            <Box>
+              <Typography variant="h6" color={palette.neutral.dark} fontWeight="bold">
+                Over 1,000 Volunteer Campaigns Across Vietnam Waiting for You!
+              </Typography>
+              <Typography variant="body2" color={palette.neutral.medium}>
+                Discover opportunities to make an impact in major cities, remote regions, and unique destinations.
+                Join hands to create a better community!
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box mt="1rem" display="flex" justifyContent="center" width="100%">
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{
+          background: "linear-gradient(310deg, #FF0080 0%, #7928CA 100%)",
+          color: "#fff",
+          padding: "0.4rem 2rem",
+          fontWeight: "bold",
+          borderRadius: "50px",
+          boxShadow: "0px 4px 15px rgba(121, 40, 202, 0.4)", // Add shadow for depth
+          width: "100%",
+          maxWidth: "520px", // Limit width for large screens
+          textTransform: "uppercase",
+          fontSize: "1rem",
+          transition: "all 0.3s ease", // Smooth transition
+          "&:hover": {
+            background: "linear-gradient(310deg, #FF6AB0 0%, #6B28BA 100%)",
+            transform: "translateY(-3px)", // Lift effect
+            boxShadow: "0px 6px 20px rgba(121, 40, 202, 0.6)", // Stronger shadow on hover
+          },
+          "&:active": {
+            transform: "translateY(1px)", // Slight push down on click
+            boxShadow: "0px 3px 10px rgba(121, 40, 202, 0.3)",
+          },
+        }}
+      >
+        Explore Campaigns
+      </Button>
+    </Box>
+        </WidgetWrapper>
+      )}
                 {/* Hiển thị nút Admin nếu role là admin */}
-                {(userRole === "assistantAdmin" || userRole === "admin") && (
+     {(userRole === "assistantAdmin" || userRole === "admin") && (
    
         <WidgetWrapper boxShadow="0px 6px 13px 3px rgba(0, 0, 0, 0.1)" margin="-0.5rem 0rem 0rem 0rem">
           <Box>
@@ -147,38 +198,42 @@ import {
             </Adjustment>
           </Box>
           <Divider />
-          <Box display="flex" justifyContent="space-between" maxWidth="100%" padding="0 9%">
-            <Button
-              onClick={() => setIsDialogOpen(true)}
-              sx={{
-                marginTop: "10px",
-                padding: "0.5rem 1rem",
-                width: "100%",
-                color: "white",
-                "&:hover": {
-                  background: "linear-gradient(310deg, #FF0080 0%, #7928CA 100%)",
-                },
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Typography
-                color={dark}
-                sx={{
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  "&:hover": {
-                    color: "white",
-                  },
-                }}
-              >
-                <ImageOutlined sx={{ marginRight: "0.5rem" }} />
-                Create Campaign
-              </Typography>
-            </Button>
-          </Box>
+
+          <Box display="flex" justifyContent="center" mt="1rem" width="100%" padding="0 9%">
+      <Button
+        onClick={() => setIsDialogOpen(true)}
+        sx={{
+          background: "linear-gradient(310deg, #FF0080 0%, #7928CA 100%)",
+          color: "white",
+          padding: "0.5rem 2rem",
+          fontWeight: "bold",
+          borderRadius: "50px",
+          boxShadow: "0px 4px 15px rgba(121, 40, 202, 0.4)", // Depth effect
+          width: "100%",
+          maxWidth: "520px", // Limit max width
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          textTransform: "uppercase",
+          fontSize: "1rem",
+          transition: "all 0.3s ease",
+          "&:hover": {
+            background: "linear-gradient(310deg, #FF6AB0 0%, #6B28BA 100%)",
+            transform: "translateY(-3px)", // Hover lift effect
+            boxShadow: "0px 6px 20px rgba(121, 40, 202, 0.6)", // Enhanced shadow on hover
+          },
+          "&:active": {
+            transform: "translateY(1px)", // Click effect
+            boxShadow: "0px 3px 10px rgba(121, 40, 202, 0.3)",
+          },
+        }}
+      >
+        <ImageOutlined sx={{ marginRight: "0.5rem", fontSize: "1.5rem" }} /> {/* Icon with adjusted size */}
+        <Typography variant="button" fontWeight="bold">
+          Create Campaign
+        </Typography>
+      </Button>
+    </Box>
         </WidgetWrapper>
        )}
   
