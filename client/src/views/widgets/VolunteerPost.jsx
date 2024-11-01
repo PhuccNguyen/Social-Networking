@@ -237,211 +237,258 @@ import {
         </WidgetWrapper>
        )}
   
-        {/* Dialog for creating a campaign */}
-        <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} fullWidth maxWidth="md">
-          <DialogTitle>Create a New Campaign</DialogTitle>
-          <DialogContent>
-            <Box display="flex" flexDirection="column" gap="1rem">
-              <TextField
-                name="title"
-                label="Campaign Title"
-                value={formData.title}
-                onChange={handleFormChange}
-                fullWidth
-                required
-              />
-              <TextField
-                name="description"
-                label="Campaign Description"
-                value={formData.description}
-                onChange={handleFormChange}
-                fullWidth
-                multiline
-                rows={3}
-                required
-              />
-              <Box display="flex" gap="1rem">
-                <TextField
-                  name="registrationStartDate"
-                  label="Registration Start Date"
-                  type="date"
-                  value={formData.registrationStartDate}
-                  onChange={handleFormChange}
-                  fullWidth
-                  required
+  <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} fullWidth maxWidth="md">
+      <DialogTitle sx={{ fontWeight: "bold",fontSize:"1.2rem", textAlign: "center",
+            color: "white",
+            background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+            padding: "0.3rem 2rem",
+            marginBottom:"1rem",
+            fontWeight: "bold",
+            boxShadow: "0px 3px 10px rgba(121, 40, 202, 0.3)",
+            "&:hover": {
+              background: "linear-gradient(310deg, #FF0080 0%, #6B28BA 100%)",
+            },
+          }}>
+          Create a New Campaign</DialogTitle>
+      <DialogContent >
+        <Box display="flex" flexDirection="column" gap="0.9rem">    
+        <Typography variant="h6" sx={{ fontWeight: "bold"}}>
+            Campaign Information
+          </Typography>
+             {/* Campaign Information */}
+           <TextField
+            name="title"
+            label="Campaign Title"
+            value={formData.title}
+            onChange={handleFormChange}
+            fullWidth
+            required
+            // sx={{ marginTop: "0.5rem" }}
+          />
+          <TextField
+            name="description"
+            label="Campaign Description"
+            value={formData.description}
+            onChange={handleFormChange}
+            fullWidth
+            multiline
+            rows={3}
+            required
+          />
+           {/* Dates & Times */}
+           <Typography variant="h6" sx={{ fontWeight: "bold"}}>
+            Campaign Time
+          </Typography>
+
+            
+          <Box display="flex" gap="1rem" flexDirection={{ xs: "column", sm: "row" }}>
+          <TextField
+              name="registrationStartDate"
+              label="Registration Start Date"
+              type="date"
+              value={formData.registrationStartDate}
+              onChange={handleFormChange}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              required
+            />
+            <TextField
+              name="registrationEndDate"
+              label="Registration End Date"
+              type="date"
+              value={formData.registrationEndDate}
+              onChange={handleFormChange}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              required
+            />
+          </Box>
+          <Divider/>
+            <TextField
+              name="campaignStartDate"
+              label="Campaign Start Date"
+              type="date"
+              value={formData.campaignStartDate}
+              onChange={handleFormChange}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              required
+            />
+            <TextField
+              name="campaignStartTime"
+              label="Campaign Start Time"
+              type="time"
+              value={formData.campaignStartTime}
+              onChange={handleFormChange}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              required
+            />
+            <TextField
+              name="campaignEndDate"
+              label="Campaign End Date"
+              type="date"
+              value={formData.campaignEndDate}
+              onChange={handleFormChange}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              required
+            />
+            <TextField
+              name="campaignEndTime"
+              label="Campaign End Time"
+              type="time"
+              value={formData.campaignEndTime}
+              onChange={handleFormChange}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              required
+            />
+
+
+          {/* Additional Fields */}
+          <Typography variant="h6" sx={{ fontWeight: "bold"}}>
+            Campaign Number
+          </Typography>
+
+          <TextField
+            name="maxVolunteers"
+            label="Max Volunteers"
+            type="number"
+            value={formData.maxVolunteers}
+            onChange={handleFormChange}
+            fullWidth
+            required
+          />
+          <TextField
+            name="location"
+            label="Location"
+            value={formData.location}
+            onChange={handleFormChange}
+            fullWidth
+            required
+          />
+
+          {/* Milestones Section */}
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            Campaign Milestones
+          </Typography>
+          <Box display="flex" gap="1rem" flexDirection={{ xs: "column", sm: "row" }}>
+            <TextField
+              label="Milestone Name"
+              value={milestoneName}
+              onChange={(e) => setMilestoneName(e.target.value)}
+              fullWidth
+            />
+            <TextField
+              label="Percentage"
+              type="number"
+              value={milestonePercentage}
+              onChange={(e) => setMilestonePercentage(e.target.value)}
+              fullWidth
+            />
+          </Box>
+          <TextField
+            label="Milestone Description"
+            value={milestoneDescription}
+            onChange={(e) => setMilestoneDescription(e.target.value)}
+            fullWidth
+            multiline
+            rows={1}
+          />
+          <Button onClick={addMilestone}  sx={{
+            color: "white",
+            background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+            borderRadius: "50px",
+            padding: "0.5rem 2rem",
+            fontWeight: "bold",
+            "&:hover": {
+              background: "linear-gradient(310deg, #FF0080 0%, #6B28BA 100%)",
+            },
+          }}>
+            Add Milestone
+          </Button>
+          <List sx={{ maxHeight: 150, overflowY: "auto", marginTop: "0.5rem" }}>
+            {formData.milestones.map((milestone, index) => (
+              <ListItem key={index}>
+                <ListItemText
+                  primary={`${milestone.name} - ${milestone.percentage}%`}
+                  secondary={milestone.description}
                 />
-                <TextField
-                  name="registrationEndDate"
-                  label="Registration End Date"
-                  type="date"
-                  value={formData.registrationEndDate}
-                  onChange={handleFormChange}
-                  fullWidth
-                  required
-                />
-              </Box>
-              <Box display="flex" gap="1rem">
-                <TextField
-                  name="campaignStartDate"
-                  label="Campaign Start Date"
-                  type="date"
-                  value={formData.campaignStartDate}
-                  onChange={handleFormChange}
-                  fullWidth
-                  required
-                />
-                <TextField
-                  name="campaignStartTime"
-                  label="Campaign Start Time"
-                  type="time"
-                  value={formData.campaignStartTime}
-                  onChange={handleFormChange}
-                  fullWidth
-                  required
-                />
-              </Box>
-              <Box display="flex" gap="1rem">
-                <TextField
-                  name="campaignEndDate"
-                  label="Campaign End Date"
-                  type="date"
-                  value={formData.campaignEndDate}
-                  onChange={handleFormChange}
-                  fullWidth
-                  required
-                />
-                <TextField
-                  name="campaignEndTime"
-                  label="Campaign End Time"
-                  type="time"
-                  value={formData.campaignEndTime}
-                  onChange={handleFormChange}
-                  fullWidth
-                  required
-                />
-              </Box>
-              <TextField
-                name="maxVolunteers"
-                label="Max Volunteers"
-                type="number"
-                value={formData.maxVolunteers}
-                onChange={handleFormChange}
-                fullWidth
-                required
-              />
-              <TextField
-                name="location"
-                label="Location"
-                value={formData.location}
-                onChange={handleFormChange}
-                fullWidth
-                required
-              />
-  
-              {/* Milestones Section */}
-              <Box>
-                <Typography variant="h6">Campaign Milestones</Typography>
-                <Box display="flex" gap="1rem">
-                  <TextField
-                    label="Milestone Name"
-                    value={milestoneName}
-                    onChange={(e) => setMilestoneName(e.target.value)}
-                  />
-                  <TextField
-                    label="Percentage"
-                    value={milestonePercentage}
-                    onChange={(e) => setMilestonePercentage(e.target.value)}
-                    type="number"
-                  />
-                </Box>
-                <TextField
-                  label="Milestone Description"
-                  value={milestoneDescription}
-                  onChange={(e) => setMilestoneDescription(e.target.value)}
-                  fullWidth
-                />
-                <Button onClick={addMilestone}>Add Milestone</Button>
-  
-                <List>
-                  {formData.milestones.map((milestone, index) => (
-                    <ListItem key={index}>
-                      <ListItemText
-                        primary={`${milestone.name} - ${milestone.percentage}%`}
-                        secondary={milestone.description}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
-  
-              {/* Upload Image */}
-              <Dropzone
-                acceptedFiles=".jpg,.jpeg,.png"
-                multiple={false}
-                onDrop={(acceptedFiles) => {
-                  const file = acceptedFiles[0];
-                  setImage(file);
-                  setPreview(URL.createObjectURL(file)); // Generate preview URL
-                }}
+              </ListItem>
+            ))}
+          </List>
+
+          {/* Upload Image Section */}
+          <Divider />
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>Upload Campaign Image</Typography>
+          <Dropzone
+            acceptedFiles=".jpg,.jpeg,.png"
+            multiple={false}
+            onDrop={(acceptedFiles) => {
+              const file = acceptedFiles[0];
+              setImage(file);
+              setPreview(URL.createObjectURL(file)); // Preview the selected image
+            }}
+          >
+            {({ getRootProps, getInputProps }) => (
+              <Box
+                {...getRootProps()}
+                border={`2px dashed black`}
+                borderRadius="8px"
+                p="0.8rem"
+                textAlign="center"
+                sx={{ "&:hover": { cursor: "pointer", backgroundColor: palette.neutral.light } }}
               >
-                {({ getRootProps, getInputProps }) => (
-                  <Box
-                    {...getRootProps()}
-                    border={`2px dashed ${palette.primary.main}`}
-                    p="1rem"
-                    sx={{ "&:hover": { cursor: "pointer" } }}
-                  >
-                    <input {...getInputProps()} />
-                    {!preview ? (
-                      <Typography>Add Image Here</Typography>
-                    ) : (
-                      <Box
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
-                        <img
-                          src={preview}
-                          alt="Preview"
-                          style={{ maxWidth: "100px", maxHeight: "100px" }}
-                        />
-                        <Typography>{image.name}</Typography>
-                        <EditOutlined />
-                      </Box>
-                    )}
+                <input {...getInputProps()} />
+                {!preview ? (
+                  <Typography variant="body1" color="textSecondary">
+                    Drag & drop or click to select an image
+                  </Typography>
+                ) : (
+                  <Box display="flex" justifyContent="center" alignItems="center" gap="1rem">
+                    <img src={preview} alt="Preview" style={{ maxWidth: "400px", maxHeight: "400px", borderRadius: "8px" }} />
+                    {/* <Typography>{preview.name}</Typography> */}
+                    <EditOutlined sx={{ color: palette.primary.main }} />
                   </Box>
                 )}
-              </Dropzone>
-
               </Box>
-            </DialogContent>
-    
-            <DialogActions>
-              <Button
-                onClick={() => setIsDialogOpen(false)}
-                sx={{
-                  backgroundColor: "#999",
-                  color: "white",
-                  "&:hover": { backgroundColor: "#666" },
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSubmit}
-                disabled={!formData.title || !formData.description}
-                sx={{
-                  backgroundColor: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
-                  color: "white",
-                  "&:hover": {
-                    backgroundColor: "linear-gradient(310deg, #FF0080 0%, #7928CA 100%)",
-                  },
-                }}
-              >
-                Create Campaign
-              </Button>
-            </DialogActions>
-          </Dialog>
+            )}
+          </Dropzone>
+        </Box>
+      </DialogContent>
+
+      <DialogActions sx={{ padding: "1rem" }}>
+        <Button
+          onClick={() => setIsDialogOpen(false)}
+          sx={{
+            color: palette.neutral.main,
+            backgroundColor: palette.neutral.light,
+            borderRadius: "50px",
+            padding: "0.5rem 2rem",
+            "&:hover": { backgroundColor: palette.neutral.dark },
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          disabled={!formData.title || !formData.description}
+          sx={{
+            color: "white",
+            background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+            borderRadius: "50px",
+            padding: "0.5rem 2rem",
+            fontWeight: "bold",
+            "&:hover": {
+              background: "linear-gradient(310deg, #FF0080 0%, #6B28BA 100%)",
+            },
+          }}
+        >
+          Create Campaign
+        </Button>
+      </DialogActions>
+    </Dialog>
         </>
       );
     };
