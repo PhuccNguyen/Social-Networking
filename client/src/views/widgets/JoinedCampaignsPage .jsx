@@ -49,7 +49,7 @@ const JoinedCampaignsPage = () => {
   if (joinedCampaigns.length === 0) {
     return (
       <Typography variant="h6" align="center" color="textSecondary">
-        No campaigns found.
+        No campaigns found.......
       </Typography>
     );
   }

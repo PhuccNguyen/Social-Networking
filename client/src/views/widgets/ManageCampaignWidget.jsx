@@ -3,7 +3,7 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import ManageCampaign from "./ManageCampaign";
 import { useSelector } from "react-redux";
 
-const ManageCampaignWidget = ({ status }) => {
+const ManageCampaignWidget = ({ status, category  }) => {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = useSelector((state) => state.token);
@@ -13,7 +13,7 @@ const ManageCampaignWidget = ({ status }) => {
     try {
       const url = status 
         ? `http://localhost:3001/volunteer/campaigns-by-status?status=${status}`
-        : `http://localhost:3001/volunteer/campaigns`;
+        : `http://localhost:3001/volunteer/campaignsformanage`;
 
       const response = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },

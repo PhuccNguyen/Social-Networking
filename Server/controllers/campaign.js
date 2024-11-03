@@ -63,23 +63,35 @@ export const getAllCampaigns = async (req, res) => {
   try {
     const currentDate = new Date();
 
-    // Fetch all campaigns and populate the creator's details
-    const campaigns = await Campaign.find()
-      .populate('createdBy', 'firstName lastName picturePath')
-      .exec();
+    // // Fetch all campaigns and populate the creator's details
+    // const campaigns = await Campaign.find()
+    //   .populate('createdBy', 'firstName lastName picturePath')
+    //   .exec();
 
-    // Categorize campaigns by date
-    const upcomingCampaigns = campaigns.filter(
-      (campaign) => new Date(campaign.campaignStartDate) > currentDate
-    );
-    const ongoingCampaigns = campaigns.filter(
-      (campaign) =>
-        new Date(campaign.campaignStartDate) <= currentDate &&
-        new Date(campaign.campaignEndDate) >= currentDate
-    );
-    const pastCampaigns = campaigns.filter(
-      (campaign) => new Date(campaign.campaignEndDate) < currentDate
-    );
+    //    // Count Upcoming Campaigns (registration has not started yet)
+    // const upcomingCount = await Campaign.countDocuments({
+    //   registrationStartDate: { $gt: now },
+    // });
+
+    // // Count Ongoing Campaigns (registration is active or campaign is ongoing but not ended)
+    // const ongoingCount = await Campaign.countDocuments({
+    //   $and: [
+    //     {
+    //       $or: [
+    //         { registrationStartDate: { $lte: now }, registrationEndDate: { $gte: now } }, // Active registration period
+    //         { campaignStartDate: { $lte: now }, campaignEndDate: { $gte: now } }, // Campaign is ongoing
+    //       ]
+    //     },
+    //     {
+    //       campaignEndDate: { $gte: now }, // Ensure campaign has not ended
+    //     }
+    //   ]
+    // });
+
+    // // Count Ended Campaigns (campaign has ended)
+    // const endedCount = await Campaign.countDocuments({
+    //   campaignEndDate: { $lt: now },
+    // });
 
     res.status(200).json({
       upcoming: upcomingCampaigns,
@@ -92,6 +104,40 @@ export const getAllCampaigns = async (req, res) => {
   }
 };
 
+// // Controller to get all campaigns, categorized as upcoming, ongoing, or past
+// export const getAllCampaignsForManage = async (req, res) => {
+//   try {
+//     const currentDate = new Date();
+//     const userId = req.user.id;
+
+//     // Fetch campaigns created by the logged-in user
+//     const campaigns = await Campaign.find({ createdBy: userId })
+//       .populate('createdBy', 'firstName lastName picturePath')
+//       .exec();
+
+//     // Categorize campaigns by date
+//     const upcomingCampaigns = campaigns.filter(
+//       (campaign) => new Date(campaign.campaignStartDate) > currentDate
+//     );
+//     const ongoingCampaigns = campaigns.filter(
+//       (campaign) =>
+//         new Date(campaign.campaignStartDate) <= currentDate &&
+//         new Date(campaign.campaignEndDate) >= currentDate
+//     );
+//     const pastCampaigns = campaigns.filter(
+//       (campaign) => new Date(campaign.campaignEndDate) < currentDate
+//     );
+
+//     res.status(200).json({
+//       upcoming: upcomingCampaigns,
+//       ongoing: ongoingCampaigns,
+//       past: pastCampaigns,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching campaigns:", error);
+//     res.status(500).json({ error: "Failed to fetch campaigns" });
+//   }
+// };
 
 
 export const registerCampaign = async (req, res) => {
@@ -182,7 +228,13 @@ export const getCampaignCounts = async (req, res) => {
     const now = new Date();
     const userId = req.user.id;
 
-    // Count Ongoing Campaigns
+    // Count Upcoming Campaigns (registration has not started yet)
+    const upcomingCount = await Campaign.countDocuments({
+      createdBy: userId,
+      registrationStartDate: { $gt: now },
+    });
+
+    // Count Ongoing Campaigns (registration is active or campaign has started but not ended)
     const ongoingCount = await Campaign.countDocuments({
       createdBy: userId,
       $or: [
@@ -191,26 +243,21 @@ export const getCampaignCounts = async (req, res) => {
           registrationEndDate: { $gte: now },
         },
         {
-          registrationEndDate: { $lt: now },
-          campaignStartDate: { $gt: now },
+          campaignStartDate: { $lte: now },
+          campaignEndDate: { $gte: now },
         }
       ],
     });
 
-    const startedCount = await Campaign.countDocuments({
-      createdBy: userId,
-      campaignStartDate: { $lte: now },
-      campaignEndDate: { $gte: now },
-    });
-
+    // Count Ended Campaigns (campaign end date is in the past)
     const endedCount = await Campaign.countDocuments({
       createdBy: userId,
       campaignEndDate: { $lt: now },
     });
 
     res.status(200).json({
+      upcoming: upcomingCount,
       ongoing: ongoingCount,
-      started: startedCount,
       ended: endedCount,
     });
   } catch (error) {
@@ -218,6 +265,7 @@ export const getCampaignCounts = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch campaign counts" });
   }
 };
+
 
 
 export const getCampaignsByStatus = async (req, res) => {
@@ -228,32 +276,31 @@ export const getCampaignsByStatus = async (req, res) => {
   try {
     let campaigns;
 
-    if (status === "ongoing") {
-      // Ongoing campaigns (either in registration period or waiting to start)
+    if (status === "upcoming") {
+      // Upcoming campaigns: registration has not started yet
+      campaigns = await Campaign.find({
+        createdBy: userId,
+        registrationStartDate: { $gt: now },
+      });
+    } else if (status === "ongoing") {
+      // Ongoing campaigns: in the registration period or actively in progress
       campaigns = await Campaign.find({
         createdBy: userId,
         $or: [
           {
-            // Within registration period
+            // Registration period active
             registrationStartDate: { $lte: now },
             registrationEndDate: { $gte: now },
           },
           {
-            // After registration period but before campaign start
-            registrationEndDate: { $lt: now },
-            campaignStartDate: { $gt: now },
+            // Campaign has started and is ongoing
+            campaignStartDate: { $lte: now },
+            campaignEndDate: { $gte: now },
           }
         ],
       });
-    } else if (status === "started") {
-      // Started campaigns (currently in progress)
-      campaigns = await Campaign.find({
-        createdBy: userId,
-        campaignStartDate: { $lte: now },
-        campaignEndDate: { $gte: now },
-      });
     } else if (status === "ended") {
-      // Ended campaigns (already completed)
+      // Ended campaigns: campaign has completed
       campaigns = await Campaign.find({
         createdBy: userId,
         campaignEndDate: { $lt: now },

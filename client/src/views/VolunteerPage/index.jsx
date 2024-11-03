@@ -29,7 +29,7 @@ const VolunteerPage = () => {
         
         <Box flexBasis={isNonMobileScreen ? "60%" : undefined} mt={isNonMobileScreen ? undefined : "2rem"}>
         <VolunteerPost picturePath={picturePath} role={role} />
-        <CampaignWidget userId={_id}  role={role} />
+        <CampaignWidget userId={_id} campaigns={_id}/>
         </Box>
 
         <Box flexBasis="26%" maxHeight="80vh" overflow="auto">

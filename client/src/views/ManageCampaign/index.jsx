@@ -5,6 +5,8 @@ import UserWidget from 'views/widgets/UserWidget';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import ManageCampaignWidget from "views/widgets/ManageCampaignWidget.jsx";
+import ManageCampaignWidgetByUser from "views/widgets/ManageCampaignWidgetByUser.jsx";
+
 
 const ManaggeCampaign = () => {
   const { _id, picturePath, userName, role } = useSelector((state) => state.user);
@@ -12,7 +14,7 @@ const ManaggeCampaign = () => {
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
   const theme = useTheme();
-  const [campaignCounts, setCampaignCounts] = useState({ ongoing: 0, started: 0, ended: 0 });
+  const [campaignCounts, setCampaignCounts] = useState({ upcoming: 0, ongoing: 0, ended: 0 });
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -82,20 +84,17 @@ const ManaggeCampaign = () => {
                   },
                 }}
               >
-                <Tab label={`All Campaigns`} />
-                <Tab label={`Campaign Ongoing (${campaignCounts.ongoing})`} />
-                <Tab label={`Campaign Started (${campaignCounts.started})`} />
-                <Tab label={`Campaign Ended (${campaignCounts.ended})`} />
+                  <Tab label="All Campaigns" />
+                <Tab label={`Upcoming Campaigns (${campaignCounts.upcoming})`} />
+                <Tab label={`Ongoing Campaigns (${campaignCounts.ongoing})`} />
+                <Tab label={`Ended Campaigns (${campaignCounts.ended})`} />
               </Tabs>
             </Paper>
 
-            <Paper 
-              elevation={3} 
-              sx={{ borderRadius: "4px", padding: "1rem", minHeight: "470px", overflowY: 'auto', maxHeight: '70vh' }}
-            >
+            <Paper elevation={3} sx={{ borderRadius: "4px", padding: "1rem", minHeight: "470px", overflowY: 'auto', maxHeight: '70vh' }}>
               {tabValue === 0 && <ManageCampaignWidget userId={_id} />}
-              {tabValue === 1 && <ManageCampaignWidget userId={_id} status="ongoing" />}
-              {tabValue === 2 && <ManageCampaignWidget userId={_id} status="started" />}
+              {tabValue === 1 && <ManageCampaignWidget userId={_id} status="upcoming" />}
+              {tabValue === 2 && <ManageCampaignWidget userId={_id} status="ongoing" />}
               {tabValue === 3 && <ManageCampaignWidget userId={_id} status="ended" />}
             </Paper>
           </Box>      
