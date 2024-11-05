@@ -58,86 +58,24 @@ export const createCampaign = async (req, res) => {
 
 
 
-// Controller to get all campaigns, categorized as upcoming, ongoing, or past
-export const getAllCampaigns = async (req, res) => {
+// Fetch all campaigns created by the logged-in user
+export const getAllCampaignsForManage = async (req, res) => {
   try {
-    const currentDate = new Date();
+    // Extract the user ID from the JWT token
+    const userId = req.user.id;
 
-    // // Fetch all campaigns and populate the creator's details
-    // const campaigns = await Campaign.find()
-    //   .populate('createdBy', 'firstName lastName picturePath')
-    //   .exec();
+    // Find campaigns created by the user
+    const campaigns = await Campaign.find({ createdBy: userId })
+      .populate("createdBy", "username picturePath") // Populate the user's name and profile picture
+      .sort({ createdAt: -1 }) // Sort by newest first (optional)
+      .lean();
 
-    //    // Count Upcoming Campaigns (registration has not started yet)
-    // const upcomingCount = await Campaign.countDocuments({
-    //   registrationStartDate: { $gt: now },
-    // });
-
-    // // Count Ongoing Campaigns (registration is active or campaign is ongoing but not ended)
-    // const ongoingCount = await Campaign.countDocuments({
-    //   $and: [
-    //     {
-    //       $or: [
-    //         { registrationStartDate: { $lte: now }, registrationEndDate: { $gte: now } }, // Active registration period
-    //         { campaignStartDate: { $lte: now }, campaignEndDate: { $gte: now } }, // Campaign is ongoing
-    //       ]
-    //     },
-    //     {
-    //       campaignEndDate: { $gte: now }, // Ensure campaign has not ended
-    //     }
-    //   ]
-    // });
-
-    // // Count Ended Campaigns (campaign has ended)
-    // const endedCount = await Campaign.countDocuments({
-    //   campaignEndDate: { $lt: now },
-    // });
-
-    res.status(200).json({
-      upcoming: upcomingCampaigns,
-      ongoing: ongoingCampaigns,
-      past: pastCampaigns,
-    });
+    res.status(200).json(campaigns);
   } catch (error) {
-    console.error("Error fetching campaigns:", error);
-    res.status(500).json({ error: "Failed to fetch campaigns" });
+    console.error("Error fetching user's campaigns:", error);
+    res.status(500).json({ error: "Failed to fetch user's campaigns" });
   }
 };
-
-// // Controller to get all campaigns, categorized as upcoming, ongoing, or past
-// export const getAllCampaignsForManage = async (req, res) => {
-//   try {
-//     const currentDate = new Date();
-//     const userId = req.user.id;
-
-//     // Fetch campaigns created by the logged-in user
-//     const campaigns = await Campaign.find({ createdBy: userId })
-//       .populate('createdBy', 'firstName lastName picturePath')
-//       .exec();
-
-//     // Categorize campaigns by date
-//     const upcomingCampaigns = campaigns.filter(
-//       (campaign) => new Date(campaign.campaignStartDate) > currentDate
-//     );
-//     const ongoingCampaigns = campaigns.filter(
-//       (campaign) =>
-//         new Date(campaign.campaignStartDate) <= currentDate &&
-//         new Date(campaign.campaignEndDate) >= currentDate
-//     );
-//     const pastCampaigns = campaigns.filter(
-//       (campaign) => new Date(campaign.campaignEndDate) < currentDate
-//     );
-
-//     res.status(200).json({
-//       upcoming: upcomingCampaigns,
-//       ongoing: ongoingCampaigns,
-//       past: pastCampaigns,
-//     });
-//   } catch (error) {
-//     console.error("Error fetching campaigns:", error);
-//     res.status(500).json({ error: "Failed to fetch campaigns" });
-//   }
-// };
 
 
 export const registerCampaign = async (req, res) => {

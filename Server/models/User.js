@@ -40,6 +40,18 @@ const UserSchema = new mongoose.Schema(
 
     // Save post
     savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
+
+
+     // Achievement Level (e.g., "Newcomer", "Active Volunteer")
+     achievementLevel: { type: String, default: "Newcomer" },
+
+     // Badges earned by the user
+     badges: [{ type: String }],  
+ 
+     // Campaign count (can also be calculated dynamically if preferred)
+     campaignCount: { type: Number, default: 0 },
+
+
   },
   { timestamps: true }
 );

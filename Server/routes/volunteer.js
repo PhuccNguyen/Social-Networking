@@ -1,12 +1,13 @@
 import express from 'express';
 import { verifyToken, verifyAssistantAdmin } from '../middleware/auth.js';
-import {  getAllCampaigns , registerCampaign, getManagedCampaigns, editCampaign, 
-    deleteCampaign , getCampaignsByStatusUser , getCampaignCounts, getCampaignsByStatus} from '../controllers/campaign.js';
+import {   registerCampaign, getManagedCampaigns, editCampaign, 
+    deleteCampaign , getCampaignsByStatusUser , getCampaignCounts,
+     getCampaignsByStatus, getAllCampaignsForManage} from '../controllers/campaign.js';
 
 const router = express.Router();
 
 //Get all campaign
-router.get('/campaigns', verifyToken, getAllCampaigns);
+// router.get('/campaigns', verifyToken, getAllCampaigns);
 
 // Route to handle campaign registration
 router.post('/register/:campaignId', verifyToken, registerCampaign);
@@ -29,7 +30,7 @@ router.get('/campaigns-by-status', verifyToken, getCampaignsByStatus);
 router.get('/campaigns-by-status-user', verifyToken, getCampaignsByStatusUser);
 
 //Get all campaign for manager
-// router.get('/campaignsformanage', verifyToken, getAllCampaignsForManage);
+router.get('/campaignsformanage', verifyToken, getAllCampaignsForManage);
 
 
 

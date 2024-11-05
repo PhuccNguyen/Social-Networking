@@ -5,6 +5,7 @@ import UserWidget from 'views/widgets/UserWidget';
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
 import ManageCampaignWidget from "views/widgets/ManageCampaignWidget.jsx";
+import ManageCampaignWidgetAll from "views/widgets/ManageCampaignWidgetAll.jsx";
 import ManageCampaignWidgetByUser from "views/widgets/ManageCampaignWidgetByUser.jsx";
 
  
@@ -92,7 +93,7 @@ const ManaggeCampaign = () => {
             </Paper>
 
             <Paper elevation={3} sx={{ borderRadius: "4px", padding: "1rem", minHeight: "470px", overflowY: 'auto', maxHeight: '70vh' }}>
-              {tabValue === 0 && <ManageCampaignWidget userId={_id} />}
+              {tabValue === 0 && <ManageCampaignWidgetAll userId={_id} />}
               {tabValue === 1 && <ManageCampaignWidget userId={_id} status="upcoming" />}
               {tabValue === 2 && <ManageCampaignWidget userId={_id} status="ongoing" />}
               {tabValue === 3 && <ManageCampaignWidget userId={_id} status="ended" />}

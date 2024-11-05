@@ -4,6 +4,7 @@ import WidgetWrapper from "components/WidgetWrapper";
 import EditUser from "views/widgets/EditUser";
 import UserSecurity from "views/widgets/UserSecurity";
 import UserAbout from "views/widgets/UserAbout";
+import ExperienceUser from "views/widgets/ExperienceUser";
 import PostUser from "views/widgets/UserWidgetPost";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -100,7 +101,7 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
         return (
           <Box>
             <Typography variant="body1" color={medium}>
-              This is show Occupation and Experience Volunteer information.
+              <ExperienceUser userId={userId} user={user} />
             </Typography>
           </Box>
         );      

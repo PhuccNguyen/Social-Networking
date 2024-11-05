@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from 'bcryptjs';
 import Post from "../models/Post.js";
-import Campaign from '../models/Campaign.js';
+import Campaign from "../models/Campaign.js";
 // import SignupVolunteer from "../models/SignupVolunteer.js";
 // import VolunteerEvent from "../Folder/Volunteerevent.js";
 
@@ -271,6 +271,44 @@ export const getUserJoinedCampaigns = async (req, res) => {
     } catch (error) {
       console.error("Error fetching joined campaigns:", error);
       res.status(500).json({ error: "Failed to retrieve joined campaigns" });
+    }
+  };
+  
+
+  export const updateUserAchievements = async (userId) => {
+    try {
+      const user = await User.findById(userId).populate("joinedCampaigns");
+  
+      if (!user) throw new Error("User not found");
+  
+      // Calculate campaign count and determine achievement level
+      const campaignCount = user.joinedCampaigns.length;
+      let achievementLevel = "Newcomer";
+      if (campaignCount >= 21) achievementLevel = "Champion of Service";
+      else if (campaignCount >= 11) achievementLevel = "Leader of Change";
+      else if (campaignCount >= 6) achievementLevel = "Impact Maker";
+      else if (campaignCount >= 3) achievementLevel = "Active Volunteer";
+  
+      // Award badges based on milestones
+      const badges = [];
+      const completedMilestoneCount = user.joinedCampaigns.reduce((count, campaign) => {
+        return campaign.milestones.every((m) => m.completed) ? count + 1 : count;
+      }, 0);
+      if (completedMilestoneCount >= 5) badges.push("milestone_achiever");
+  
+      // Update user achievements and save
+      user.achievementLevel = achievementLevel;
+      user.campaignCount = campaignCount;
+      user.badges = badges;
+      await user.save();
+  
+      return {
+        ...user.toObject(),
+        joinedCampaigns: user.joinedCampaigns,
+      };
+    } catch (error) {
+      console.error("Error updating user achievements:", error);
+      throw error;
     }
   };
   
