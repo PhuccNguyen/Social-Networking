@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import ManageCampaignWidget from "views/widgets/ManageCampaignWidget.jsx";
 import ManageCampaignWidgetByUser from "views/widgets/ManageCampaignWidgetByUser.jsx";
 
-
+ 
 const ManaggeCampaign = () => {
   const { _id, picturePath, userName, role } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);

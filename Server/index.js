@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import crypto from 'crypto';
 import multer from "multer";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -50,10 +51,19 @@ console.log('PORT:', process.env.PORT);
 // File storage (multer)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "public/assets");
+    cb(null, "public/assets"); // Save in the 'public/assets' directory
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    // Generate a unique identifier
+    const uniqueSuffix = crypto.randomBytes(8).toString("hex");
+    const originalName = path.parse(file.originalname).name; // Get name without extension
+    const extension = path.extname(file.originalname); // Get the file extension
+
+    // New filename with unique suffix
+    const newFileName = `${originalName}-${uniqueSuffix}${extension}`;
+    req.file = { ...req.file, filename: newFileName }; // Store filename in req.file for MongoDB storage
+
+    cb(null, newFileName);
   }
 });
 

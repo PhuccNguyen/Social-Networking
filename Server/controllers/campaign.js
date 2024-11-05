@@ -27,7 +27,7 @@ export const createCampaign = async (req, res) => {
       parsedMilestones = JSON.parse(milestones);
     }
 
-    // Handle the image upload (from multer)
+
     const imageCampaing = req.file ? req.file.filename : null;
 
     // Create a new Campaign document
@@ -44,7 +44,7 @@ export const createCampaign = async (req, res) => {
       campaignEndTime,
       milestones: parsedMilestones,
       createdBy: new mongoose.Types.ObjectId(createdBy),  // Ensure that this is an ObjectId
-      imageCampaing,  // Handle image upload
+      imageCampaing,  // Handle image upload\
     });
 
     // Save the campaign to the database
@@ -305,6 +305,48 @@ export const getCampaignsByStatus = async (req, res) => {
         createdBy: userId,
         campaignEndDate: { $lt: now },
       });
+    } else {
+      return res.status(400).json({ error: "Invalid status" });
+    }
+
+    res.status(200).json(campaigns);
+  } catch (error) {
+    console.error("Error fetching campaigns by status:", error);
+    res.status(500).json({ error: "Failed to fetch campaigns" });
+  }
+};
+
+
+export const getCampaignsByStatusUser = async (req, res) => {
+  const { status } = req.query;
+  const now = new Date();
+
+  try {
+    let campaigns;
+
+    if (status === "upcoming") {
+      // Campaigns where registration has not started yet
+      campaigns = await Campaign.find({ registrationStartDate: { $gt: now } })
+        .sort({ registrationStartDate: 1 })
+        .populate('createdBy', 'firstName lastName picturePath') // Populate with username and picturePath
+        .lean();
+    } else if (status === "ongoing") {
+      // Campaigns that are ongoing (within registration or campaign period)
+      campaigns = await Campaign.find({
+        $or: [
+          { registrationStartDate: { $lte: now }, registrationEndDate: { $gte: now } },
+          { campaignStartDate: { $lte: now }, campaignEndDate: { $gte: now } }
+        ]
+      })
+        .sort({ campaignStartDate: 1 })
+        .populate('createdBy', 'firstName lastName picturePath') // Populate with username and picturePath
+        .lean();
+    } else if (status === "ended") {
+      // Campaigns that have already ended
+      campaigns = await Campaign.find({ campaignEndDate: { $lt: now } })
+        .sort({ campaignEndDate: -1 })
+        .populate('createdBy', 'firstName lastName picturePath') // Populate with username and picturePath
+        .lean();
     } else {
       return res.status(400).json({ error: "Invalid status" });
     }

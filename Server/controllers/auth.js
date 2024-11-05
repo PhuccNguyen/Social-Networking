@@ -10,10 +10,11 @@ export const register = async (req, res) => {
             email, intro,
             gender, birthday,
             status, password,
-            picturePath, friends,
+             friends,
             location, occupation
             } = req.body;
 
+        const picturePath = req.file ? req.file.filename : null;
         console.log ("Receive Data: You Inputed :", req.body);  // Add logging to see received data
 
         // Check if required fields are provided

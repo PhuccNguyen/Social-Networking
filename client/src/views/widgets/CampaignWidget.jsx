@@ -1,37 +1,35 @@
+
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setCampaigns } from "state";
-import CampaignUserWidget from "./CampaignUserWidget.jsx";
+import { useSelector } from "react-redux";  // Add this line
+import CampaignUserWidget from "./CampaignUserWidget";
 import Loader from "components/Loader";
 import { Box, Typography } from "@mui/material";
 
-const CampaignWidget = () => {
-  const dispatch = useDispatch();
-  const { upcoming, ongoing, past } = useSelector((state) => state.campaigns);
-  const token = useSelector((state) => state.token);
+const CampaignWidget = ({ status }) => {
+  const token = useSelector((state) => state.token);  // Now `useSelector` is defined
+  const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const getCampaigns = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch("http://localhost:3001/volunteer/campaigns", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) throw new Error("Failed to fetch campaigns");
-
-      const data = await response.json();
-      dispatch(setCampaigns({ campaigns: data }));
-    } catch (error) {
-      console.error("Error fetching campaigns:", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    getCampaigns();
-  }, [token, dispatch]);
+    const fetchCampaigns = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`http://localhost:3001/volunteer/campaigns-by-status-user?status=${status}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) throw new Error("Failed to fetch campaigns");
+
+        const data = await response.json();
+        setCampaigns(data);
+      } catch (error) {
+        console.error("Error fetching campaigns:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCampaigns();
+  }, [status, token]);
 
   if (loading) {
     return (
@@ -43,10 +41,11 @@ const CampaignWidget = () => {
 
   return (
     <Box>
-      {/* Ongoing Campaigns */}
-      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>Ongoing Campaigns</Typography>
-      {ongoing && ongoing.length > 0 ? (
-        ongoing.map((campaign) => (
+      <Typography variant="h6" sx={{ mt: 1, mb: 1 }}>
+        {status.charAt(0).toUpperCase() + status.slice(1)} Campaigns
+      </Typography>
+      {campaigns.length > 0 ? (
+        campaigns.map((campaign) => (
           <CampaignUserWidget
             key={campaign._id}
             campaignId={campaign._id}
@@ -65,57 +64,7 @@ const CampaignWidget = () => {
           />
         ))
       ) : (
-        <Typography color="textSecondary">No ongoing campaigns</Typography>
-      )}
-
-      {/* Upcoming Campaigns */}
-      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>Upcoming Campaigns</Typography>
-      {upcoming && upcoming.length > 0 ? (
-        upcoming.map((campaign) => (
-          <CampaignUserWidget
-            key={campaign._id}
-            campaignId={campaign._id}
-            title={campaign.title}
-            description={campaign.description}
-            location={campaign.location}
-            campaignStartDate={campaign.campaignStartDate}
-            campaignStartTime={campaign.campaignStartTime}
-            campaignEndDate={campaign.campaignEndDate}
-            campaignEndTime={campaign.campaignEndTime}
-            registrationStartDate={campaign.registrationStartDate}
-            registrationEndDate={campaign.registrationEndDate}
-            maxVolunteers={campaign.maxVolunteers}
-            createdBy={campaign.createdBy}
-            imageCampaing={campaign.imageCampaing}
-          />
-        ))
-      ) : (
-        <Typography color="textSecondary">No upcoming campaigns</Typography>
-      )}
-
-      {/* Past Campaigns */}
-      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>Past Campaigns</Typography>
-      {past && past.length > 0 ? (
-        past.map((campaign) => (
-          <CampaignUserWidget
-            key={campaign._id}
-            campaignId={campaign._id}
-            title={campaign.title}
-            description={campaign.description}
-            location={campaign.location}
-            campaignStartDate={campaign.campaignStartDate}
-            campaignStartTime={campaign.campaignStartTime}
-            campaignEndDate={campaign.campaignEndDate}
-            campaignEndTime={campaign.campaignEndTime}
-            registrationStartDate={campaign.registrationStartDate}
-            registrationEndDate={campaign.registrationEndDate}
-            maxVolunteers={campaign.maxVolunteers}
-            createdBy={campaign.createdBy}
-            imageCampaing={campaign.imageCampaing}
-          />
-        ))
-      ) : (
-        <Typography color="textSecondary">No past campaigns</Typography>
+        <Typography color="textSecondary">No {status} Campaigns</Typography>
       )}
     </Box>
   );
