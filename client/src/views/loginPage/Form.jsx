@@ -482,8 +482,8 @@ const Form = () => {
           </Box>
 
 
-  {/* Snackbar Alert */}
-  <Snackbar
+           {/* Snackbar Alert */}
+              <Snackbar
             open={openSnackbar}
             autoHideDuration={6000}
             onClose={handleSnackbarClose}
@@ -493,6 +493,7 @@ const Form = () => {
               {errorMessage}
             </Alert>
           </Snackbar>
+          
                 
         </form>
       )}

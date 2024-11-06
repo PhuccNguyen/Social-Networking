@@ -122,6 +122,19 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
     }
   };
 
+  const buttonStyles = (section) => ({
+    minWidth: '100px',
+    color: activeSection === section ? "#fff" : main,
+    background: activeSection === section ? "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)" : 'transparent',
+    border: activeSection === section ? "none" : `1px solid ${main}`,
+    transition: 'background 0.3s, transform 0.2s',
+    '&:hover': {
+      background: activeSection === section ? "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)" : main,
+      color: "#fff",
+      transform: 'scale(1.05)',
+    },
+  });
+
   return (
     <WidgetWrapper
       sx={{
@@ -145,68 +158,29 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
         <Typography variant="h6" color={dark} fontWeight="600">
           {getSectionTitle()}
         </Typography>
-
-        {/* Buttons */}
-        <Box sx={{ display: 'flex', gap: '0.5rem' }}>
-        <Button
-            variant={activeSection === 'post' ? "contained" : "outlined"}
-            onClick={() => setActiveSection('post')}
-            sx={{
-              color: activeSection === 'post' ? "#fff" : main,
-              minWidth: '100px',
-            }}
-          >
-            Post
-          </Button>
-          <Button
-            variant={activeSection === 'about' ? "contained" : "outlined"}
-            onClick={() => setActiveSection('about')}
-            sx={{
-              color: activeSection === 'about' ? "#fff" : main,
-              minWidth: '100px',
-            }}
-          >
-            About
-          </Button>
-          <Button
-            variant={activeSection === 'edit' ? "contained" : "outlined"}
-            onClick={() => setActiveSection('edit')}
-            sx={{
-              color: activeSection === 'edit' ? "#fff" : main,
-              minWidth: '100px',
-            }}
-          >
-            Details Information
-          </Button>
-
-          <Button
-            variant={activeSection === 'experiences' ? "contained" : "outlined"}
-            onClick={() => setActiveSection('experiences')}
-            sx={{
-              color: activeSection === 'experiences' ? "#fff" : main,
-              minWidth: '100px',
-            }}
-          >
-            Experiences
-          </Button>
-      {/* Show  Password and security button only if the logged-in user is viewing their own profile */}
-      {loggedInUserId === userId && (
-          <Button
-          variant={activeSection === 'security' ? "contained" : "outlined"}
-          onClick={() => setActiveSection('security')}
-          sx={{
-            color: activeSection === 'security' ? "#fff" : main,
-            minWidth: '100px',
-          }}
-        >
-          Password and security
+  {/* Buttons */}
+  <Box sx={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <Button variant="contained" onClick={() => setActiveSection('post')} sx={buttonStyles('post')}>
+          Post
         </Button>
-      )}
-      
+        <Button variant="contained" onClick={() => setActiveSection('about')} sx={buttonStyles('about')}>
+          About
+        </Button>
+        <Button variant="contained" onClick={() => setActiveSection('edit')} sx={buttonStyles('edit')}>
+          Details Information
+        </Button>
+        <Button variant="contained" onClick={() => setActiveSection('experiences')} sx={buttonStyles('experiences')}>
+          Experiences
+        </Button>
+        {loggedInUserId === userId && (
+          <Button variant="contained" onClick={() => setActiveSection('security')} sx={buttonStyles('security')}>
+            Password and Security
+          </Button>
+        )}
 
 
 
-        </Box>
+      </Box>
       </Box>
 
       <Divider />

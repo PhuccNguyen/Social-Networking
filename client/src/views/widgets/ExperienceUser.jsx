@@ -70,7 +70,13 @@ const UserProfileWithAchievements = ({ userId }) => {
       {/* Achievements Section */}
       <Box mt={2}>
         
-        <Typography variant="h6"color={dark} display="flex" alignItems="center" >
+        <Typography variant="h6"color={dark} display="flex" alignItems="center" sx = {{ "&:hover": 
+               {
+                WebkitTextFillColor: "transparent",
+                background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+                WebkitBackgroundClip: "text",                 cursor: "pointer",
+               },
+            }} >
           <EmojiEventsIcon  sx={{ mr: 1 } } /> Achievements
         </Typography>
 
@@ -97,10 +103,16 @@ const UserProfileWithAchievements = ({ userId }) => {
 
       {/* Campaign Participation Summary */}
       <Box mt={2}>
-        <Typography variant="h6" color={dark} display="flex" alignItems="center">
+        <Typography variant="h6" color={dark} display="flex" alignItems="center" sx = {{ "&:hover": 
+               {
+                WebkitTextFillColor: "transparent",
+                background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+                WebkitBackgroundClip: "text",                 cursor: "pointer",
+               },
+            }}>
           <EventIcon sx={{ mr: 1 }} /> Campaign Participation
         </Typography>
-        <Typography variant="body1" sx={{ fontWeight: "bold", my: 1 }} color={palette.neutral.medium}>
+        <Typography variant="body1" sx={{ fontWeight: "bold", my: 1 }} color={palette.neutral.medium} >
           Total Campaigns Joined: {profile.campaignCount}
         </Typography>
       </Box>
@@ -109,7 +121,13 @@ const UserProfileWithAchievements = ({ userId }) => {
 
       {/* Detailed List of Joined Campaigns */}
       <Box mt={2}>
-        <Typography variant="h6" color={dark} display="flex" alignItems="center">
+        <Typography variant="h6" color={dark} display="flex" alignItems="center" sx = {{ "&:hover": 
+               {
+                WebkitTextFillColor: "transparent",
+                background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+                WebkitBackgroundClip: "text",                 cursor: "pointer",
+               },
+            }}>
           <EventIcon sx={{ mr: 1 }} /> Joined Campaigns
         </Typography>
         {profile.joinedCampaigns.length > 0 ? (

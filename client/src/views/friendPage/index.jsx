@@ -1,4 +1,9 @@
-import { Box, Typography, Breadcrumbs, Link, Paper, Tabs, Tab, useTheme } from '@mui/material';
+import { Box, Typography, Breadcrumbs, Link, Paper, Tabs, Tab, useTheme,Tooltip } from '@mui/material';
+import PeopleIcon from "@mui/icons-material/People";
+import MailIcon from "@mui/icons-material/Mail";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import GroupIcon from "@mui/icons-material/Group";
+import HomeIcon from "@mui/icons-material/Home";
 import Navbar from "views/navbar";
 import { useSelector } from 'react-redux';
 import UserWidget from 'views/widgets/UserWidget';
@@ -14,6 +19,8 @@ const FriendPage = () => {
     const navigate = useNavigate();
     const [tabValue, setTabValue] = useState(0);
     const theme = useTheme(); 
+    const isDarkMode = theme.palette.mode === "dark";
+
 
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
@@ -36,28 +43,47 @@ const FriendPage = () => {
                     overflow="auto"
                     minHeight="80vh"
                 >
-                    {/* Fixed Breadcrumbs for navigation */}
                     <Box
-                        position="fixed"
-                        top="93px"
-                        left="390px"
-                        right="1rem"
-                        padding="0.5rem"
-                        zIndex={1000}
-                        boxShadow="0px 2px 0px 0px rgba(0, 0, 0, 0.1)"
-                    >
-                        <Breadcrumbs aria-label="breadcrumb">
-                            <Link
-                                underline="hover"
-                                color="inherit"
-                                onClick={() => navigate('/Home')}
-                                sx={{ cursor: "pointer" }}
-                            >
-                                Home
-                            </Link>
-                            <Typography color="textPrimary">Friends</Typography>
-                        </Breadcrumbs>
-                    </Box>
+      position="fixed"
+      top="90px"
+      left="390px"
+      right="1rem"
+      padding="0.75rem 1rem"
+      zIndex={1000}
+      borderRadius="8px"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: "0.5rem",
+        transition: "background-color 0.3s ease, box-shadow 0.3s ease",
+      }}
+    >
+      <Breadcrumbs aria-label="breadcrumb">
+        <Link
+          underline="hover"
+          color={isDarkMode ? "text.secondary" : "text.primary"}
+          onClick={() => navigate("/Home")}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            cursor: "pointer",
+            fontSize: "1.1rem",
+            fontWeight: 500,
+          }}
+        >
+          <HomeIcon fontSize="small"  sx={{ marginRight: "0.3rem" }} />
+          Home
+        </Link>
+
+        <Typography
+          color={isDarkMode ? "text.secondary" : "text.primary"}
+          fontSize="1.1rem"
+          fontWeight={500}
+        >
+          Friends
+        </Typography>
+      </Breadcrumbs>
+    </Box>
 
                     {/* Content starts below the fixed breadcrumbs */}
                     <Box
@@ -68,46 +94,61 @@ const FriendPage = () => {
                         zIndex={999}
                         Width="calc(100% - 420px)"
                     >
-                        <Paper
-                            elevation={3}
-                            sx={{
-                                borderRadius: "4px",
-                                overflow: "hidden",
-                                marginBottom: "1rem",
-                            }}
-                        >
-                            <Tabs
-                                value={tabValue}
-                                onChange={handleTabChange}
-                                variant="fullWidth"
-                                aria-label="friend management tabs"
-                                sx={{
-                                    backgroundColor: theme.palette.mode === 'dark' ? '#333' : 'white',
-                                    '& .MuiTab-root': {
-                                        fontWeight: 'bold',
-                                        fontSize: '1rem',
-                                        textTransform: 'none',
-                                        padding: '0.75rem 1.5rem',
-                                        transition: 'background-color 0.3s ease, color 0.3s ease',
-                                        color: theme.palette.mode === 'dark' ? 'white' : 'black',
-                                    },
-                                    '& .Mui-selected': {
-                                        background: theme.palette.mode === 'dark' 
-                                            ? 'linear-gradient(310deg, #FF0080 0%, #7928CA 100%)' 
-                                            : 'linear-gradient(310deg, #7928CA 0%, #FF0080 100%)',
-                                        color: 'white',
-                                    },
-                                    '& .MuiTabs-indicator': {
-                                        backgroundColor: 'transparent',
-                                    },
-                                }}
-                            >
-                                <Tab label="Requests Received" />
-                                <Tab label="Requests Sent" />
-                                <Tab label="Suggestions" />
-                                <Tab label="Friends" />
-                            </Tabs>
-                        </Paper>
+                           <Paper
+      elevation={4} // Slightly higher elevation for more prominence
+      sx={{
+        borderRadius: "8px", // Enhanced corner radius for a more modern look
+        overflow: "hidden",
+        marginBottom: "1.5rem",
+      }}
+    >
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        variant="fullWidth"
+        aria-label="friend management tabs"
+        sx={{
+          backgroundColor: theme.palette.mode === "dark" ? "#333" : "white",
+          "& .MuiTab-root": {
+            fontWeight: 500,
+            fontSize: "1rem",
+            textTransform: "none",
+            padding: "0.5rem 1rem",
+            transition: "background-color 0.3s ease, color 0.3s ease",
+            color: theme.palette.mode === "dark" ? "white" : "black",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.3rem",
+          },
+          "& .Mui-selected": {
+            background: theme.palette.mode === "dark"
+              ? "linear-gradient(310deg, #FF0080 0%, #7928CA 100%)"
+              : "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+            color: "white",
+            borderRadius: "4px", // Rounded effect on the selected tab
+          },
+          "& .MuiTabs-indicator": {
+            backgroundColor: "transparent",
+          },
+        }}
+      >
+        <Tooltip title="View requests others have sent to you" arrow>
+          <Tab icon={<MailIcon />} label="Requests Received" />
+        </Tooltip>
+        
+        <Tooltip title="Check the requests you have sent" arrow>
+          <Tab icon={<PersonAddIcon />} label="Requests Sent" />
+        </Tooltip>
+        
+        <Tooltip title="See suggestions for people you may know" arrow>
+          <Tab icon={<PeopleIcon />} label="Suggestions" />
+        </Tooltip>
+        
+        <Tooltip title="View and manage your current friends" arrow>
+          <Tab icon={<GroupIcon />} label="Friends" />
+        </Tooltip>
+      </Tabs>
+    </Paper>
 
                         {/* Content for each tab */}
                         <Paper elevation={3} sx={{ borderRadius: "4px", padding: "1rem", minHeight: "470px" }}>
