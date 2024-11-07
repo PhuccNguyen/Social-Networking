@@ -359,6 +359,7 @@ const AdminDashboard = () => {
       ) : (
         <Box mt={4}>
         <Typography variant="h4" gutterBottom>Campaign Overview</Typography>
+
         <Table sx={{ backgroundColor: palette.background.paper, borderRadius: "8px", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)" }}>
           <TableHead>
             <TableRow>
@@ -371,6 +372,7 @@ const AdminDashboard = () => {
               <TableCell><strong>Admin</strong></TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
             {filteredCampaigns.map((campaign) => (
               <TableRow 
@@ -400,6 +402,7 @@ const AdminDashboard = () => {
                     {new Date(campaign.campaignEndDate).toLocaleDateString()}
                   </Typography>
                 </TableCell>
+
                 <TableCell width="150px">
                   <Box display="flex" alignItems="center">
                     <LinearProgress 
@@ -420,6 +423,7 @@ const AdminDashboard = () => {
                     </Typography>
                   </Box>
                 </TableCell>
+                
                 <TableCell align="center">
                   <Typography variant="body1" sx={{ fontWeight: "bold", color: palette.info.main }}>
                     {campaign.totalVolunteers || "N/A"}
