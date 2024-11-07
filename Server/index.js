@@ -18,7 +18,9 @@ import volunteerRoutes from './routes/volunteer.js';
 import { createPost } from "./controllers/post.js";
 import { register } from "./controllers/auth.js";
 import { createCampaign  } from './controllers/campaign.js';
+import { searchInformation } from "./controllers/search.js";
 import { verifyToken, verifyAssistantAdmin } from './middleware/auth.js';
+
 
 // import Post from "./models/Post.js";
 // import { users } from "./data/index.js"
@@ -84,9 +86,9 @@ const upload = multer({
 // Routes With Files
 app.post("/auth/register", upload.single("picture"), register); // No
 app.post("/posts", verifyToken, upload.single("picture"), createPost); // VerifyToken middleware here
-
-// This is the corrected version:
 app.post('/campaigns', verifyToken, verifyAssistantAdmin, upload.single("imageCampaing"), createCampaign);
+
+app.get('/search', verifyToken, searchInformation);
 
 // Routes
 app.use("/auth", authRoutes);
