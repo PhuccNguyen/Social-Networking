@@ -85,6 +85,7 @@ const PostUserWidget = ({
     }
   };
 
+
   const handleCommentSubmit = async () => {
     if (newComment.trim() === "") return;
 
@@ -112,6 +113,8 @@ const PostUserWidget = ({
       console.error(error.message);
     }
   };
+
+  
 
   return (
     <WidgetWrapper sx={{ width: "90%", margin: "1rem auto",  boxShadow: "0px 6px 13px 3px rgba(0, 0, 0, 0.1)", borderRadius: "7px" }}>

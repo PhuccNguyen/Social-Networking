@@ -70,7 +70,7 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
     switch (activeSection) {
       case 'post':
         return (
-          <Box sx={{ textAlign: 'justify' }}> {/* Set text alignment to justified */}
+          <Box sx={{ textAlign: 'justify' }}> 
             <Typography>
               <PostUser userId={userId} isProfile={true}/>
             </Typography>
@@ -145,7 +145,6 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
       }}
     >
       
-      {/* Title and Buttons in the same row */}
       <Box
         sx={{
           display: 'flex',
@@ -154,11 +153,10 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
           mb: '1rem',
         }}
       >
-        {/* Fixed Title */}
         <Typography variant="h6" color={dark} fontWeight="600">
           {getSectionTitle()}
         </Typography>
-  {/* Buttons */}
+
   <Box sx={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
         <Button variant="contained" onClick={() => setActiveSection('post')} sx={buttonStyles('post')}>
           Post
