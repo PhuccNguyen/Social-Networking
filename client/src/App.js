@@ -11,6 +11,7 @@ import UserRegisterCampaign from "views/UserRegisterCampaign";
 import LandingPage from "views/LandingPage";
 import FriendPage from "views/friendPage";
 import NotFoundPage from "views/NotFoundPage"; 
+import NotificationComponent from "./components/NotificationComponent.jsx"; 
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
@@ -21,12 +22,15 @@ function App() {
   const mode = useSelector((state) => state.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const isAuth = Boolean(useSelector((state) => state.token));
+  const userId = useSelector((state) => state.user?.id); // Get userId from Redux state
+
 
   return (
     <div className="app">
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <CssBaseline />
+          {isAuth && userId && <NotificationComponent userId={userId} />} {/* Show notifications when authenticated */}
           <Routes>
             <Route path="/" element={<LoginPage />} />
             <Route path="/volunteer" element={isAuth ? <VolunteerPage /> : <Navigate to="/" />} />

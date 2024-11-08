@@ -216,7 +216,7 @@ const Navbar = () => {
               searchResults.posts.length > 0 ||
               searchResults.campaigns.length > 0) && (
 
-              <TableContainer
+                <TableContainer
                 ref={tableRef}
                 component={Paper}
                 sx={{

@@ -1,4 +1,6 @@
 import express from 'express';
+import { Server } from 'socket.io';
+import http from 'http';
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -9,12 +11,16 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from 'url';
+
+  // import notificationRoutes from "./routes/notifications.js"; // Import notification 
 import authRoutes from "./routes/auth.js";
 import usersRoutes from "./routes/users.js";
 import postsRoutes from "./routes/post.js";
 import friendRoutes from "./routes/friend.js"; 
 import adminRoutes from "./routes/admin.js"; 
-import volunteerRoutes from './routes/volunteer.js'; 
+import volunteerRoutes from "./routes/volunteer.js"; 
+
+
 import { createPost } from "./controllers/post.js";
 import { register } from "./controllers/auth.js";
 import { createCampaign  } from './controllers/campaign.js';
@@ -33,8 +39,9 @@ dotenv.config();
 // Configurations for __filename and __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const app = express();
+// const server = http.createServer(app); // Create server
+// const io = new Server(server, { cors: { origin: '*' } }); // Initialize Socket.IO
 
 // Middleware configurations
 app.use(express.json());
@@ -87,7 +94,6 @@ const upload = multer({
 app.post("/auth/register", upload.single("picture"), register); // No
 app.post("/posts", verifyToken, upload.single("picture"), createPost); // VerifyToken middleware here
 app.post('/campaigns', verifyToken, verifyAssistantAdmin, upload.single("imageCampaing"), createCampaign);
-
 app.get('/search', verifyToken, searchInformation);
 
 // Routes
@@ -97,8 +103,23 @@ app.use("/posts", postsRoutes);
 app.use("/friends",verifyToken, friendRoutes);
 app.use('/volunteer', volunteerRoutes);
 app.use('/admin', adminRoutes);
+// app.use("/notifications", notificationRoutes); // Notification routes
 
+// // Set up Socket.IO for real-time notifications
+// io.onlineUsers = new Map();
+// io.on('connection', (socket) => {
+//   console.log('User connected:', socket.id);
+//   socket.on('registerUser', (userId) => io.onlineUsers.set(userId, socket.id));
+//   socket.on('disconnect', () => {
+//     console.log('User disconnected:', socket.id);
+//     io.onlineUsers.forEach((socketId, userId) => {
+//       if (socketId === socket.id) io.onlineUsers.delete(userId);
+//     });
+//   });
+// });
 
+// // Export io for use in controllers
+// export { io };
 
 // Mongoose connection
 const PORT = process.env.PORT || 4001;
