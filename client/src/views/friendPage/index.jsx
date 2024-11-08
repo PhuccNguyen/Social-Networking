@@ -49,7 +49,7 @@ const FriendPage = () => {
       left="390px"
       right="1rem"
       padding="0.75rem 1rem"
-      zIndex={1000}
+      zIndex={100}
       borderRadius="8px"
       sx={{
         display: "flex",

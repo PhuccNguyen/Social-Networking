@@ -1,15 +1,19 @@
 import React from "react";
 import styled from "styled-components";
+import { useTheme } from "@mui/material";
 import { BookmarkBorderOutlined, BookmarkOutlined } from "@mui/icons-material";
 
+
 const SaveButton = ({ isSaved, handleSaveToggle, postId }) => {
+  const theme = useTheme();
+  const neutralLight = theme.palette.neutral.light;
   return (
     <StyledWrapper>
       <>
         <input
           type="checkbox"
           checked={isSaved}
-          id={`save-${postId}`} // Ensure a unique id for each post's save button
+          id={`save-${postId}`} 
           name={`save-checkbox-${postId}`}
           onChange={handleSaveToggle}
         />
@@ -31,15 +35,12 @@ const SaveButton = ({ isSaved, handleSaveToggle, postId }) => {
 
 const StyledWrapper = styled.div`
   label {
-    background-color: white;
     display: flex;
     align-items: center;
     gap: 14px;
     padding: 10px 15px 10px 10px;
     cursor: pointer;
     user-select: none;
-    border-radius: 10px;
-    color: black;
   }
 
   input {

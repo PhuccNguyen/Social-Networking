@@ -7,6 +7,7 @@ import FlexBetween from "components/Adjustment";
 import BoxFriend from "components/BoxFriendDemo";
 import Boxcomment from "components/BoxComment";
 import WidgetWrapper from "components/WidgetWrapper";
+import { useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost, setSavedPosts } from "state";
 import dayjs from "dayjs";
@@ -37,6 +38,9 @@ const PostUserWidget = ({
   const loggedInUserId = loggedInUser._id;
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
+  const theme = useTheme();
+  const neutralLight = theme.palette.neutral.light;
+
   
 
   const handleLikeToggle = async () => {
@@ -188,14 +192,7 @@ const PostUserWidget = ({
           <Typography sx={{ fontSize: "0.85rem" }}>{comments.length}</Typography>
         </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {/* Pass postId to ensure unique save button */}
+        <Box >
           <SaveButton postId={postId} isSaved={saved} handleSaveToggle={handleSavePost} />
         </Box>
       </Box>

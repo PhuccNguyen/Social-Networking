@@ -63,7 +63,7 @@ const UserWidget = ({ userId, picturePath, role  }) => {
   } = user;
 
   return (
-    <WidgetWrapper position="fixed" margin="-0.5rem 1rem 1rem 1rem" top="14.5%" zIndex={1000} right="74%" width="370px" boxShadow= "0px 6px 13px 3px rgba(0, 0, 0, 0.1)" >
+    <WidgetWrapper position="fixed" margin="-0.5rem 1rem 1rem 1rem" top="14.5%" zIndex={100} right="74%" width="370px" boxShadow= "0px 6px 13px 3px rgba(0, 0, 0, 0.1)" >
        {/******** One *******/}
        <AdjustContent
         gap="0.5rem"

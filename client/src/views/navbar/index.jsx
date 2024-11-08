@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import {
   Box,
   IconButton,
@@ -7,7 +7,7 @@ import {
   MenuItem,
   Menu,
   Alert,
-  Paper, List, ListItem,
+  Paper,
   Table,
   TableBody,
   TableCell,
@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import {
   Search,
-  Message,
   Notifications,
   Menu as MenuIcon,
   Close,
@@ -36,45 +35,54 @@ import Bell from "components/BellNavbar";
 import ButtonNavbar from "CSS/ButtonNavbar";
 
 const Navbar = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState({
+    users: [],
+    posts: [],
+    campaigns: [],
+  });
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showTable, setShowTable] = useState(false);
+
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState({ users: [], posts: [], campaigns: [] });
-  const [alertMessage, setAlertMessage] = useState("");
   const user = useSelector((state) => state.user);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const theme = useTheme();
 
-  console.log(user.picturePath);
+  const searchInputRef = useRef(null);
+  const tableRef = useRef(null);
 
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
   const background = theme.palette.background.default;
   const alt = theme.palette.background.alt;
-  const token = useSelector((state) => state.token);  // Now `useSelector` is defined
+  const token = useSelector((state) => state.token); // Now `useSelector` is defined
 
   const fullName = `${user.firstName} ${user.lastName}`;
   const userId = user._id;
   const userRole = user.role;
 
-
-
+  // Fetch and display search results
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-
     try {
-      const response = await fetch(`http://localhost:3001/search?query=${encodeURIComponent(searchQuery)}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await fetch(
+        `http://localhost:3001/search?query=${encodeURIComponent(searchQuery)}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       const data = await response.json();
       setSearchResults({
         users: data.users || [],
         posts: data.posts || [],
         campaigns: data.campaigns || [],
       });
+      setShowTable(true);
     } catch (error) {
       console.error("Error searching:", error);
       setAlertMessage("Failed to fetch search results");
@@ -91,14 +99,40 @@ const Navbar = () => {
     }
   };
 
-
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  // Toggle for outside clicks
+  const closeTable = useCallback(() => setShowTable(false), []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        tableRef.current &&
+        !tableRef.current.contains(event.target) &&
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target)
+      ) {
+        closeTable();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [closeTable]);
 
   return (
     <Box
@@ -110,9 +144,7 @@ const Navbar = () => {
       boxShadow="0px 4px 10px rgba(0, 0, 0, 0.1)"
     >
       <FlexBetween padding="1rem 6%" backgroundColor={alt}>
-        {/* Logo and Search */}
         <FlexBetween gap="1.75rem">
-          {/* Logo cải tiến */}
           <Typography
             variant="h5"
             color={dark}
@@ -132,101 +164,153 @@ const Navbar = () => {
           </Typography>
 
           <div style={{ position: "relative", zIndex: 1000 }}>
-      {/* Search Bar */}
-      <FlexBetween
-        backgroundColor="#f0f0f0"
-        borderRadius="30px"
-        padding="0.3rem 1.5rem"
-        gap="0.5rem"
-        sx={{
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-          transition: "box-shadow 0.3s ease",
-          "&:hover": {
-            boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.15)",
-          },
-        }}
-      >
-        <InputBase
-          placeholder="Search by username, post, or campaign..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          sx={{
-            width: "100%",
-            fontSize: "0.85rem",
-          }}
-        />
-        <IconButton onClick={handleSearch} sx={{ padding: "0.3rem" }}>
-          <Search />
-        </IconButton>
-      </FlexBetween>
+            {/* Search Bar */}
+            <FlexBetween
+              ref={searchInputRef}
+              backgroundColor={neutralLight} 
+              borderRadius="30px"
+              padding="0.3rem 1.5rem"
+              gap="0.5rem"
+              sx={{
+                boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+                transition: "box-shadow 0.3s ease",
+                "&:hover": {
+                  boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.15)",
+                },
+              }}
+            >
+              <InputBase
+                placeholder="Search by username, post, or campaign..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                sx={{
+                  width: "100%",
+                  fontSize: "0.85rem",
+                }}
+              />
+              <IconButton onClick={handleSearch} sx={{ padding: "0.3rem" }}>
+                <Search />
+              </IconButton>
+            </FlexBetween>
 
-      {/* Alert Notification */}
-      {alertMessage && (
-        <div style={{ position: "absolute", top: "10px", left: "50%", transform: "translateX(-50%)", zIndex: 1000 }}>
-          <Alert severity="error" onClose={() => setAlertMessage("")}>
-            {alertMessage}
-          </Alert>
-        </div>
-      )}
+            {/* Alert Notification */}
+            {alertMessage && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  zIndex: 1000,
+                }}
+              >
+                <Alert severity="error" onClose={() => setAlertMessage("")}>
+                  {alertMessage}
+                </Alert>
+              </div>
+            )}
 
-      {/* Search Results Table */}
-      {(searchResults.users.length > 0 || searchResults.posts.length > 0 || searchResults.campaigns.length > 0) && (
-      <TableContainer
-      component={Paper}
-      sx={{
-        position: "fixed", // Change to fixed positioning
-        top: "75px",       // Position it based on viewport
-        left: "40%",       // Center horizontally relative to viewport
-        transform: "translateX(-50%)", // Center alignment
-        width: "90%",      // Set to almost full width, adjust as necessary
-        maxWidth: "600px", // Maximum width to keep it compact
-        maxHeight: "200px", // Enable scrolling if content overflows
-        overflowY: "auto",
-        zIndex: "9999",    // High z-index to stay above other elements
-        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
-      }}
-    >
-      <Table size="small" aria-label="search results">
-        <TableBody>
-          {searchResults.users.map((user) => (
-            <TableRow
-              key={user._id}
-              hover
-              sx={{ cursor: "pointer" }}
-              onClick={() => handleRowClick("user", user._id)}
-            >
-              <TableCell>User</TableCell>
-              <TableCell>{user.userName}</TableCell>
-            </TableRow>
-          ))}
-          {searchResults.posts.map((post) => (
-            <TableRow
-              key={post._id}
-              hover
-              sx={{ cursor: "pointer" }}
-              onClick={() => handleRowClick("post", post._id)}
-            >
-              <TableCell>Post</TableCell>
-              <TableCell>{post.description}</TableCell>
-            </TableRow>
-          ))}
-          {searchResults.campaigns.map((campaign) => (
-            <TableRow
-              key={campaign._id}
-              hover
-              sx={{ cursor: "pointer" }}
-              onClick={() => handleRowClick("campaign", campaign._id)}
-            >
-              <TableCell>Campaign</TableCell>
-              <TableCell>{campaign.title} - {campaign.location}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-    
-      )}
-    </div>
+            {/* Search Results Table */}
+            {(searchResults.users.length > 0 ||
+              searchResults.posts.length > 0 ||
+              searchResults.campaigns.length > 0) && (
+
+              <TableContainer
+                ref={tableRef}
+                component={Paper}
+                sx={{
+                  position: "fixed",
+                  top: "70px",
+                  left: "30%",
+                  transform: "translateX(-50%)",
+                  width: "70%",
+                  maxWidth: "600px",
+                  maxHeight: "250px",
+                  overflowY: "auto",
+                  zIndex: 9999,
+                  borderRadius: "10px",
+                  boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.15)",
+                }}
+              >
+                <Table size="small" aria-label="search results">
+                  <TableBody>
+                    {searchResults.users.length > 0 && (
+                      <TableRow>
+                        <TableCell
+                          colSpan={2}
+                          sx={{
+                            backgroundColor: "#f0f0f0",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Users
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    {searchResults.users.map((user) => (
+                      <TableRow
+                        key={user._id}
+                        hover
+                        onClick={() => handleRowClick("user", user._id)}
+                      >
+                        <TableCell>User</TableCell>
+                        <TableCell>{user.userName}</TableCell>
+                      </TableRow>
+                    ))}
+                    {searchResults.posts.length > 0 && (
+                      <TableRow>
+                        <TableCell
+                          colSpan={2}
+                          sx={{
+                            backgroundColor: "#f0f0f0",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Posts
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    {searchResults.posts.map((post) => (
+                      <TableRow
+                        key={post._id}
+                        hover
+                        onClick={() => handleRowClick("post", post._id)}
+                      >
+                        <TableCell>Post</TableCell>
+                        <TableCell>{post.description}</TableCell>
+                      </TableRow>
+                    ))}
+                    {searchResults.campaigns.length > 0 && (
+                      <TableRow>
+                        <TableCell
+                          colSpan={2}
+                          sx={{
+                            backgroundColor: "#f0f0f0",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Campaigns
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    {searchResults.campaigns.map((campaign) => (
+                      <TableRow
+                        key={campaign._id}
+                        hover
+                        onClick={() => handleRowClick("campaign", campaign._id)}
+                      >
+                        <TableCell>Campaign</TableCell>
+                        <TableCell>
+                          {campaign.title} - {campaign.location}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </div>
         </FlexBetween>
 
         {/* Buttons Section */}
