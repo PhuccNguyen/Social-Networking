@@ -8,6 +8,7 @@ import Admin from "views/Admin";
 import SavedPostsPage from "views/SavedPostsPage";
 import ManageCampaign from "views/ManageCampaign";
 import UserRegisterCampaign from "views/UserRegisterCampaign";
+import LandingPage from "views/LandingPage";
 import FriendPage from "views/friendPage";
 import NotFoundPage from "views/NotFoundPage"; 
 import { useMemo } from "react";
@@ -37,7 +38,7 @@ function App() {
             <Route path="/Admin" element={isAuth ? <Admin /> : <Navigate to="/" />} />
             <Route path="/ManageCampaign" element={isAuth ? <ManageCampaign /> : <Navigate to="/" />} />
             <Route path="/UserRegisterCampaign" element={isAuth ? <UserRegisterCampaign /> : <Navigate to="/" />} />
-
+            <Route path="/LandingPage" element={<LandingPage />} />
             
             {/* Wildcard route for 404 page */}
             <Route  path="*" element={<NotFoundPage />} />
