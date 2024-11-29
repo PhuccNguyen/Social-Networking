@@ -8,16 +8,57 @@ import {
     getSavedPosts,
     getUserJoinedCampaigns,
     updateUserAchievements,
+    updateProfilePic ,
 } from "../controllers/users.js";
 import { verifyToken } from '../middleware/auth.js';
-
+import multer from 'multer'; // File upload handler
+import crypto from 'crypto';
+import path from 'path';  // Make sure to import the path module
 const router = express.Router();
+
+// Multer configuration for image upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/assets/');  // Folder to store the images
+  },
+  filename: function (req, file, cb) {
+    // Generate a unique filename based on the original file name
+    const originalName = path.parse(file.originalname).name;  // Get the name without extension
+    const extension = path.extname(file.originalname);  // Get the file extension
+
+    // Create a new filename with a unique suffix
+    const uniqueSuffix = crypto.randomBytes(8).toString("hex");
+    const newFileName = `${originalName}-${uniqueSuffix}${extension}`;
+
+    // Save the file with the new filename in the request object for MongoDB
+    req.file = { filename: newFileName };
+
+    cb(null, newFileName);  // Return the filename to save the file in the local storage
+  }
+});
+
+// Initialize multer with the storage configuration
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 },  // 5MB file size limit
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
+
 
 // Get user profile
 router.get("/:id", verifyToken, getUser);
 
 // Update Infor user 
 router.patch("/:id", verifyToken, updateUser);
+
+// Route for updating user profile picture
+router.post("/:id/updateProfilePic", verifyToken, upload.single('file'), updateProfilePic);
 
 // Delete a friend
 router.delete("/:id/friends/:friendId", verifyToken, deleteUserFriend);

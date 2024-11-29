@@ -1,6 +1,8 @@
+import mongoose from "mongoose";
 import Post from "../models/Post.js";
-import User from "../models/User.js";
-import { io } from "../index.js"; // Import the Socket.IO instance
+import User from "../models/User.js"; // Ensure User model is imported
+import Notification from "../models/Notification.js";
+import { io } from "../index.js"; // Assuming socket.io is configured
 
 // Create a new post
 export const createPost = async (req, res) => {
@@ -92,94 +94,152 @@ export const getFriendPosts = async (req, res) => {
 
 export const likePost = async (req, res) => {
   try {
-      const { id } = req.params;  
-      const { userId } = req.body;
+    const { id } = req.params;
+    const { userId } = req.body;
 
-      // Find the post to be liked/unliked
-      const post = await Post.findById(id);
-      if (!post) {
-          return res.status(404).json({ message: "Post not found" });
-      }
+    // Find the post to be liked/unliked
+    const post = await Post.findById(id);
+    if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+    }
 
-      // Check if the user has already liked the post
-      const isLiked = post.likes.get(userId);
+    // Check if the user has already liked the post
+    const isLiked = post.likes.get(userId);
 
-      if (isLiked) {
-          post.likes.delete(userId);  // Unlike the post
-      } else {
-          post.likes.set(userId, true);  // Like the post
-      }
+    if (isLiked) {
+        post.likes.delete(userId);  // Unlike the post
+    } else {
+        post.likes.set(userId, true);  // Like the post
+    }
 
-      // Update the post with the new likes object
-      const updatedPost = await Post.findByIdAndUpdate(
-          id, 
-          { likes: post.likes }, 
-          { new: true }
-      );
+    // Update the post with the new likes object
+    const updatedPost = await Post.findByIdAndUpdate(
+        id, 
+        { likes: post.likes }, 
+        { new: true }
+    );
 
-      // Notify the post owner
-      const postOwner = post.userId; // Post owner's ID
-      if (postOwner !== userId) { // Ensure the user doesn't get a notification for liking their own post
-          const notificationMessage = `${req.user.firstName} liked your post.`;
-          const socketId = io.onlineUsers.get(postOwner);
+    // Get sender's information (req.user should contain the sender's info)
+    const sender = await User.findById(userId); // Populate sender info from the User model
+    if (!sender) {
+        return res.status(404).json({ message: "Sender not found" });
+    }
 
-          if (socketId) {
-              io.to(socketId).emit("notification", {
-                  type: "like",
-                  message: notificationMessage,
-                  postId: post._id,
-                  sender: {
-                      id: userId,
-                      name: `${req.user.firstName} ${req.user.lastName}`,
-                      picturePath: req.user.picturePath,
-                  },
-              });
-          }
-      }
+    // Notify the post owner
+    const postOwner = post.userId; // Post owner's ID
+    if (postOwner !== userId) { // Ensure the user doesn't get a notification for liking their own post
+        const notificationMessage = `${sender.firstName} ${sender.lastName} liked your post.`;
 
-      res.status(200).json(updatedPost);  
+        // Create and save the notification
+        const notification = new Notification({
+            recipient: postOwner,
+            sender: userId,
+            type: "like",
+            message: notificationMessage,
+            postId: post._id, // Optional: link to the post
+        });
+
+        await notification.save(); // Save the notification in the database
+
+        // Send the notification via socket.io
+        const socketId = io.onlineUsers.get(postOwner);
+
+        if (socketId) {
+            // Emit the notification with sender's details
+            io.to(socketId).emit("notification", {
+                type: "like",
+                message: notificationMessage,
+                postId: post._id,
+                sender: {
+                    id: sender._id,
+                    name: `${sender.firstName} ${sender.lastName}`, // Sender's name
+                    picturePath: sender.picturePath, // Sender's profile picture
+                },
+                createdAt: notification.createdAt,
+            });
+        }
+    }
+
+    // Return updated post details
+    res.status(200).json(updatedPost);  
   } catch (err) {
-      res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 
 // ADD COMMENT
 export const addComment = async (req, res) => {
-    try {
-        const { postId } = req.params;
-        const { userId, commentText } = req.body;
+  try {
+      const { postId } = req.params;
+      const { userId, commentText } = req.body;
 
-        // Tìm kiếm bài viết theo postId
-        const post = await Post.findById(postId);
-        if (!post) {
-            return res.status(404).json({ message: "Post not found" });
-        }
+      // Step 1: Find the post by postId
+      const post = await Post.findById(postId);
+      if (!post) {
+          return res.status(404).json({ message: "Post not found" });
+      }
 
-        // Tìm kiếm người dùng theo userId
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
+      // Step 2: Find the user by userId (the one commenting)
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ message: "User not found" });
+      }
 
-        // Add the comment to the post with user information fetched from the database
-        const newComment = {
-            userId,
-            firstName: user.firstName,
-            lastName: user.lastName, 
-            userPicturePath: user.picturePath,
-            commentText,
-            createdAt: new Date(),
-        };
-        post.comments.push(newComment);
+      // Step 3: Add the comment with user information
+      const newComment = {
+          userId,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          userPicturePath: user.picturePath,
+          commentText,
+          createdAt: new Date(),
+      };
 
-        // Lưu lại bài viết sau khi thêm bình luận
-        await post.save();
-        res.status(200).json(post);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+      // Step 4: Push the comment to the post's comments array
+      post.comments.push(newComment);
+
+      // Step 5: Save the post after adding the comment
+      await post.save();
+
+      // Optional: Create a notification for the post owner (if you want notifications for comments)
+      if (post.userId !== userId) { // Don't notify the commenter about their own comment
+          const notificationMessage = `${user.firstName} ${user.lastName} commented on your post.`;
+
+          const notification = new Notification({
+              recipient: post.userId,
+              sender: userId,
+              type: "comment",
+              message: notificationMessage,
+              postId: post._id, // Optional: link to the post
+          });
+
+          await notification.save(); // Save notification
+
+          // Step 6: Notify via socket.io (if connected)
+          const socketId = io.onlineUsers.get(post.userId);
+          if (socketId) {
+              io.to(socketId).emit("notification", {
+                  type: "comment",
+                  message: notificationMessage,
+                  postId: post._id,
+                  sender: {
+                      id: userId,
+                      name: `${user.firstName} ${user.lastName}`,
+                      picturePath: user.picturePath, // Sender's profile picture
+                  },
+                  createdAt: notification.createdAt,
+              });
+          }
+      }
+
+      // Step 7: Respond with the updated post
+      res.status(200).json(post);
+
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+  }
 };
-
 
 
 // Controller to get trending posts based on interactions

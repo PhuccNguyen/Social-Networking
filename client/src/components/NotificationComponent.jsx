@@ -1,44 +1,39 @@
-import { useEffect, useState } from "react";
-import io from "socket.io-client";
-import { useDispatch } from "react-redux";
-import { setNotifications } from "state";
-import "./NotificationComponent.css";
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setNotifications } from 'state'; // Redux action to set notifications
 
-const socket = io("http://localhost:3001");
-
-function NotificationComponent({ userId }) {
+const NotificationComponent = ({ userId }) => {
   const dispatch = useDispatch();
-  const [notifications, setNotificationsLocal] = useState([]); // Local state for notifications
+  const notifications = useSelector((state) => state.auth.notifications); // Access notifications from Redux store
 
   useEffect(() => {
-    if (userId) {
-      socket.emit("registerUser", userId); // Register user for notifications
-      console.log(`User ${userId} registered for notifications`);
-
-      // Listen for incoming notifications
-      socket.on("notification", (data) => {
-        console.log("Received notification:", data);
-        setNotificationsLocal((prev) => [...prev, data]);
-        dispatch(setNotifications({ notifications: [...notifications, data] })); // Persist in Redux
-      });
-    }
-
-    // Cleanup when component unmounts
-    return () => {
-      socket.off("notification");
-      socket.disconnect();
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch(`http://localhost:3001/notifications/${userId}`);
+        const data = await response.json();
+        dispatch(setNotifications({ notifications: data })); // Dispatch action to update Redux store with notifications
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
     };
+
+    fetchNotifications();
   }, [userId, dispatch]);
 
   return (
-    <div className="notification-container">
-      {notifications.map((notification, index) => (
-        <div key={index} className="notification-item">
-          <p>{notification.message}</p>
-        </div>
-      ))}
+    <div>
+      {notifications && notifications.length > 0 ? (
+        notifications.map((notif) => (
+          <div key={notif._id}>
+            <p>{notif.message}</p>
+            <small>{new Date(notif.createdAt).toLocaleString()}</small>
+          </div>
+        ))
+      ) : (
+        <p>No new notifications</p>
+      )}
     </div>
   );
-}
+};
 
 export default NotificationComponent;

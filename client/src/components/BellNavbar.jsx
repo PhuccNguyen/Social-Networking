@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { IconButton, Badge, Menu, MenuItem, Typography, Divider } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { IconButton, Badge, Menu, MenuItem, Typography } from "@mui/material";
 import { formatDistanceToNow } from "date-fns";
 import io from "socket.io-client";
-import UserImage from "components/UserImage"; 
+import UserImage from "components/UserImage";
+import styled from "styled-components"; // Add styled-components for animation
+import MoreVertIcon from "@mui/icons-material/MoreVert"; // Correct import for MoreVertIcon
 
 const socket = io("http://localhost:3001", { autoConnect: false });
 
@@ -18,7 +18,7 @@ function BellNavbar({ userId }) {
   const isMenuOpen = Boolean(anchorEl);
   const isMoreMenuOpen = Boolean(moreMenuAnchor);
 
-  // Memoized fetchNotifications function
+  // Fetch notifications
   const fetchNotifications = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
@@ -45,12 +45,11 @@ function BellNavbar({ userId }) {
     }
   }, [userId]);
 
-  // Fetch notifications when component mounts
   useEffect(() => {
     if (userId) fetchNotifications();
   }, [userId, fetchNotifications]);
 
-  // Listen for real-time notifications
+  // Socket connection for real-time notifications
   useEffect(() => {
     if (!userId) return;
 
@@ -83,12 +82,10 @@ function BellNavbar({ userId }) {
 
   const handleDeleteNotification = () => {
     if (notificationToDelete) {
-      // Implement delete logic here (e.g., making a DELETE request to the backend)
       setNotifications((prevNotifications) =>
         prevNotifications.filter((notif) => notif._id !== notificationToDelete._id)
       );
       handleMoreMenuClose();
-      // Call backend to delete the notification if necessary
       console.log("Notification deleted:", notificationToDelete);
     }
   };
@@ -99,10 +96,14 @@ function BellNavbar({ userId }) {
   };
 
   return (
-    <>
+    <StyledWrapper>
       <IconButton onClick={handleMenuOpen} color="inherit">
         <Badge badgeContent={unreadCount} color="error">
-          <NotificationsIcon />
+          <button className="button">
+            <svg viewBox="0 0 448 512" className="bell">
+              <path d="M224 0c-17.7 0-32 14.3-32 32V49.9C119.5 61.4 64 124.2 64 200v33.4c0 45.4-15.5 89.5-43.8 124.9L5.3 377c-5.8 7.2-6.9 17.1-2.9 25.4S14.8 416 24 416H424c9.2 0 17.6-5.3 21.6-13.6s2.9-18.2-2.9-25.4l-14.9-18.6C399.5 322.9 384 278.8 384 233.4V200c0-75.8-55.5-138.6-128-150.1V32c0-17.7-14.3-32-32-32zm0 96h8c57.4 0 104 46.6 104 104v33.4c0 47.9 13.9 94.6 39.7 134.6H72.3C98.1 328 112 281.3 112 233.4V200c0-57.4 46.6-104 104-104h8zm64 352H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7s18.7-28.3 18.7-45.3z" />
+            </svg>
+          </button>
         </Badge>
       </IconButton>
 
@@ -111,15 +112,13 @@ function BellNavbar({ userId }) {
         open={isMenuOpen}
         onClose={handleMenuClose}
         PaperProps={{
-          style: { maxHeight: 400, width: "300px" }, // Set maxHeight for scrollable notifications
+          style: { maxHeight: 400, width: "300px" },
         }}
       >
-        {/* Mark all as read */}
         <MenuItem onClick={handleMenuClose}>
           <Typography variant="body2">Mark all as read</Typography>
         </MenuItem>
 
-        {/* Notifications List */}
         {notifications.length > 0 ? (
           notifications.map((notif, index) => (
             <MenuItem
@@ -132,7 +131,7 @@ function BellNavbar({ userId }) {
                 alignItems: "center",
               }}
             >
-              <UserImage image={notif.sender.picturePath} size="35px" /> {/* Display the sender's image */}
+              <UserImage image={notif.sender.picturePath} size="35px" />
               <Typography
                 variant="body2"
                 color={notif.isRead ? "textSecondary" : "textPrimary"}
@@ -151,16 +150,6 @@ function BellNavbar({ userId }) {
               <IconButton onClick={(e) => handleMoreMenuOpen(e, notif)}>
                 <MoreVertIcon fontSize="small" />
               </IconButton>
-              <Menu
-                anchorEl={moreMenuAnchor}
-                open={isMoreMenuOpen}
-                onClose={handleMoreMenuClose}
-                PaperProps={{
-                  style: { width: "150px" },
-                }}
-              >
-                <MenuItem onClick={handleDeleteNotification}>Delete</MenuItem>
-              </Menu>
             </MenuItem>
           ))
         ) : (
@@ -169,8 +158,64 @@ function BellNavbar({ userId }) {
           </MenuItem>
         )}
       </Menu>
-    </>
+    </StyledWrapper>
   );
 }
+
+const StyledWrapper = styled.div`
+  .button {
+    width: 30px;
+    height: 30px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(240, 240, 240);
+    border-radius: 50%;
+    cursor: pointer;
+    transition-duration: 0.3s;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .bell {
+    width: 22px;
+    transition: transform 0.3s ease;
+  }
+
+  .bell path {
+    fill: black;
+  }
+
+  .button:hover {
+    background-color: rgb(220, 220, 220);
+  }
+
+  .button:hover .bell {
+    animation: bellRing 1s both;
+  }
+
+  @keyframes bellRing {
+    0%,
+    100% {
+      transform-origin: top;
+    }
+    15% {
+      transform: rotateZ(10deg);
+    }
+    30% {
+      transform: rotateZ(-10deg);
+    }
+    45% {
+      transform: rotateZ(5deg);
+    }
+    60% {
+      transform: rotateZ(-5deg);
+    }
+    75% {
+      transform: rotateZ(2deg);
+    }
+  }
+`;
 
 export default BellNavbar;

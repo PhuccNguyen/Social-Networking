@@ -52,19 +52,37 @@ app.use("/assets", express.static(path.join(__dirname, "public/assets")));
 console.log("MONGO_URL:", process.env.MONGO_URL);
 console.log("PORT:", process.env.PORT);
 
-// File storage configuration with multer
+// File storage (multer)
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: function (req, file, cb) {
     cb(null, "public/assets");
   },
-  filename: (req, file, cb) => {
+  filename: function (req, file, cb) {
+    // Generate a unique identifier
     const uniqueSuffix = crypto.randomBytes(8).toString("hex");
-    const originalName = path.parse(file.originalname).name;
-    const extension = path.extname(file.originalname);
-    cb(null, `${originalName}-${uniqueSuffix}${extension}`);
-  },
+    const originalName = path.parse(file.originalname).name; // Get name without extension
+    const extension = path.extname(file.originalname); // Get the file extension
+
+    // New filename with unique suffix
+    const newFileName = `${originalName}-${uniqueSuffix}${extension}`;
+    req.file = { ...req.file, filename: newFileName }; // Store filename in req.file for MongoDB storage
+
+    cb(null, newFileName);
+  }
 });
-const upload = multer({ storage });
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
+
 
 // Routes with files
 app.post("/auth/register", upload.single("picture"), register);

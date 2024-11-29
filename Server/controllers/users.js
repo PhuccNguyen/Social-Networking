@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from 'bcryptjs';
 import Post from "../models/Post.js";
+import path from 'path';
 import Campaign from "../models/Campaign.js";
 // import SignupVolunteer from "../models/SignupVolunteer.js";
 // import VolunteerEvent from "../Folder/Volunteerevent.js";
@@ -110,6 +111,35 @@ export const updateUserRole = async (req, res) => {
     }
   };
 
+
+// Controller function to update user profile picture
+export const updateProfilePic = async (req, res) => {
+    try {
+      const { id } = req.params;  // Get user ID from route params
+      const user = await User.findById(id);  // Find the user by ID
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // Ensure that the file is uploaded
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+  
+      // Update user's picture path with the new file name
+      user.picturePath = req.file.filename;  // Save only the filename without 'assets/'
+  
+      // Save the updated user
+      await user.save();
+  
+      // Return the updated user info (including the new profile picture path)
+      res.status(200).json(user);
+    } catch (err) {
+      console.error("Error updating profile picture:", err);
+      res.status(500).json({ message: "Error updating profile picture" });
+    }
+  };
 
   // UPDATE INFOR USER + PASSWORD
   export const updateUser = async (req, res) => {

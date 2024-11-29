@@ -7,26 +7,28 @@ import mongoose from "mongoose";
 
 const router = express.Router();
 
-// Fetch notifications for a user with pagination
+// Get notifications for a user
 router.get("/:userId", verifyToken, async (req, res) => {
   try {
+    const { userId } = req.params;
     const { page = 1, limit = 20 } = req.query;
 
-    // Validate userId format
-    if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ error: "Invalid user ID format" });
     }
 
-    const notifications = await Notification.find({ recipient: req.params.userId })
+    // Get notifications and populate sender details
+    const notifications = await Notification.find({ recipient: userId })
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
-      .limit(parseInt(limit));
+      .limit(parseInt(limit))
+      .populate("sender", "firstName lastName picturePath") // Populating sender's information
+      .populate("recipient", "firstName lastName picturePath"); // Optionally, you can populate recipient's info too if needed
 
-    // Ensure createdAt is in ISO format
     const formattedNotifications = notifications.map((notif) => {
       return {
         ...notif.toObject(),
-        createdAt: notif.createdAt.toISOString(), // Convert to ISO string if necessary
+        createdAt: notif.createdAt.toISOString(),
       };
     });
 
