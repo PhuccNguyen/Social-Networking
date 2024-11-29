@@ -5,6 +5,7 @@ import { io } from "../index.js";
 
 export const sendFriendRequest = async (req, res) => {
   try {
+    
     const { userId, targetUserId } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(targetUserId)) {
