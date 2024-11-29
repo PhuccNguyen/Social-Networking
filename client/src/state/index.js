@@ -5,8 +5,10 @@ const initialState = {
   user: null,
   token: null,
   posts: [],
-  campaigns: [], // Adding campaigns array to the initial state
-  followedUsers: [], // Adding followed users
+  campaigns: [], 
+  followedUsers: [], 
+  notifications: [], 
+
 };
 
 export const authSlice = createSlice({
@@ -67,6 +69,31 @@ export const authSlice = createSlice({
       });
       state.campaigns = updatedCampaigns;
     },
+
+
+    // Notification-related reducers
+    setNotifications: (state, action) => {
+      state.notifications = action.payload.notifications; // Set notifications from the server or socket
+    },
+    addNotification: (state, action) => {
+      state.notifications = [action.payload, ...state.notifications]; // Add a new notification
+    },
+    deleteNotification: (state, action) => {
+      state.notifications = state.notifications.filter(
+        (notif) => notif._id !== action.payload._id
+      );
+    },
+    markAllNotificationsAsRead: (state) => {
+      state.notifications = state.notifications.map((notif) => ({
+        ...notif,
+        isRead: true,
+      }));
+    },
+    markNotificationAsRead: (state, action) => {
+      state.notifications = state.notifications.map((notif) =>
+        notif._id === action.payload._id ? { ...notif, isRead: true } : notif
+      );
+    },
   },
 });
 
@@ -79,8 +106,13 @@ export const {
   setPosts,
   setPost,
   setSavedPosts,
-  setCampaigns, // Exporting the new action for setting campaigns
-  setCampaign,  // Exporting the new action for setting individual campaigns
+  setCampaigns, 
+  setCampaign, 
+  setNotifications,
+  addNotification,
+  deleteNotification,
+  markAllNotificationsAsRead,
+  markNotificationAsRead,
 } = authSlice.actions;
 
 export default authSlice.reducer;

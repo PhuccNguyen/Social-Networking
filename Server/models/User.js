@@ -32,24 +32,15 @@ const UserSchema = new mongoose.Schema(
     // Chiến dịch đã tham gia (cho User)
     joinedCampaigns: [{ type: mongoose.Schema.Types.ObjectId, ref: "Campaign" }], 
 
-    // Chiến dịch được quản lý (cho Admin và Assistant Admin)
-    // managedCampaigns: [{ type: mongoose.Schema.Types.ObjectId, ref: "Campaign" }],
-
     isActive: { type: Boolean, default: true }, // Add isActive field
-
-
     // Save post
     savedPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
-
-
      // Achievement Level (e.g., "Newcomer", "Active Volunteer")
-     achievementLevel: { type: String, default: "Newcomer" },
-
+    achievementLevel: { type: String, default: "Newcomer" },
      // Badges earned by the user
-     badges: [{ type: String }],  
- 
+    badges: [{ type: String }],  
      // Campaign count (can also be calculated dynamically if preferred)
-     campaignCount: { type: Number, default: 0 },
+    campaignCount: { type: Number, default: 0 },
 
 
   },

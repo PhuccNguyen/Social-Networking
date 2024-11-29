@@ -1,45 +1,69 @@
+import mongoose from "mongoose";
 import User from "../models/User.js";
+import Notification from "../models/Notification.js";
+import { io } from "../index.js";
 
-/* SEND FRIEND REQUEST */
 export const sendFriendRequest = async (req, res) => {
-    try {
-        const { userId, targetUserId } = req.body;
+  try {
+    const { userId, targetUserId } = req.body;
 
-        const user = await User.findById(userId);
-        const targetUser = await User.findById(targetUserId);
-
-        if (!targetUser) {
-            return res.status(404).json({ message: "User not found" });
-        }
-
-        // Check if a request has already been sent
-        if (targetUser.friendRequestsReceived.includes(userId)) {
-            return res.status(400).json({ message: "Friend request already sent" });
-        }
-
-        // Add the user to sent requests and the target to received requests
-        user.friendRequestsSent.push(targetUserId);
-        targetUser.friendRequestsReceived.push(userId);
-
-        await user.save();
-        await targetUser.save();
-
-        res.status(200).json({ message: "Friend request sent successfully" });
-    } catch (error) {
-        res.status(500).json({ message: "Error sending friend request" });
+    if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(targetUserId)) {
+      return res.status(400).json({ message: "Invalid user IDs" });
     }
+
+    const user = await User.findById(userId);
+    const targetUser = await User.findById(targetUserId);
+
+    if (!targetUser) {
+      return res.status(404).json({ message: "Target user not found" });
+    }
+
+    if (targetUser.friendRequestsReceived.includes(userId)) {
+      return res.status(400).json({ message: "Friend request already sent" });
+    }
+
+    user.friendRequestsSent.push(targetUserId);
+    targetUser.friendRequestsReceived.push(userId);
+    await user.save();
+    await targetUser.save();
+
+    const message = `${user.firstName} ${user.lastName} sent you a friend request.`;
+    const notification = new Notification({ 
+        recipient: targetUserId, sender: userId, type: "friendRequest", message,
+    });
+    await notification.save();
+
+    const socketId = io.onlineUsers.get(targetUserId);
+    if (socketId) {
+      io.to(socketId).emit("notification", { 
+        type: "friendRequest", message, sender: { 
+        id: userId, 
+        name: `${user.firstName} ${user.lastName}`, 
+        picturePath: user.picturePath, // Include sender's profile picture
+    },
+        createdAt: notification.createdAt // Include the createdAt field when emitting the notification
+    });
+    }
+
+
+
+    res.status(200).json({ message: "Friend request sent" });
+  } catch (error) {
+    console.error("Error sending friend request:", error);
+    res.status(500).json({ message: "Failed to send friend request" });
+  }
 };
 
-/* ACCEPT FRIEND REQUEST */
+
 export const acceptFriendRequest = async (req, res) => {
     try {
-        const { userId, requesterId } = req.body;
+        const { userId, requesterId } = req.body; // userId is the recipient of the request, requesterId is the sender
 
-        const user = await User.findById(userId);
-        const requester = await User.findById(requesterId);
+        const user = await User.findById(userId); // User 2 (who is accepting the request)
+        const requester = await User.findById(requesterId); // User 1 (who sent the request)
 
         if (!requester) {
-            return res.status(404).json({ message: "User not found" });
+            return res.status(404).json({ message: "Requester not found" });
         }
 
         if (!user.friendRequestsReceived.includes(requesterId)) {
@@ -50,16 +74,49 @@ export const acceptFriendRequest = async (req, res) => {
         user.friends.push(requesterId);
         requester.friends.push(userId);
 
-        // Remove friend request from both users
-        user.friendRequestsReceived = user.friendRequestsReceived.filter(id => id.toString() !== requesterId);
-        requester.friendRequestsSent = requester.friendRequestsSent.filter(id => id.toString() !== userId);
+        // Remove the friend request from both users' lists
+        user.friendRequestsReceived = user.friendRequestsReceived.filter(
+            (id) => id.toString() !== requesterId
+        );
+        requester.friendRequestsSent = requester.friendRequestsSent.filter(
+            (id) => id.toString() !== userId
+        );
 
         await user.save();
         await requester.save();
 
-        res.status(200).json({ message: "Friend request accepted" });
+        // **Send the notification to User 1** (who sent the request)
+        const message = `${user.firstName} ${user.lastName} accepted your friend request.`;
+        const notification = new Notification({
+            recipient: requesterId, // **User 1** is the recipient
+            sender: userId, // **User 2** is the sender (accepting the request)
+            type: "friendRequestAccepted",
+            message,
+            priority: "high", // High priority since this is an important notification
+            link: `/profile/${userId}`, // Optional: Link to **User 2's** profile
+        });
+
+        await notification.save();
+
+        // Emit real-time notification to **User 1**
+        const socketId = io.onlineUsers.get(requesterId);
+        if (socketId) {
+            io.to(socketId).emit("notification", {
+                type: "friendRequestAccepted",
+                message,
+                sender: {
+                    id: userId,
+                    name: `${user.firstName} ${user.lastName}`,
+                    picturePath: user.picturePath, // Include sender's profile picture
+                },
+                createdAt: notification.createdAt // Include the createdAt field when emitting the notification
+            });
+        }
+
+        res.status(200).json({ message: "Friend request accepted successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Error accepting friend request" });
+        console.error("Error accepting friend request:", error);
+        res.status(500).json({ message: "Failed to accept friend request" });
     }
 };
 

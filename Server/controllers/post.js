@@ -1,5 +1,6 @@
 import Post from "../models/Post.js";
 import User from "../models/User.js";
+import { io } from "../index.js"; // Import the Socket.IO instance
 
 // Create a new post
 export const createPost = async (req, res) => {
@@ -89,39 +90,58 @@ export const getFriendPosts = async (req, res) => {
 };
 
 
-// Like or unlike a post
 export const likePost = async (req, res) => {
-    try {
-        const { id } = req.params;  
-        const { userId } = req.body;
+  try {
+      const { id } = req.params;  
+      const { userId } = req.body;
 
-        // Find the post to be liked/unliked
-        const post = await Post.findById(id);
-        if (!post) {
-            return res.status(404).json({ message: "Post not found" });
-        }
+      // Find the post to be liked/unliked
+      const post = await Post.findById(id);
+      if (!post) {
+          return res.status(404).json({ message: "Post not found" });
+      }
 
-        // Check if the user has already liked the post
-        const isLiked = post.likes.get(userId);
+      // Check if the user has already liked the post
+      const isLiked = post.likes.get(userId);
 
-        if (isLiked) {
-            post.likes.delete(userId);  // Unlike the post
-        } else {
-            post.likes.set(userId, true);  // Like the post
-        }
+      if (isLiked) {
+          post.likes.delete(userId);  // Unlike the post
+      } else {
+          post.likes.set(userId, true);  // Like the post
+      }
 
-        // Update the post with the new likes object
-        const updatedPost = await Post.findByIdAndUpdate(
-            id, 
-            { likes: post.likes }, 
-            { new: true }
-        );
+      // Update the post with the new likes object
+      const updatedPost = await Post.findByIdAndUpdate(
+          id, 
+          { likes: post.likes }, 
+          { new: true }
+      );
 
-        res.status(200).json(updatedPost);  
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-}
+      // Notify the post owner
+      const postOwner = post.userId; // Post owner's ID
+      if (postOwner !== userId) { // Ensure the user doesn't get a notification for liking their own post
+          const notificationMessage = `${req.user.firstName} liked your post.`;
+          const socketId = io.onlineUsers.get(postOwner);
+
+          if (socketId) {
+              io.to(socketId).emit("notification", {
+                  type: "like",
+                  message: notificationMessage,
+                  postId: post._id,
+                  sender: {
+                      id: userId,
+                      name: `${req.user.firstName} ${req.user.lastName}`,
+                      picturePath: req.user.picturePath,
+                  },
+              });
+          }
+      }
+
+      res.status(200).json(updatedPost);  
+  } catch (err) {
+      res.status(500).json({ message: err.message });
+  }
+};
 
 // ADD COMMENT
 export const addComment = async (req, res) => {

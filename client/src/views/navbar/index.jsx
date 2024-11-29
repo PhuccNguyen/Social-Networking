@@ -328,7 +328,7 @@ const Navbar = () => {
           <FlexBetween gap="2rem">
             <SetMode />
 
-            <Bell />
+            <Bell userId={userId}/>
 
             <IconButton
               onClick={handleMenuOpen}

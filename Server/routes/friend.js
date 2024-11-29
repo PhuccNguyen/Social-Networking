@@ -1,5 +1,4 @@
 // routes/friend.js
-
 import express from 'express';
 import {
     sendFriendRequest,

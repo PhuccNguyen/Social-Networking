@@ -1,31 +1,40 @@
-import { useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import { useEffect, useState } from "react";
+import io from "socket.io-client";
+import { useDispatch } from "react-redux";
+import { setNotifications } from "state";
+import "./NotificationComponent.css";
 
-const socket = io('http://localhost:4001'); // Make sure this matches your server URL
+const socket = io("http://localhost:3001");
 
 function NotificationComponent({ userId }) {
-  const [notifications, setNotifications] = useState([]);
+  const dispatch = useDispatch();
+  const [notifications, setNotificationsLocal] = useState([]); // Local state for notifications
 
   useEffect(() => {
-    // Register user when connected
-    socket.emit('registerUser', userId);
+    if (userId) {
+      socket.emit("registerUser", userId); // Register user for notifications
+      console.log(`User ${userId} registered for notifications`);
 
-    // Listen for new notifications
-    socket.on('newNotification', (notification) => {
-      setNotifications((prev) => [notification, ...prev]);
-      alert(notification.message); // Display alert or customize UI as desired
-    });
+      // Listen for incoming notifications
+      socket.on("notification", (data) => {
+        console.log("Received notification:", data);
+        setNotificationsLocal((prev) => [...prev, data]);
+        dispatch(setNotifications({ notifications: [...notifications, data] })); // Persist in Redux
+      });
+    }
 
+    // Cleanup when component unmounts
     return () => {
-      socket.off('newNotification');
+      socket.off("notification");
+      socket.disconnect();
     };
-  }, [userId]);
+  }, [userId, dispatch]);
 
   return (
-    <div className="notifications">
+    <div className="notification-container">
       {notifications.map((notification, index) => (
-        <div key={index} className="notification">
-          {notification.message}
+        <div key={index} className="notification-item">
+          <p>{notification.message}</p>
         </div>
       ))}
     </div>
