@@ -55,7 +55,8 @@ export const sendFriendRequest = async (req, res) => {
 };
 
 
-export const acceptFriendRequest = async (req, res) => {
+export const acceptFriendRequest = async (req, res) => 
+    {
     try {
         const { userId, requesterId } = req.body; // userId is the recipient of the request, requesterId is the sender
 
