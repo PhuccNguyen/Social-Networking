@@ -105,7 +105,6 @@ const io = new Server(server, {
   cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
   transports: ["websocket", "polling"],
 });
-
 // Socket.IO: Track and handle connections
 io.onlineUsers = new Map();
 io.on("connection", (socket) => {
@@ -113,6 +112,7 @@ io.on("connection", (socket) => {
   
   socket.on("registerUser", (userId) => {
     io.onlineUsers.set(userId, socket.id);
+
     console.log(`User ${userId} registered for notifications`);
   });
 
