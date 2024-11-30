@@ -17,7 +17,8 @@ import path from 'path';  // Make sure to import the path module
 const router = express.Router();
 
 // Multer configuration for image upload
-const storage = multer.diskStorage({
+const storage = multer.diskStorage 
+({
   destination: function (req, file, cb) {
     cb(null, 'public/assets/');  // Folder to store the images
   },
@@ -38,7 +39,8 @@ const storage = multer.diskStorage({
 });
 
 // Initialize multer with the storage configuration
-const upload = multer({
+const upload = multer
+({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 },  // 5MB file size limit
   fileFilter: (req, file, cb) => {

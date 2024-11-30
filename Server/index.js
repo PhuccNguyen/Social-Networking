@@ -92,7 +92,7 @@ app.get("/search", verifyToken, searchInformation);
 
 // Routes
 app.use("/auth", authRoutes);
-app.use("/users", usersRoutes);
+app.use("/users", usersRoutes );
 app.use("/posts", postsRoutes);
 app.use("/friends", verifyToken, friendRoutes);
 app.use("/volunteer", volunteerRoutes);

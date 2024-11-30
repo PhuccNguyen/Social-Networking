@@ -113,7 +113,8 @@ export const updateUserRole = async (req, res) => {
 
 
 // Controller function to update user profile picture
-export const updateProfilePic = async (req, res) => {
+export const updateProfilePic = async (req, res) => 
+    {
     try {
       const { id } = req.params;  // Get user ID from route params
       const user = await User.findById(id);  // Find the user by ID
