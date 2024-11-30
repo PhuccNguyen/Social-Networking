@@ -7,7 +7,7 @@ export const sendNotification = async (req, res) => {
   try {
     const socketId = io.onlineUsers.get(userId); // Check if the user is online
     if (socketId) {
-      // Emit notification to the user's socket
+
       io.to(socketId).emit("notification", { message });
       return res.status(200).json({ success: true, message: "Notification sent successfully!" });
     } else {
