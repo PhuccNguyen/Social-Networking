@@ -8,7 +8,8 @@ import mongoose from "mongoose";
 const router = express.Router();
 
 // Get notifications for a user
-router.get("/:userId", verifyToken, async (req, res) => {
+router.get("/:userId", verifyToken, async (req, res) => 
+  {
   try {
     const { userId } = req.params;
     const { page = 1, limit = 20 } = req.query;
@@ -22,8 +23,8 @@ router.get("/:userId", verifyToken, async (req, res) => {
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(parseInt(limit))
-      .populate("sender", "firstName lastName picturePath") // Populating sender's information
-      .populate("recipient", "firstName lastName picturePath"); // Optionally, you can populate recipient's info too if needed
+      .populate("sender", "firstName lastName picturePath") 
+      .populate("recipient", "firstName lastName picturePath"); 
 
     const formattedNotifications = notifications.map((notif) => {
       return {
@@ -40,7 +41,8 @@ router.get("/:userId", verifyToken, async (req, res) => {
 });
 
 // Mark notification as read
-router.put("/:userId/markAllRead", verifyToken, async (req, res) => {
+router.put("/:userId/markAllRead", verifyToken, async (req, res) => 
+  {
   try {
     const notifications = await Notification.updateMany(
       { recipient: req.params.userId, isRead: false },
