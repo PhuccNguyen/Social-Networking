@@ -169,7 +169,8 @@ export const likePost = async (req, res) =>
 };
 
 // ADD COMMENT
-export const addComment = async (req, res) => {
+export const addComment = async (req, res) => 
+  {
   try {
       const { postId } = req.params;
       const { userId, commentText } = req.body;
