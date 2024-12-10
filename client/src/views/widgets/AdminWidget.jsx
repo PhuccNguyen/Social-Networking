@@ -1,5 +1,5 @@
-import { ManageAccountsOutlined, EditOutlined, Dashboard, People, Campaign } from "@mui/icons-material";
-import { Box, Typography, Divider, useTheme, Button, IconButton } from "@mui/material";
+import { Dashboard, People, AccountCircle, Campaign, Settings } from "@mui/icons-material";
+import { Box, Typography, Divider, useTheme, Button, IconButton, Tooltip } from "@mui/material";
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import UserImage from "components/UserImage";
@@ -13,7 +13,7 @@ import IdentifyRoleAdmin from "components/IdentifyRoleAdmin";
 import IdentifyRoleAsistantAdmin from "components/IdentifyRoleAsistantAdmin";
 import { useSelector } from "react-redux";
 
-const AdminWidget = ({ userId, picturePath, role,}) => {
+const AdminWidget = ({ userId, picturePath, role }) => {
   const [user, setUser] = useState(null);
   const [activeSection, setActiveSection] = useState('Dashboard');
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -23,6 +23,7 @@ const AdminWidget = ({ userId, picturePath, role,}) => {
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
+  const textColor = palette.mode === 'dark' ? "#fff" : "#000";  // Text color depending on theme
 
   // Fetch user information
   const getUser = async () => {
@@ -48,10 +49,10 @@ const AdminWidget = ({ userId, picturePath, role,}) => {
   // Function to render the active section content
   const renderSectionContent = () => {
     switch (activeSection) {
-      case 'Dashboard': return <Dasdboard  userId={userId}  />;
+      case 'Dashboard': return <Dasdboard userId={userId} />;
       case 'AssistantAdmin': return <AssistantAdmin />;
       case 'Role': return <AdminRole userId={userId} />;
-      case 'Campaign': return <AdminCampain />;
+      case 'Campaign': return <AdminCampain userId={userId} />;
       default: return null;
     }
   };
@@ -71,7 +72,7 @@ const AdminWidget = ({ userId, picturePath, role,}) => {
         <Box display="flex" flexDirection="column" alignItems={isSidebarExpanded ? "flex-start" : "center"}>
           {/* Toggle Sidebar */}
           <IconButton onClick={() => setIsSidebarExpanded(!isSidebarExpanded)} sx={{ mb: 2 }}>
-            <ManageAccountsOutlined fontSize="large" />
+            <AccountCircle fontSize="large" />
           </IconButton>
 
           {/* User Profile Section */}
@@ -90,12 +91,8 @@ const AdminWidget = ({ userId, picturePath, role,}) => {
                 </Typography>
                 {/* Role Badge */}
                 <Box display="flex" alignItems="center" mt="-0.6rem" ml="0.6rem">
-                  {role === "admin" && (
-                    <IdentifyRoleAdmin />
-                  )}
-                  {role === "assistantAdmin" && (
-                    <IdentifyRoleAsistantAdmin />
-                  )}
+                  {role === "admin" && <IdentifyRoleAdmin />}
+                  {role === "assistantAdmin" && <IdentifyRoleAsistantAdmin />}
                 </Box>
               </Box>
             )}
@@ -107,65 +104,89 @@ const AdminWidget = ({ userId, picturePath, role,}) => {
 
           {/* Sidebar Navigation Buttons */}
           <Box display="flex" flexDirection="column" gap="1.5rem">
-            <Button
-              startIcon={<Dashboard />}
-              onClick={() => setActiveSection('Dashboard')}
-              sx={{
-                justifyContent: isSidebarExpanded ? "flex-start" : "center",
-                color: main,
-                fontWeight: "bold",
-                textAlign: "left",
-                backgroundColor: activeSection === 'Dashboard' ? "#f0f0f0" : "transparent",
-                "&:hover": { backgroundColor: "#e0e0e0" },
-              }}
-            >
-              {isSidebarExpanded && "Dashboard"}
-            </Button>
+            {/* Dashboard Button */}
+            <Tooltip title="Dashboard" arrow>
+              <Button
+                startIcon={<Dashboard />}
+                onClick={() => setActiveSection('Dashboard')}
+                sx={{
+                  justifyContent: "flex-start",
+                  width: "100%",
+                  color: activeSection === 'Dashboard' ? "#fff" : textColor, // Active color is white, otherwise theme-based color
+                  fontWeight: "bold",
+                  textAlign: "left",
+                  background: activeSection === 'Dashboard' ? "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)" : "transparent",
+                  "&:hover": {
+                    background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+                  },
+                }}
+              >
+                {isSidebarExpanded && "Dashboard"}
+              </Button>
+            </Tooltip>
 
-            <Button
-              startIcon={<People />}
-              onClick={() => setActiveSection('AssistantAdmin')}
-              sx={{
-                justifyContent: isSidebarExpanded ? "flex-start" : "center",
-                color: main,
-                fontWeight: "bold",
-                textAlign: "left",
-                backgroundColor: activeSection === 'AssistantAdmin' ? "#f0f0f0" : "transparent",
-                "&:hover": { backgroundColor: "#e0e0e0" },
-              }}
-            >
-              {isSidebarExpanded && "Manage Assistant Admins"}
-            </Button>
+            {/* Assistant Admin Button */}
+            <Tooltip title="Manage Assistant Admins" arrow>
+              <Button
+                startIcon={<People />}
+                onClick={() => setActiveSection('AssistantAdmin')}
+                sx={{
+                  justifyContent: "flex-start",
+                  width: "100%",
+                  color: activeSection === 'AssistantAdmin' ? "#fff" : textColor,
+                  fontWeight: "bold",
+                  textAlign: "left",
+                  background: activeSection === 'AssistantAdmin' ? "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)" : "transparent",
+                  "&:hover": {
+                    background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+                  },
+                }}
+              >
+                {isSidebarExpanded && "Manage Assistant Admins"}
+              </Button>
+            </Tooltip>
 
-            <Button
-              startIcon={<ManageAccountsOutlined />}
-              onClick={() => setActiveSection('Role')}
-              sx={{
-                justifyContent: isSidebarExpanded ? "flex-start" : "center",
-                color: main,
-                fontWeight: "bold",
-                textAlign: "left",
-                backgroundColor: activeSection === 'Role' ? "#f0f0f0" : "transparent",
-                "&:hover": { backgroundColor: "#e0e0e0" },
-              }}
-            >
-              {isSidebarExpanded && "Manage Roles"}
-            </Button>
+            {/* Manage Roles Button */}
+            <Tooltip title="Manage Roles" arrow>
+              <Button
+                startIcon={<Settings />}
+                onClick={() => setActiveSection('Role')}
+                sx={{
+                  justifyContent: "flex-start",
+                  width: "100%",
+                  color: activeSection === 'Role' ? "#fff" : textColor,
+                  fontWeight: "bold",
+                  textAlign: "left",
+                  background: activeSection === 'Role' ? "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)" : "transparent",
+                  "&:hover": {
+                    background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+                  },
+                }}
+              >
+                {isSidebarExpanded && "Manage Roles"}
+              </Button>
+            </Tooltip>
 
-            <Button
-              startIcon={<Campaign />}
-              onClick={() => setActiveSection('Campaign')}
-              sx={{
-                justifyContent: isSidebarExpanded ? "flex-start" : "center",
-                color: main,
-                fontWeight: "bold",
-                textAlign: "left",
-                backgroundColor: activeSection === 'Campaign' ? "#f0f0f0" : "transparent",
-                "&:hover": { backgroundColor: "#e0e0e0" },
-              }}
-            >
-              {isSidebarExpanded && "Manage Campaigns"}
-            </Button>
+            {/* Campaign Management Button */}
+            <Tooltip title="Manage Campaigns" arrow>
+              <Button
+                startIcon={<Campaign />}
+                onClick={() => setActiveSection('Campaign')}
+                sx={{
+                  justifyContent: "flex-start",
+                  width: "100%",
+                  color: activeSection === 'Campaign' ? "#fff" : textColor,
+                  fontWeight: "bold",
+                  textAlign: "left",
+                  background: activeSection === 'Campaign' ? "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)" : "transparent",
+                  "&:hover": {
+                    background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+                  },
+                }}
+              >
+                {isSidebarExpanded && "Manage Campaigns"}
+              </Button>
+            </Tooltip>
           </Box>
         </Box>
       </WidgetWrapper>

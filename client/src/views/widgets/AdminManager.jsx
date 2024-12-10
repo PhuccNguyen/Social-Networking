@@ -84,7 +84,11 @@ const AdminDashboard = () => {
         const response = await fetch(
           "http://localhost:3001/admin/assistant-admins-campaigns",
           {
-            headers: { Authorization: `Bearer ${token}` },
+            method: "get",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
 
@@ -374,141 +378,219 @@ const AdminDashboard = () => {
           </Box>
 
           <Grid container spacing={4} mt={4}>
-      {/* Milestone Completion Chart */}
-      <Grid item xs={12} md={6}>
-        <Paper
-          sx={{
-            padding: "1.5rem",
-            borderRadius: "12px",
-            boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold", color: "#3b82f6" }}>
-            Milestone Completion
-          </Typography>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={selectedCampaign.milestones}>
-              <XAxis dataKey="name" tick={{ fontSize: 14, fill: "#555" }} />
-              <YAxis tick={{ fontSize: 14, fill: "#555" }} />
-              <Tooltip />
-              <Bar dataKey="percentage" fill="#3b82f6" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </Paper>
-      </Grid>
-
-      {/* Gender Distribution Pie Chart */}
-      <Grid item xs={12} md={6}>
-        <Paper
-          sx={{
-            padding: "1.5rem",
-            borderRadius: "12px",
-            boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold", color: "#3b82f6" }}>
-            Volunteer Gender Distribution
-          </Typography>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={genderData}
-                dataKey="count"
-                nameKey="_id"
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                labelLine={false}
-              >
-                {genderData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#ffffff",
-                  borderRadius: "8px",
-                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+            {/* Milestone Completion Chart */}
+            <Grid item xs={12} md={6}>
+              <Paper
+                sx={{
+                  padding: "1.5rem",
+                  borderRadius: "12px",
+                  boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.1)",
                 }}
-                formatter={(value) => `${value} Volunteers`}
-              />
-              <Legend layout="horizontal" align="center" verticalAlign="bottom" />
-            </PieChart>
-          </ResponsiveContainer>
-        </Paper>
-      </Grid>
+              >
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{ fontWeight: "bold", color: "#3b82f6" }}
+                >
+                  Milestone Completion
+                </Typography>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={selectedCampaign.milestones}>
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fontSize: 14, fill: "#555" }}
+                    />
+                    <YAxis tick={{ fontSize: 14, fill: "#555" }} />
+                    <Tooltip />
+                    <Bar
+                      dataKey="percentage"
+                      fill="#3b82f6"
+                      radius={[8, 8, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Paper>
+            </Grid>
 
-      {/* Age Distribution Bar Chart */}
-      <Grid item xs={12} md={6}>
-        <Paper
-          sx={{
-            padding: "1.5rem",
-            borderRadius: "12px",
-            boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.1)",
-          }}
-        >
-          <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold", color: "#3b82f6" }}>
-            Volunteer Age Distribution
-          </Typography>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={ageData} barSize={40}>
-              <XAxis
-                dataKey="range"
-                tick={{ fontSize: 14, fill: "#555" }}
-                label={{ value: "Age Range", position: "insideBottom", offset: -5, fontSize: 16, fill: "#333" }}
-              />
-              <YAxis
-                tick={{ fontSize: 14, fill: "#555" }}
-                label={{ value: "Number of Volunteers", angle: -90, position: "insideLeft", fontSize: 16, fill: "#333" }}
-              />
-              <Tooltip contentStyle={{ backgroundColor: "#f4f4f4", borderRadius: "8px" }} />
-              <Bar dataKey="count" fill="#3b82f6" radius={[8, 8, 0, 0]}>
-                <LabelList dataKey="count" position="top" style={{ fontSize: 14, fill: "#333" }} />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </Paper>
-      </Grid>
+            {/* Gender Distribution Pie Chart */}
+            <Grid item xs={12} md={6}>
+              <Paper
+                sx={{
+                  padding: "1.5rem",
+                  borderRadius: "12px",
+                  boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{ fontWeight: "bold", color: "#3b82f6" }}
+                >
+                  Volunteer Gender Distribution
+                </Typography>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={genderData}
+                      dataKey="count"
+                      nameKey="_id"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      label={({ name, percent }) =>
+                        `${name}: ${(percent * 100).toFixed(0)}%`
+                      }
+                      labelLine={false}
+                    >
+                      {genderData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#ffffff",
+                        borderRadius: "8px",
+                        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                      }}
+                      formatter={(value) => `${value} Volunteers`}
+                    />
+                    <Legend
+                      layout="horizontal"
+                      align="center"
+                      verticalAlign="bottom"
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Paper>
+            </Grid>
 
-      {/* Location Distribution Bar Chart */}
-      <Grid item xs={12} md={6}>
-        <Paper
-          sx={{
-            padding: "1.5rem",
-            borderRadius: "16px",
-            boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.1)",
-            backgroundColor: "#f9fafb",
-          }}
-        >
-          <Typography variant="h5" gutterBottom sx={{ fontWeight: "bold", color: "#3b82f6" }}>
-            Volunteer Distribution by Location
-          </Typography>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={locationData}>
-              <XAxis
-                dataKey="_id"
-                tick={{ fontSize: 14, fill: "#555" }}
-                label={{ value: "Location", position: "insideBottom", offset: -5, fontSize: 16, fill: "#333" }}
-              />
-              <YAxis
-                tick={{ fontSize: 14, fill: "#555" }}
-                label={{ value: "Number of Volunteers", angle: -90, position: "insideLeft", fontSize: 16, fill: "#333" }}
-              />
-              <Tooltip
-                contentStyle={{ backgroundColor: "#ffffff", borderRadius: "8px", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)" }}
-                formatter={(value) => `${value} Volunteers`}
-              />
-              <Legend layout="horizontal" align="center" verticalAlign="top" wrapperStyle={{ fontSize: 14, color: "#555" }} />
-              <Bar dataKey="count" fill="#4ade80" radius={[8, 8, 0, 0]}>
-                <LabelList dataKey="count" position="top" style={{ fontSize: 14, fill: "#333" }} />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </Paper>
-      </Grid>
-    </Grid>
+            {/* Age Distribution Bar Chart */}
+            <Grid item xs={12} md={6}>
+              <Paper
+                sx={{
+                  padding: "1.5rem",
+                  borderRadius: "12px",
+                  boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{ fontWeight: "bold", color: "#3b82f6" }}
+                >
+                  Volunteer Age Distribution
+                </Typography>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={ageData} barSize={40}>
+                    <XAxis
+                      dataKey="range"
+                      tick={{ fontSize: 14, fill: "#555" }}
+                      label={{
+                        value: "Age Range",
+                        position: "insideBottom",
+                        offset: -5,
+                        fontSize: 16,
+                        fill: "#333",
+                      }}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 14, fill: "#555" }}
+                      label={{
+                        value: "Number of Volunteers",
+                        angle: -90,
+                        position: "insideLeft",
+                        fontSize: 16,
+                        fill: "#333",
+                      }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#f4f4f4",
+                        borderRadius: "8px",
+                      }}
+                    />
+                    <Bar dataKey="count" fill="#3b82f6" radius={[8, 8, 0, 0]}>
+                      <LabelList
+                        dataKey="count"
+                        position="top"
+                        style={{ fontSize: 14, fill: "#333" }}
+                      />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Paper>
+            </Grid>
+
+            {/* Location Distribution Bar Chart */}
+            <Grid item xs={12} md={6}>
+              <Paper
+                sx={{
+                  padding: "1.5rem",
+                  borderRadius: "16px",
+                  boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.1)",
+                  backgroundColor: "#f9fafb",
+                }}
+              >
+                <Typography
+                  variant="h5"
+                  gutterBottom
+                  sx={{ fontWeight: "bold", color: "#3b82f6" }}
+                >
+                  Volunteer Distribution by Location
+                </Typography>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={locationData}>
+                    <XAxis
+                      dataKey="_id"
+                      tick={{ fontSize: 14, fill: "#555" }}
+                      label={{
+                        value: "Location",
+                        position: "insideBottom",
+                        offset: -5,
+                        fontSize: 16,
+                        fill: "#333",
+                      }}
+                    />
+                    <YAxis
+                      tick={{ fontSize: 14, fill: "#555" }}
+                      label={{
+                        value: "Number of Volunteers",
+                        angle: -90,
+                        position: "insideLeft",
+                        fontSize: 16,
+                        fill: "#333",
+                      }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#ffffff",
+                        borderRadius: "8px",
+                        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                      }}
+                      formatter={(value) => `${value} Volunteers`}
+                    />
+                    <Legend
+                      layout="horizontal"
+                      align="center"
+                      verticalAlign="top"
+                      wrapperStyle={{ fontSize: 14, color: "#555" }}
+                    />
+                    <Bar dataKey="count" fill="#4ade80" radius={[8, 8, 0, 0]}>
+                      <LabelList
+                        dataKey="count"
+                        position="top"
+                        style={{ fontSize: 14, fill: "#333" }}
+                      />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </Paper>
+            </Grid>
+          </Grid>
         </Box>
       ) : (
         <Box mt={4}>

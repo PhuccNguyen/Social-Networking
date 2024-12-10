@@ -1,25 +1,28 @@
 import User from '../models/User.js';
 import mongoose from 'mongoose';
+import Campaign from '../models/Campaign.js';  
 
-// Fetch all users for the Manage Roles page
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}, '_id name email role lastLogin picturePath isActive'); // Include isActive field
-    const usersWithId = users.map(user => ({
-      id: user._id, // Map _id to id for frontend compatibility
-      name: user.name,
+    const users = await User.find({}, '_id firstName lastName email role lastLogin picturePath isActive');
+    console.log('Fetched users:', users); // Log the users to debug
+    const usersWithFullName = users.map(user => ({
+      id: user._id, 
+      userName: user.userName,
+      fullName: `${user.firstName} ${user.lastName}`, // Combine first and last name
       email: user.email,
       role: user.role,
       lastLogin: user.lastLogin,
       picturePath: user.picturePath,
-      isActive: user.isActive // Include isActive in response
+      isActive: user.isActive
     }));
 
-    res.status(200).json(usersWithId);
+    res.status(200).json(usersWithFullName);
   } catch (error) {
     res.status(500).json({ error: 'Failed to retrieve users' });
   }
 };
+
 
 
 
@@ -70,5 +73,55 @@ export const toggleUserActiveStatus = async (req, res) => {
   }
 };
 
+export const deleteCampaign = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Log the received ID to verify it's correct
+    console.log("Deleting campaign with ID:", id);
+
+    // Delete the campaign from the database
+    const deletedCampaign = await Campaign.findByIdAndDelete(id);
+
+    if (!deletedCampaign) {
+      // Campaign not found
+      return res.status(404).json({ message: 'Campaign not found.' });
+    }
+
+    // Return a success response
+    res.status(200).json({ message: 'Campaign deleted successfully.' });
+  } catch (error) {
+    console.error("Error deleting campaign:", error);  // Log the error for debugging
+    res.status(500).json({ message: 'Error deleting campaign.', error: error.message });
+  }
+};
 
 
+export const toggleCampaignStatus = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const campaign = await Campaign.findById(id);
+    if (!campaign) return res.status(404).json({ error: "Campaign not found" });
+
+    campaign.isActive = !campaign.isActive;
+    await campaign.save();
+
+    res.status(200).json({ message: `Campaign ${campaign.isActive ? 'enabled' : 'disabled'}`, campaign });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update campaign status" });
+  }
+};
+
+export const getAllCampaign = async (req, res) => {
+  try {
+    const campaigns = await Campaign.find()
+      .populate("createdBy", "firstName lastName username picturePath") // Populate specific fields
+      .lean();
+
+    res.status(200).json({ campaigns });
+  } catch (error) {
+    console.error("Error fetching campaigns:", error);
+    res.status(500).json({ error: "Failed to retrieve campaigns" });
+  }
+};

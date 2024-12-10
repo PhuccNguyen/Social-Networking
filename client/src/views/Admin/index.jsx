@@ -12,7 +12,7 @@ const AdminControll = () => {
       <Navbar  />
       <Box
         width="100%"
-        padding="0" // Set padding to zero to make sections reach the edge
+        padding="0" 
         display="flex"
         justifyContent="space-between"
         marginTop="70px"

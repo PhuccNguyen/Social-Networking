@@ -46,12 +46,17 @@ const CampaignSchema = new mongoose.Schema({
     default: [],
   },
   imageCampaing: {
-    type: String,  // This stores the image filename
+    type: String, 
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',  
     required: true,
+  },
+  status: {
+    type: String,
+    enum: ['enabled', 'disabled'],
+    default: 'enabled',
   },
 }, { timestamps: true });
 

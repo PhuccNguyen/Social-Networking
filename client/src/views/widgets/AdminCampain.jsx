@@ -1,7 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+// Import necessary hooks
+import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  CircularProgress,
+  Snackbar,
+  Alert,
+  Typography,
+} from "@mui/material";
 import {
   Box,
-  Typography,
   Paper,
   InputBase,
   IconButton,
@@ -11,64 +23,156 @@ import {
   Card,
   CardContent,
   CardActions,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   LinearProgress,
   Avatar,
 } from "@mui/material";
-import { Search } from "@mui/icons-material";
+import { Search, Delete } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
-
-// Fake campaign data
-const fakeCampaigns = [
-  {
-    _id: "1",
-    title: "Beach Cleanup",
-    description: "Join us to clean up the local beach.",
-    registrationStartDate: "2024-10-01",
-    registrationEndDate: "2024-10-05",
-    maxVolunteers: 50,
-    location: "Miami Beach, FL",
-    campaignStartDate: "2024-10-06",
-    campaignEndDate: "2024-10-15",
-    image: "/assets/campaign1.png",
-    milestones: ["Initial meeting", "Midway progress", "Final cleanup"],
-    createdBy: { username: "AssistantAdmin 1", picturePath: "/assets/admin1.png" },
-    status: "ongoing",
-  },
-  {
-    _id: "2",
-    title: "Help Homeless Children",
-    description: "Support and provide resources for homeless children.",
-    registrationStartDate: "2024-09-01",
-    registrationEndDate: "2024-09-10",
-    maxVolunteers: 100,
-    location: "New York, NY",
-    campaignStartDate: "2024-09-15",
-    campaignEndDate: "2024-09-30",
-    image: "/assets/campaign2.png",
-    milestones: ["Fundraising", "Initial Supplies", "Closing Event"],
-    createdBy: { username: "AssistantAdmin 2", picturePath: "/assets/admin2.png" },
-    status: "completed",
-  },
-];
+import { useSelector } from "react-redux";
+import UserImage from "components/UserImage";
 
 const CampaignPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTab, setSelectedTab] = useState(0); // 0 for ongoing, 1 for completed
-  const [selectedCampaign, setSelectedCampaign] = useState(null);
+  const [campaigns, setCampaigns] = useState([]);
+  const [isDisabled, setIsDisabled] = useState(false); // State to manage Enable/Disable button
+  const [selectedCampaign, setSelectedCampaign] = useState(null); // For campaign details
+  const [campaignToDelete, setCampaignToDelete] = useState(null); // For delete dialog
+  const token = useSelector((state) => state.token);
   const theme = useTheme();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [selectedCampaignId, setSelectedCampaignId] = useState(null);
 
-  // Filter campaigns by search query and status (ongoing or completed)
-  const filteredCampaigns = fakeCampaigns.filter((campaign) => {
-    const matchesSearch = campaign.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      campaign.location.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = selectedTab === 0 ? campaign.status === "ongoing" : campaign.status === "completed";
-    return matchesSearch && matchesStatus;
-  });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch("http://localhost:3001/admin/campaignadmin", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Ensure token is valid
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch campaigns");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (Array.isArray(data.campaigns)) {
+          setCampaigns(data.campaigns);
+        } else {
+          console.error("Expected an array of campaigns, but received:", data);
+          setCampaigns([]); // Fallback to empty array if no valid data
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching campaigns:", error);
+        setCampaigns([]); // Fallback to empty array on error
+      });
+  }, []); // Runs once when the component mounts
+
+  // Handle close confirmation dialog
+  const handleCloseDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+    setErrorMessage(""); // Reset error message
+    setSuccessMessage(""); // Reset success message
+  };
+
+  const openDeleteDialog = (campaignId) => {
+    setDeleteDialogOpen(true);
+    setSelectedCampaignId(campaignId); // Store the campaign ID to delete
+  };
+
+  const handleDeleteCampaign = async () => {
+    if (!selectedCampaignId) return; // Ensure campaign ID is available
+
+    setLoading(true); // Show loading indicator
+
+    try {
+      // Perform DELETE request
+      const response = await fetch(
+        `http://localhost:3001/admin/campaigns/${selectedCampaignId}`,
+        {
+          method: "DELETE", // Use DELETE method
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Make sure token is passed
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(errorMessage || "Failed to delete campaign");
+      }
+
+      // Update campaigns after successful deletion
+      setCampaigns((prev) =>
+        prev.filter((campaign) => campaign._id !== selectedCampaignId)
+      );
+      setSuccessMessage("Campaign deleted successfully");
+      setDeleteDialogOpen(false); // Close the dialog
+    } catch (error) {
+      console.error("Error deleting campaign:", error);
+      setErrorMessage(
+        error.message ||
+          "An unexpected error occurred while deleting the campaign"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filtering campaigns based on the search query
+  const filteredCampaigns = campaigns.filter(
+    (campaign) =>
+      campaign.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      campaign.location.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Your existing JSX rendering code for the campaigns
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  function getCampaignStatus(startDate, endDate) {
+    const currentDate = new Date();
+    const registrationStartDate = new Date(startDate);
+    const registrationEndDate = new Date(endDate);
+
+    if (
+      currentDate >= registrationStartDate &&
+      currentDate <= registrationEndDate
+    ) {
+      return "Ongoing";
+    } else if (currentDate > registrationEndDate) {
+      return "Ended";
+    } else {
+      return "Upcoming"; // In case the campaign hasn't started yet.
+    }
+  }
+
+  const handleEditCampaign = (campaignId) => {
+    if (window.confirm("Are you sure you want to edit this campaign?")) {
+      setCampaigns((prev) =>
+        prev.map((campaign) =>
+          campaign._id === campaignId
+            ? { ...campaign, title: campaign.title + " (edited)" } // Example of editing
+            : campaign
+        )
+      );
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setSelectedCampaign(null);
+  };
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -78,13 +182,12 @@ const CampaignPage = () => {
     setSelectedCampaign(campaign);
   };
 
-  const handleCloseModal = () => {
-    setSelectedCampaign(null);
+  const toggleDisableButton = () => {
+    setIsDisabled((prevState) => !prevState);
   };
 
   return (
     <Box padding="2rem">
-      {/* Search Bar */}
       <Box display="flex" alignItems="center" mb={3}>
         <InputBase
           placeholder="Search campaigns by title or location..."
@@ -109,82 +212,360 @@ const CampaignPage = () => {
               backgroundColor: theme.palette.primary.dark,
             },
           }}
+          onClick={() => setSearchQuery(searchQuery.trim())}
         >
           <Search />
         </IconButton>
       </Box>
 
-      {/* Tabs for Ongoing and Completed */}
       <Tabs value={selectedTab} onChange={handleTabChange} centered>
-        <Tab label="Ongoing Campaigns" />
-        <Tab label="Completed Campaigns" />
+        <Tab label="All Campaigns" />
       </Tabs>
 
-      {/* Campaign Cards */}
-      <Grid container spacing={4} mt={3}>
+      <Grid container spacing={4} mt={1}>
         {filteredCampaigns.map((campaign) => (
           <Grid item xs={12} md={6} lg={4} key={campaign._id}>
-            <Card sx={{ borderRadius: "12px", boxShadow: "0 2px 5px rgba(0,0,0,0.1)" }}>
-              <CardContent>
+            <Card
+              sx={{
+                borderRadius: "16px", // Slightly rounder corners
+                boxShadow: "0 6px 15px rgba(0,0,0,0.1)", // Subtle elevation for better separation
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                transition: "transform 0.3s, box-shadow 0.3s",
+                "&:hover": {
+                  transform: "scale(1.02)",
+                  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+                },
+              }}
+            >
+              <CardContent sx={{ flexGrow: 1 }}>
+                <Box display="flex" alignItems="center" mb={2}>
+                  <UserImage
+                    image={
+                      campaign.createdBy?.picturePath || "/default-image.jpg"
+                    }
+                    alt={`${campaign.createdBy?.firstName || "Unknown"} ${
+                      campaign.createdBy?.lastName || "User"
+                    }`}
+                    size="40px" // Slightly larger image
+                  />
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    sx={{ marginLeft: "12px" }} // Adjust spacing
+                  >
+                    {`${campaign.createdBy?.firstName || "Unknown"} ${
+                      campaign.createdBy?.lastName || "User"
+                    }`}
+                  </Typography>
+                </Box>
+
                 <Typography variant="h6" gutterBottom>
                   {campaign.title}
                 </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {campaign.location}
+
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  gutterBottom
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px", // Adds some spacing between text and icons
+                  }}
+                >
+                  📍 Location: {campaign.location}
                 </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  Volunteers: {campaign.maxVolunteers}
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  gutterBottom
+                  sx={{ display: "flex", alignItems: "center", gap: "4px" }}
+                >
+                  👥 Volunteers: {campaign.maxVolunteers}
                 </Typography>
-                <Typography variant="body2" color="textSecondary">
-                  {campaign.campaignStartDate} - {campaign.campaignEndDate}
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  gutterBottom
+                  sx={{ display: "flex", alignItems: "center", gap: "4px" }}
+                >
+                  🗓️ {campaign.campaignStartDate} - {campaign.campaignEndDate}
                 </Typography>
-                <LinearProgress variant="determinate" value={50} sx={{ height: "8px", borderRadius: "4px", my: 2 }} />
+              </CardContent>
+
+              <CardActions sx={{ padding: "16px" }}>
                 <Button
                   variant="contained"
                   fullWidth
                   onClick={() => handleCampaignClick(campaign)}
-                  sx={{ backgroundColor: theme.palette.primary.main }}
+                  sx={{
+                    backgroundColor: theme.palette.primary.main,
+                    padding: "10px 0", // Add padding for better click experience
+                    fontWeight: "bold",
+                    fontSize: "0.8rem",
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.dark,
+                    },
+                  }}
                 >
                   View Details
                 </Button>
-              </CardContent>
+              </CardActions>
             </Card>
           </Grid>
         ))}
       </Grid>
-
-      {/* Campaign Detail Modal */}
       {selectedCampaign && (
-        <Dialog open={!!selectedCampaign} onClose={handleCloseModal} maxWidth="sm" fullWidth>
-          <DialogTitle>{selectedCampaign.title}</DialogTitle>
-          <DialogContent>
-            <Typography variant="body1" gutterBottom>
-              {selectedCampaign.description}
+        <Dialog
+          open={!!selectedCampaign}
+          onClose={handleCloseDialog}
+          maxWidth="md"
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: "12px",
+              overflow: "hidden",
+              backgroundColor: "#fff",
+            },
+          }}
+        >
+          <DialogTitle
+            sx={{
+              backgroundColor: "#f4f6f8",
+              padding: "24px",
+              borderBottom: "1px solid #ddd",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h5" fontWeight="bold">
+              {selectedCampaign.title}
             </Typography>
-            <Typography variant="body2" color="textSecondary">
-              Location: {selectedCampaign.location}
+            <Typography
+              variant="subtitle1"
+              sx={{
+                color:
+                  selectedCampaign.status === "active"
+                    ? "#000000"
+                    : selectedCampaign.status === "inactive"
+                    ? "#000000"
+                    : "#000000",
+                fontWeight: "bold",
+              }}
+            >
+              Status:{" "}
+              {getCampaignStatus(
+                selectedCampaign.registrationStartDate,
+                selectedCampaign.registrationEndDate
+              )}
             </Typography>
-            <Typography variant="body2" color="textSecondary">
-              Volunteers: {selectedCampaign.maxVolunteers}
+          </DialogTitle>
+
+          <DialogContent sx={{ padding: "24px" }}>
+            {/* Campaign Image Section */}
+            {selectedCampaign.imageCampaing && (
+              <Box
+                sx={{
+                  mb: 3,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <img
+                  src={`http://localhost:3001/assets/${selectedCampaign.imageCampaing}`}
+                  alt={selectedCampaign.title}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    maxHeight: "300px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                  }}
+                />
+              </Box>
+            )}
+
+            {/* Description Section */}
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
+              Description
             </Typography>
-            <Typography variant="body2" color="textSecondary">
-              Registration: {selectedCampaign.registrationStartDate} - {selectedCampaign.registrationEndDate}
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              Campaign: {selectedCampaign.campaignStartDate} - {selectedCampaign.campaignEndDate}
+            <Typography
+              paragraph
+              sx={{
+                marginBottom: "24px",
+                color: "text.secondary",
+                lineHeight: 1.6,
+              }}
+            >
+              {selectedCampaign.description || "No description provided."}
             </Typography>
 
-            <Box mt={3}>
-              <Typography variant="h6">Milestones</Typography>
-              <ul>
-                {selectedCampaign.milestones.map((milestone, index) => (
-                  <li key={index}>{milestone}</li>
-                ))}
-              </ul>
-            </Box>
+            {/* Details Section */}
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
+              Campaign Details
+            </Typography>
+            <Grid container spacing={2} sx={{ marginBottom: "24px" }}>
+              <Grid item xs={6}>
+                <Typography color="text.secondary">
+                  <strong>Location:</strong>{" "}
+                  {selectedCampaign.location || "Not specified"}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography color="text.secondary">
+                  <strong>Volunteers: </strong>
+                  {selectedCampaign.maxVolunteers || "N/A"}
+                </Typography>
+              </Grid>
+
+              {/* Registration Period */}
+              <Grid item xs={6}>
+                <Typography color="text.secondary">
+                  <strong>Registration Period:</strong>{" "}
+                  {selectedCampaign.registrationStartDate &&
+                  selectedCampaign.registrationEndDate
+                    ? `${new Date(
+                        selectedCampaign.registrationStartDate
+                      ).toLocaleDateString()} - ${new Date(
+                        selectedCampaign.registrationEndDate
+                      ).toLocaleDateString()}`
+                    : "Not specified"}
+                </Typography>
+              </Grid>
+
+              {/* Campaign Duration */}
+              <Grid item xs={6}>
+                <Typography color="text.secondary">
+                  <strong>Campaign Duration:</strong>{" "}
+                  {selectedCampaign.campaignStartDate &&
+                  selectedCampaign.campaignEndDate
+                    ? `${new Date(
+                        selectedCampaign.campaignStartDate
+                      ).toLocaleDateString()} - ${new Date(
+                        selectedCampaign.campaignEndDate
+                      ).toLocaleDateString()}`
+                    : "Not specified"}
+                </Typography>
+              </Grid>
+            </Grid>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseModal}>Close</Button>
+
+          <DialogActions
+            sx={{
+              padding: "16px",
+              backgroundColor: "#f4f6f8",
+              borderTop: "1px solid #ddd",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            {/* Action Buttons */}
+            <Box display="flex" justifyContent="flex-end" alignItems="center">
+              <Button
+                variant="outlined"
+                onClick={handleCloseDialog}
+                sx={{
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  color: "primary.main",
+                  borderColor: "primary.main",
+                  "&:hover": {
+                    backgroundColor: "rgba(0,0,0,0.04)",
+                  },
+                }}
+              >
+                Close
+              </Button>
+
+              {/* Edit and Delete Buttons (Admin only) */}
+              <Box ml={2}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleEditCampaign(selectedCampaign._id)}
+                  sx={{
+                    padding: "10px 20px",
+                    borderRadius: "8px",
+                    marginRight: "8px",
+                  }}
+                >
+                  Edit
+                </Button>
+
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => openDeleteDialog(selectedCampaign._id)}
+                  sx={{
+                    padding: "10px 20px",
+                    borderRadius: "8px",
+                  }}
+                >
+                  Delete
+                </Button>
+
+                <Dialog
+                  open={deleteDialogOpen}
+                  onClose={handleCloseDeleteDialog}
+                >
+                  <DialogTitle>Confirm Deletion</DialogTitle>
+                  <DialogContent>
+                    <Typography>
+                      Are you sure you want to delete this campaign? This action
+                      cannot be undone.
+                    </Typography>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleCloseDeleteDialog} color="primary">
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleDeleteCampaign}
+                      color="error"
+                      disabled={loading}
+                    >
+                      {loading ? <CircularProgress size={24} /> : "Delete"}
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+
+                {/* Display success or error message */}
+                {successMessage && (
+                  <Snackbar open={true} message={successMessage} />
+                )}
+                {errorMessage && (
+                  <Snackbar open={true} message={errorMessage} />
+                )}
+
+                {/* Success Snackbar */}
+                <Snackbar
+                  open={!!successMessage}
+                  autoHideDuration={3000}
+                  onClose={() => setSuccessMessage("")}
+                >
+                  <Alert severity="success" sx={{ width: "100%" }}>
+                    {successMessage}
+                  </Alert>
+                </Snackbar>
+
+                {/* Error Snackbar */}
+                <Snackbar
+                  open={!!errorMessage}
+                  autoHideDuration={3000}
+                  onClose={() => setErrorMessage("")}
+                >
+                  <Alert severity="error" sx={{ width: "100%" }}>
+                    {errorMessage}
+                  </Alert>
+                </Snackbar>
+              </Box>
+            </Box>
           </DialogActions>
         </Dialog>
       )}

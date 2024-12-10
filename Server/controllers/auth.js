@@ -15,7 +15,7 @@ export const register = async (req, res) => {
             } = req.body;
 
         const picturePath = req.file ? req.file.filename : null;
-        console.log ("Receive Data: You Inputed :", req.body);  // Add logging to see received data
+        console.log ("Receive Data: You Inputed :", req.body);  
 
         // Check if required fields are provided
         if (!firstName || !lastName || 
@@ -45,15 +45,13 @@ export const register = async (req, res) => {
             password: passwordHash,
             picturePath, friends,
             location, occupation,
-            // viewedProfile: Math.floor(Math.random() * 1000),
-            // impressions: Math.floor(Math.random() * 1000),
         });
         const savedUser = await newUser.save();
 
 
             // Create JWT token including user role
     const token = jwt.sign(
-        { id: savedUser._id, role: savedUser.role },  // Include role in the token
+        { id: savedUser._id, role: savedUser.role },  
         process.env.JWT_SECRET,
         { expiresIn: '5h' }
       );
