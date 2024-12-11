@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Avatar, Chip, Tooltip, Divider, useTheme } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Avatar,
+  Chip,
+  Tooltip,
+  Divider,
+  useTheme,
+} from "@mui/material";
 import { useSelector } from "react-redux";
 import StarIcon from "@mui/icons-material/Star";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
@@ -10,6 +18,7 @@ const UserProfileWithAchievements = ({ userId }) => {
   const [profile, setProfile] = useState(null);
   const token = useSelector((state) => state.token);
   const isDarkMode = useSelector((state) => state.mode === "dark");
+  const loggedInUserId = useSelector((state) => state.user._id); // ID of logged-in user
   const { palette } = useTheme();
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
@@ -52,15 +61,41 @@ const UserProfileWithAchievements = ({ userId }) => {
         <Avatar
           src={`http://localhost:3001/assets/${profile.picturePath}`}
           alt={profile.firstName}
-          sx={{ width: 80, height: 80, border: `2px solid ${palette.neutral.main}` }}
+          sx={{
+            width: 80,
+            height: 80,
+            border: `2px solid ${palette.neutral.main}`,
+          }}
         />
         <Box ml={2}>
-          <Typography variant="h5" fontWeight="bold" color={palette.neutral.main}>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            color={palette.neutral.main}
+          >
             {profile.firstName} {profile.lastName}
           </Typography>
-          <Typography variant="subtitle1" color={palette.neutral.medium} display="flex" alignItems="center">
-            <WorkspacePremiumIcon sx={{ color: "#ffc107", mr: 0.5 }} />
-            {profile.achievementLevel}
+
+          <Typography
+            variant="subtitle1"
+            color={palette.neutral.medium}
+            display="flex"
+            alignItems="center"
+            marginTop="7px"
+          >
+            <Box
+              component="img"
+              src="/assets/quality.png"
+              alt="Status Icon"
+              sx={{
+                width: "24px",
+                height: "24px",
+                objectFit: "cover",
+                borderRadius: "50%", // Optional for rounded icons
+                mr: 1,
+              }}
+            />
+            Achievement Level: {profile.achievementLevel}
           </Typography>
         </Box>
       </Box>
@@ -68,19 +103,40 @@ const UserProfileWithAchievements = ({ userId }) => {
       <Divider sx={{ my: 2, borderColor: palette.neutral.main }} />
 
       {/* Achievements Section */}
-      <Box mt={2}>
-        
-        <Typography variant="h6"color={dark} display="flex" alignItems="center" sx = {{ "&:hover": 
-               {
-                WebkitTextFillColor: "transparent",
-                background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
-                WebkitBackgroundClip: "text",                 cursor: "pointer",
-               },
-            }} >
-          <EmojiEventsIcon  sx={{ mr: 1 } } /> Achievements
+      <Box mt={2} sx={{ padding: 0, borderRadius: 2 }}>
+        <Typography
+          variant="h6"
+          color={dark}
+          display="flex"
+          alignItems="center"
+          sx={{
+            "&:hover": {
+              WebkitTextFillColor: "transparent",
+              background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+              WebkitBackgroundClip: "text",
+              cursor: "pointer",
+            },
+            fontWeight: "bold",
+            letterSpacing: 1.2,
+          }}
+        >
+          <Box
+            component="img"
+            src="/assets/premium.png"
+            marginLeft="7px"
+            alt="Status Icon"
+            sx={{
+              width: "24px",
+              height: "24px",
+              objectFit: "cover",
+              borderRadius: "50%",
+              mr: 1,
+            }}
+          />
+          Achievements
         </Typography>
 
-        <Box display="flex" gap={1} flexWrap="wrap" mt={1}>
+        <Box display="flex" gap={2} flexWrap="wrap" mt={2}>
           {profile.badges && profile.badges.length > 0 ? (
             profile.badges.map((badge, index) => (
               <Tooltip key={index} title={badge} placement="top">
@@ -88,13 +144,29 @@ const UserProfileWithAchievements = ({ userId }) => {
                   label={badge.replace("_", " ")}
                   color="primary"
                   icon={<StarIcon />}
-                  variant="outlined"
-                  sx={{ fontWeight: "bold" }}
+                  variant="filled"
+                  sx={{
+                    fontWeight: "bold",
+                    borderRadius: "20px",
+                    padding: "6px 12px",
+                    backgroundColor: "#7928CA",
+                    color: "#fff",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                    "&:hover": {
+                      backgroundColor: "#FF0080",
+                      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.3)",
+                    },
+                  }}
                 />
               </Tooltip>
             ))
           ) : (
-            <Typography color="textSecondary">No badges earned yet.</Typography>
+            <Typography
+              color="textSecondary"
+              sx={{ fontStyle: "italic", mt: 1 }}
+            >
+              No badges earned yet.
+            </Typography>
           )}
         </Box>
       </Box>
@@ -103,16 +175,27 @@ const UserProfileWithAchievements = ({ userId }) => {
 
       {/* Campaign Participation Summary */}
       <Box mt={2}>
-        <Typography variant="h6" color={dark} display="flex" alignItems="center" sx = {{ "&:hover": 
-               {
-                WebkitTextFillColor: "transparent",
-                background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
-                WebkitBackgroundClip: "text",                 cursor: "pointer",
-               },
-            }}>
+        <Typography
+          variant="h6"
+          color={dark}
+          display="flex"
+          alignItems="center"
+          sx={{
+            "&:hover": {
+              WebkitTextFillColor: "transparent",
+              background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+              WebkitBackgroundClip: "text",
+              cursor: "pointer",
+            },
+          }}
+        >
           <EventIcon sx={{ mr: 1 }} /> Campaign Participation
         </Typography>
-        <Typography variant="body1" sx={{ fontWeight: "bold", my: 1 }} color={palette.neutral.medium} >
+        <Typography
+          variant="body1"
+          sx={{ fontWeight: "bold", my: 1 }}
+          color={palette.neutral.medium}
+        >
           Total Campaigns Joined: {profile.campaignCount}
         </Typography>
       </Box>
@@ -121,13 +204,20 @@ const UserProfileWithAchievements = ({ userId }) => {
 
       {/* Detailed List of Joined Campaigns */}
       <Box mt={2}>
-        <Typography variant="h6" color={dark} display="flex" alignItems="center" sx = {{ "&:hover": 
-               {
-                WebkitTextFillColor: "transparent",
-                background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
-                WebkitBackgroundClip: "text",                 cursor: "pointer",
-               },
-            }}>
+        <Typography
+          variant="h6"
+          color={dark}
+          display="flex"
+          alignItems="center"
+          sx={{
+            "&:hover": {
+              WebkitTextFillColor: "transparent",
+              background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+              WebkitBackgroundClip: "text",
+              cursor: "pointer",
+            },
+          }}
+        >
           <EventIcon sx={{ mr: 1 }} /> Joined Campaigns
         </Typography>
         {profile.joinedCampaigns.length > 0 ? (
@@ -143,7 +233,11 @@ const UserProfileWithAchievements = ({ userId }) => {
               boxShadow={2}
               bgcolor={isDarkMode ? palette.background.alt : "#ffffff"}
             >
-              <Typography variant="body1" fontWeight="bold" color={palette.neutral.main}>
+              <Typography
+                variant="body1"
+                fontWeight="bold"
+                color={palette.neutral.main}
+              >
                 {campaign.title}
               </Typography>
               <Typography variant="body2" color={palette.neutral.medium}>
@@ -168,7 +262,9 @@ const UserProfileWithAchievements = ({ userId }) => {
             </Box>
           ))
         ) : (
-          <Typography color="textSecondary">No campaigns joined yet.</Typography>
+          <Typography color="textSecondary">
+            No campaigns joined yet.
+          </Typography>
         )}
       </Box>
     </Box>

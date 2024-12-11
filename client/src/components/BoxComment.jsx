@@ -1,25 +1,25 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import UserImage from "./UserImage";
+import { useSelector } from "react-redux";
 
 const BoxComment = ({ friendId, firstName, lastName, subtitle, userPicturePath }) => {
   const navigate = useNavigate();
+  const isDarkMode = useSelector((state) => state.mode === "dark");
   const { palette } = useTheme();
-  const main = palette.neutral.main;
   const medium = palette.neutral.medium;
+  const main = palette.primary.main;
 
   return (
     <Box
       display="flex"
       alignItems="center"
-      gap="0.75rem"
+      gap="0.45rem"
       sx={{
         cursor: "pointer",
-        padding: "0.5rem 0",
-        "&:hover": {
-          backgroundColor: palette.action.hover,
-          borderRadius: "0.5rem",
-        },
+        padding: "0.1rem 0.1rem",
+        backgroundColor: isDarkMode ? palette.background.default : "#f9f9f9", // Light or dark background
+        borderRadius: "8px",
       }}
       onClick={() => {
         navigate(`/profile/${friendId}`);
@@ -29,18 +29,19 @@ const BoxComment = ({ friendId, firstName, lastName, subtitle, userPicturePath }
       <UserImage image={userPicturePath} size="35px" />
       <Box>
         <Typography
-          color={main}
           variant="body2"
           fontWeight="500"
-          sx={{ lineHeight: 1.2 }}
+          sx={{
+            lineHeight: 1.2,
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
         >
-                    {firstName}
-                    {lastName}
-
-        </Typography>
-        
-        <Typography color={medium} fontSize="0.75rem">
-          {subtitle}
+          <span>{firstName} {lastName}</span>
+          <span style={{ fontSize: "0.75rem", color: medium, marginLeft: "5px" }}>
+            {subtitle}
+          </span>
         </Typography>
       </Box>
     </Box>

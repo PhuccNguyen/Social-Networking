@@ -12,7 +12,6 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const savedPosts = useSelector((state) => state.user.savedPosts || []);
   const [loading, setLoading] = useState(true);
 
-  // Fetch posts from friends or user-specific posts (for profile page)
   const getPosts = async () => {
     setLoading(true); // Start loading
     try {
@@ -68,16 +67,14 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   );
 
   if (loading) {
-    // Display loading spinner while fetching data
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
-        <Loader /> {/* Use your custom Loader component here */}
+        <Loader /> 
       </Box>
     );
   }
 
   if (!posts || posts.length === 0) {
-    // Display message if no posts are available
     return (
       <Typography variant="h6" align="center" color="textSecondary">
         No posts available

@@ -88,7 +88,7 @@ router.get("/:userId/joinedcampaigns", verifyToken, getUserJoinedCampaigns);
 router.get("/:id/profileWithAchievements", verifyToken, async (req, res) => {
     try {
       const userId = req.params.id;
-      const profile = await updateUserAchievements(userId); // Call the function to update and retrieve achievements
+      const profile = await updateUserAchievements(userId); 
   
       if (!profile) {
         return res.status(404).json({ message: "User not found" });

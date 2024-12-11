@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const navigate = useNavigate();
-
   const styles = {
     navbar: {
       display: 'flex',
@@ -103,6 +102,7 @@ const Navbar = () => {
               }}
             >
               {item}
+              
               {/* Underline Effect */}
               <span
                 className="hoverEffect"
@@ -111,6 +111,7 @@ const Navbar = () => {
                   ...(item === 'Home' ? { transform: 'scaleX(1)', transformOrigin: 'bottom left' } : {}),
                 }}
               ></span>
+
             </a>
           </li>
         ))}
@@ -118,7 +119,7 @@ const Navbar = () => {
 
       {/* Sign In Button */}
       <button
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/LoginPage')}
         style={styles.signInBtn}
         onMouseEnter={(e) => {
           e.target.style.transform = styles.signInBtnHover.transform;

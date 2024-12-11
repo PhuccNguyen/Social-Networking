@@ -10,10 +10,10 @@ import { Snackbar, Alert } from "@mui/material"; // Import Snackbar and Alert
 const UserWidgetProfile = ({ userId, picturePath }) => {
   const [user, setUser] = useState(null);
   const token = useSelector((state) => state.token);
-  const [newPicture, setNewPicture] = useState(null); 
+  const [newPicture, setNewPicture] = useState(null);
   const { palette } = useTheme();
   const dark = palette.neutral.dark;
-  const loggedInUserId = useSelector((state) => state.user._id); 
+  const loggedInUserId = useSelector((state) => state.user._id);
   const medium = palette.neutral.medium;
   const main = palette.primary.main;
   const [openSnackbar, setOpenSnackbar] = useState(false); // Snackbar state
@@ -41,7 +41,6 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
   const { firstName, lastName, status, email, location, occupation, friends } =
     user;
 
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -66,9 +65,9 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
     }
   };
 
-
   const handleNavigateToFriendPage = () => {
-    window.location.href = 'http://localhost:3000/friendPage'; }// Navigate to the friend page
+    window.location.href = "http://localhost:3000/friendPage";
+  }; // Navigate to the friend page
 
   return (
     <Box>
@@ -100,10 +99,12 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
 
           <Box position="absolute" top="30%" zIndex="1000" left="38%">
             <UserImageProfile image={newPicture || picturePath} size="90px" />
-            
+
             {loggedInUserId === userId && (
               <IconButton
-                onClick={() => document.getElementById("profile-image-input").click()}
+                onClick={() =>
+                  document.getElementById("profile-image-input").click()
+                }
                 sx={{
                   position: "absolute",
                   bottom: "5px",
@@ -136,7 +137,9 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
             </Typography>
           </Box>
         </Box>
+
         <Divider sx={{ mb: "1rem" }} />
+
         <Box
           display="flex"
           justifyContent="space-between"
@@ -147,18 +150,16 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
           {/* Address Section */}
           <Box display="flex" justifyContent="space-between" width="100%">
             <Box display="flex" alignItems="center" width="200px">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fontSize="1.5rem"
-                width="1em"
-                height="1em"
-                viewBox="0 0 512 512"
-              >
-                <path
-                  fill="#d62931"
-                  d="M240.3 396.8c3.3 5.1 9.1 8.5 15.7 8.5s12.4-3.4 15.8-8.5L382 226.6c14.8-22.9 23.4-48.1 23.4-77.3C405.3 64.9 339 0 256 0S106.7 64.9 106.7 149.3c0 29.2 8.6 54.4 23.4 77.3zM256 64c47.1 0 85.3 38.2 85.3 85.3s-38.2 85.3-85.3 85.3s-85.3-38.2-85.3-85.3S208.9 64 256 64m109.4 259.5L256 469.3L146.6 323.5c-37.4 19.6-61.3 48.9-61.3 81.8C85.3 464.2 161.7 512 256 512s170.7-47.8 170.7-106.7c0-32.9-23.9-62.2-61.3-81.8"
-                />
-              </svg>
+              {/* Replace SVG with Image */}
+              <img
+                src="/assets/circle.png"
+                alt="Address Icon"
+                style={{
+                  width: "2rem", // Adjust the size as needed
+                  height: "2rem",
+                  objectFit: "contain", // Ensure the image scales properly
+                }}
+              />
               <Typography
                 fontWeight="600"
                 width="80px"
@@ -188,9 +189,19 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
           </Box>
 
           {/* Email Section */}
-          <Box display="flex" justifyContent="space-between" width="100%">
+          <Box display="flex"             mt="1rem"
+ justifyContent="space-between" width="100%">
             <Box display="flex" alignItems="center" width="200px">
-              <FcAddressBook fontSize="1.5rem" />
+              {/* Replace FcAddressBook icon with an Image */}
+              <img
+                src="/assets/email.png"
+                alt="Email Icon"
+                style={{
+                  width: "2rem", // Adjust the size as needed
+                  height: "2rem",
+                  objectFit: "contain", // Ensure the image scales appropriately
+                }}
+              />
               <Typography
                 fontWeight="600"
                 width="80px"
@@ -227,19 +238,16 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
             mt="1rem"
           >
             <Box display="flex" alignItems="center" width="200px">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fontSize="1.2rem"
-                sx={{ color: main }}
-                width="1.25em"
-                height="1em"
-                viewBox="0 0 640 512"
-              >
-                <path
-                  fill="#765dee"
-                  d="M192 256c61.9 0 112-50.1 112-112S253.9 32 192 32S80 82.1 80 144s50.1 112 112 112m76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C51.6 288 0 339.6 0 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2M480 256c53 0 96-43 96-96s-43-96-96-96s-96 43-96 96s43 96 96 96m48 32h-3.8c-13.9 4.8-28.6 8-44.2 8s-30.3-3.2-44.2-8H432c-20.4 0-39.2 5.9-55.7 15.4c24.4 26.3 39.7 61.2 39.7 99.8v38.4c0 2.2-.5 4.3-.6 6.4H592c26.5 0 48-21.5 48-48c0-61.9-50.1-112-112-112"
-                />
-              </svg>
+              {/* Replace the SVG with an Image */}
+              <img
+                src="/assets/high-five.png" // Add the correct path to your icon image
+                alt="Friend Icon"
+                style={{
+                  width: "2rem", // Adjust the size as needed
+                  height: "2rem",
+                  objectFit: "contain", // Ensure the image scales properly
+                }}
+              />
               <Typography
                 fontWeight="600"
                 width="80px"
@@ -252,7 +260,7 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
             <Typography
               fontSize="1rem"
               role="button"
-              onClick={handleNavigateToFriendPage} 
+              onClick={handleNavigateToFriendPage}
               color={medium}
               textAlign="left"
               width="300px"
@@ -278,7 +286,16 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
             mt="1rem"
           >
             <Box display="flex" alignItems="center" width="200px">
-              <FcStackOfPhotos fontSize="1.7rem" />
+              {/* Replace FcStackOfPhotos icon with Image */}
+              <img
+                src="/assets/status.jpg" // Replace with the correct path to your image
+                alt="Status Icon"
+                style={{
+                  width: "2rem", // Adjust the size as needed
+                  height: "2rem",
+                  objectFit: "contain", // Ensure the image scales properly
+                }}
+              />
               <Typography
                 fontWeight="600"
                 width="80px"
@@ -321,18 +338,18 @@ const UserWidgetProfile = ({ userId, picturePath }) => {
           <Snackbar
             open={openSnackbar}
             position="absolute"
-            autoHideDuration={3000} 
-            onClose={() => setOpenSnackbar(false)} 
+            autoHideDuration={3000}
+            onClose={() => setOpenSnackbar(false)}
             anchorOrigin={{
-              vertical: "top", 
-              horizontal: "right", 
+              vertical: "top",
+              horizontal: "right",
             }}
             sx={{
               position: "absolute",
               top: "20px",
               right: "20px",
               zIndex: 1000,
-              width: "300px", 
+              width: "300px",
             }}
           >
             <Alert onClose={() => setOpenSnackbar(false)} severity="success">

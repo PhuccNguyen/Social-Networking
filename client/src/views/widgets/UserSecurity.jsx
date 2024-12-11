@@ -1,17 +1,36 @@
-import { Box, Typography, TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, InputAdornment, useTheme } from "@mui/material";
-import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  IconButton,
+  LinearProgress,
+  InputAdornment,
+  useTheme,
+} from "@mui/material";
+import { MailOutline, Phone } from '@mui/icons-material';
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const UserSecurity = ({ userId }) => {
-  const [user, setUser] = useState({ email: '', mobile: '' });
+  const [user, setUser] = useState({ email: "", mobile: "" });
   const [error, setError] = useState(null);
   const [openPasswordDialog, setOpenPasswordDialog] = useState(false);
   const [openEmailDialog, setOpenEmailDialog] = useState(false);
+  const loggedInUserId = useSelector((state) => state.user._id);
   const [loading, setLoading] = useState(true);
-  const [passwordData, setPasswordData] = useState({ oldPassword: '', newPassword: '' });
-  const [showOldPassword, setShowOldPassword] = useState(false); // State for toggling old password visibility
-  const [showNewPassword, setShowNewPassword] = useState(false); // State for toggling new password visibility
+  const [passwordData, setPasswordData] = useState({
+    oldPassword: "",
+    newPassword: "",
+  });
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const token = useSelector((state) => state.token);
   const { palette } = useTheme();
 
@@ -40,12 +59,10 @@ const UserSecurity = ({ userId }) => {
     getUser();
   }, [userId]);
 
-  // Handle input change for Email/Mobile fields
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  // Handle Password Change
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -63,18 +80,23 @@ const UserSecurity = ({ userId }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        
+
         // Check if the error is due to incorrect old password
-        if (response.status === 400 && errorData.message === "Current password is incorrect") {
-          alert("The current password you entered is incorrect. Please try again.");
+        if (
+          response.status === 400 &&
+          errorData.message === "Current password is incorrect"
+        ) {
+          alert(
+            "The current password you entered is incorrect. Please try again."
+          );
         } else {
           throw new Error(errorData.message || "Failed to change password");
         }
-        return; 
+        return;
       }
 
       setOpenPasswordDialog(false);
-      alert('Password changed successfully');
+      alert("Password changed successfully");
     } catch (error) {
       setError(error.message);
     }
@@ -98,13 +120,30 @@ const UserSecurity = ({ userId }) => {
       }
 
       const updatedUser = await response.json();
-      console.log('Email/Mobile updated successfully:', updatedUser);
+      console.log("Email/Mobile updated successfully:", updatedUser);
       setOpenEmailDialog(false);
-      alert('Email/Mobile updated successfully');
+      alert("Email/Mobile updated successfully");
     } catch (error) {
       setError("Failed to update contact information");
     }
   };
+
+  const calculatePasswordStrength = (password) => {
+    let strength = 0;
+    if (password.length >= 8) strength += 1; // Length
+    if (/[A-Z]/.test(password)) strength += 1; // Uppercase letter
+    if (/[a-z]/.test(password)) strength += 1; // Lowercase letter
+    if (/[0-9]/.test(password)) strength += 1; // Number
+    if (/[!@#$%^&*()_+{}\[\]:;"'<>,.?\/\\|]/.test(password)) strength += 1; // Special characters
+    return (strength / 5) * 100; // Convert to percentage
+  };
+  
+  
+    // Determine the color of the progress bar based on password strength
+    const passwordStrength = calculatePasswordStrength(passwordData.newPassword);
+    let progressColor = 'error'; // Default to red
+    if (passwordStrength >= 60) progressColor = 'warning'; // Yellow
+    if (passwordStrength >= 80) progressColor = 'success'; // Green
 
   const handleOpenPasswordDialog = () => setOpenPasswordDialog(true);
   const handleClosePasswordDialog = () => setOpenPasswordDialog(false);
@@ -126,103 +165,365 @@ const UserSecurity = ({ userId }) => {
   const { email, mobile } = user;
 
   return (
-    <Box sx={{ padding: "2rem", borderRadius: "12px", boxShadow: "0px 10px 30px rgba(0,0,0,0.1)", backgroundColor: palette.background.paper, textAlign: "center" }}>
-      <Typography variant="h5" color={palette.neutral.dark} mb="2rem">Security Information</Typography>
+    <Box
+      sx={{
+        padding: "2rem",
+        borderRadius: "12px",
+        boxShadow: "0px 10px 30px rgba(0,0,0,0.1)",
+        backgroundColor: palette.background.paper,
+        textAlign: "center",
+      }}
+    >
+      <Typography variant="h5" color={palette.neutral.dark} mb="2rem">
+        Security Information
+      </Typography>
 
       {error && (
-        <Typography variant="body2" color="error" mb="1rem">{error}</Typography>
+        <Typography variant="body2" color="error" mb="1rem">
+          {error}
+        </Typography>
       )}
 
       <Grid container spacing={3} justifyContent="center">
         <Grid item xs={12}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="body1" color={palette.neutral.dark}>Password</Typography>
-            <Button variant="outlined" color="primary" onClick={handleOpenPasswordDialog}>Change Password</Button>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography
+              variant="body1"
+              fontWeight="bold"
+              color={palette.neutral.dark}
+            >
+              Password
+            </Typography>
+            <Typography variant="body1" color={palette.neutral.dark}>
+              *****************
+            </Typography>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleOpenPasswordDialog}
+              sx={{
+                zIndex: 1000,
+                padding: "0.3rem 0.8rem", // Add padding for better text readability
+                borderRadius: "4px", // Rounded corners for a modern look
+                fontWeight: "bold", // Make the text bold for emphasis
+                background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)", // Gradient background
+                color: "white", // Text color
+                border: "2px solid transparent", // Transparent border to let the gradient show through
+                "&:hover": {
+                  background:
+                    "linear-gradient(310deg, #FF0080 0%, #7928CA 100%)", // Inverted gradient on hover
+                  borderColor: "#FF0080", // Border color change on hover
+                  color: "#FFF", // Ensure the text stays white
+                },
+                "&:focus": {
+                  outline: "none", // Remove default focus outline
+                  boxShadow: "0 0 0 4px rgba(255, 0, 128, 0.4)", // Add a soft focus effect for accessibility
+                },
+                transition: "all 0.3s ease", // Smooth transition for hover/focus effects
+              }}
+            >
+              Change Password
+            </Button>
           </Box>
         </Grid>
 
         <Grid item xs={12}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="body1" color={palette.neutral.dark}>Email</Typography>
-            <Typography variant="body1" color={palette.neutral.dark}>{email}</Typography>
-            <Button variant="outlined" color="primary" onClick={handleOpenEmailDialog}>Edit</Button>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography
+              fontWeight="bold"
+              variant="body1"
+              color={palette.neutral.dark}
+            >
+              Email
+            </Typography>
+            <Typography variant="body1" color={palette.neutral.dark}>
+              {email}
+            </Typography>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleOpenEmailDialog}
+              sx={{
+                zIndex: 1000,
+                borderRadius: "4px", // Rounded corners for a modern look
+                fontWeight: "bold", // Make the text bold for emphasis
+                background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)", // Gradient background
+                color: "white", // Text color
+                "&:hover": {
+                  background:
+                    "linear-gradient(310deg, #FF0080 0%, #7928CA 100%)", // Inverted gradient on hover
+                  borderColor: "#FF0080", // Border color change on hover
+                  color: "#FFF", // Ensure the text stays white
+                },
+              }}
+            >
+              Edit
+            </Button>
           </Box>
         </Grid>
 
         <Grid item xs={12}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="body1" color={palette.neutral.dark}>Mobile</Typography>
-            <Typography variant="body1" color={palette.neutral.dark}>{mobile}</Typography>
-            <Button variant="outlined" color="primary" onClick={handleOpenEmailDialog}>Edit</Button>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Typography
+              variant="body1"
+              fontWeight="bold"
+              color={palette.neutral.dark}
+            >
+              Mobile
+            </Typography>
+            <Typography variant="body1" color={palette.neutral.dark}>
+              {mobile}
+            </Typography>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleOpenEmailDialog}
+              sx={{
+                zIndex: 1000,
+                borderRadius: "4px", // Rounded corners for a modern look
+                fontWeight: "bold", // Make the text bold for emphasis
+                background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)", // Gradient background
+                color: "white", // Text color
+                "&:hover": {
+                  background:
+                    "linear-gradient(310deg, #FF0080 0%, #7928CA 100%)", // Inverted gradient on hover
+                  borderColor: "#FF0080", // Border color change on hover
+                  color: "#FFF", // Ensure the text stays white
+                },
+              }}
+            >
+              Edit
+            </Button>
           </Box>
         </Grid>
       </Grid>
+      <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog} maxWidth="sm" fullWidth>
+      <DialogTitle>Change Password</DialogTitle>
+      <DialogContent>
+        <Box component="form" onSubmit={handlePasswordSubmit}>
+          
+          {/* Current Password */}
+          <TextField
+            label="Current Password"
+            name="oldPassword"
+            type={showOldPassword ? "text" : "password"}
+            value={passwordData.oldPassword}
+            onChange={(e) => setPasswordData({ ...passwordData, oldPassword: e.target.value })}
+            fullWidth
+            margin="normal"
+            required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={toggleShowOldPassword}>
+                    {showOldPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              borderRadius: "8px",
+              '& .MuiInputBase-root': {
+                borderRadius: "8px",
+              },
+            }}
+          />
 
-      {/* Dialog for Changing Password */}
-      <Dialog open={openPasswordDialog} onClose={handleClosePasswordDialog}>
-        <DialogTitle>Change Password</DialogTitle>
-        <DialogContent>
-          <Box component="form" onSubmit={handlePasswordSubmit}>
-            <TextField
-              label="Current Password"
-              name="oldPassword"
-              type={showOldPassword ? "text" : "password"}
-              value={passwordData.oldPassword}
-              onChange={(e) => setPasswordData({ ...passwordData, oldPassword: e.target.value })}
-              fullWidth
-              margin="normal"
-              required
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={toggleShowOldPassword}>
-                      {showOldPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                )
+          {/* New Password */}
+          <TextField
+            label="New Password"
+            name="newPassword"
+            type={showNewPassword ? "text" : "password"}
+            value={passwordData.newPassword}
+            onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+            fullWidth
+            margin="normal"
+            required
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={toggleShowNewPassword}>
+                    {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              borderRadius: "8px",
+              '& .MuiInputBase-root': {
+                borderRadius: "8px",
+              },
+            }}
+          />
+
+          {/* Password Strength Indicator */}
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" color="textSecondary">
+              New Password Strength:
+            </Typography>
+            <LinearProgress
+              variant="determinate"
+              value={passwordStrength}
+              sx={{
+                height: 5,
+                borderRadius: "5px",
+                backgroundColor: progressColor === 'success' ? '#388e3c' : progressColor === 'warning' ? '#fbc02d' : '#d32f2f',
               }}
             />
-            <TextField
-              label="New Password"
-              name="newPassword"
-              type={showNewPassword ? "text" : "password"}
-              value={passwordData.newPassword}
-              onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-              fullWidth
-              margin="normal"
-              required
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={toggleShowNewPassword}>
-                      {showNewPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }}
-            />
-            <Button type="submit" variant="contained" color="primary" sx={{ mt: 3 }}>Change Password</Button>
           </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClosePasswordDialog} color="primary">Cancel</Button>
-        </DialogActions>
-      </Dialog>
 
-      {/* Dialog for Editing Email/Mobile */}
-      <Dialog open={openEmailDialog} onClose={handleCloseEmailDialog}>
-        <DialogTitle>Edit Contact Information</DialogTitle>
-        <DialogContent>
-          <Box component="form" onSubmit={handleEmailMobileSubmit}>
-            <TextField label="Email" name="email" value={user.email} onChange={handleChange} fullWidth margin="normal" required />
-            <TextField label="Mobile" name="mobile" value={user.mobile} onChange={handleChange} fullWidth margin="normal" required />
-            <Button type="submit" variant="contained" color="primary" sx={{ mt: 3 }}>Save Changes</Button>
+          {/* Save and Cancel Buttons */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              sx={{
+                padding: "0.75rem 1.5rem",
+                borderRadius: "8px",
+                fontWeight: "bold",
+                background: "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)",
+                color: "white",
+                "&:hover": {
+                  background: "linear-gradient(310deg, #FF0080 0%, #7928CA 100%)",
+                },
+              }}
+            >
+              Change Password
+            </Button>
+
+            <Button
+              onClick={handleClosePasswordDialog}
+              color="primary"
+              sx={{
+                padding: "0.75rem 1.5rem",
+                borderRadius: "8px",
+                fontWeight: "bold",
+                background: "#f5f5f5",
+                "&:hover": {
+                  background: "#e0e0e0",
+                },
+              }}
+            >
+              Cancel
+            </Button>
           </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseEmailDialog} color="primary">Cancel</Button>
-        </DialogActions>
-      </Dialog>
+
+        </Box>
+      </DialogContent>
+    </Dialog>
+    
+    <Dialog open={openEmailDialog} onClose={handleCloseEmailDialog} maxWidth="sm" fullWidth>
+      <DialogTitle>Edit Contact Information</DialogTitle>
+      <DialogContent>
+        <Box component="form" onSubmit={handleEmailMobileSubmit}>
+          
+          {/* Email Field */}
+          <TextField
+            label="Email"
+            name="email"
+            value={user.email}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            required
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <MailOutline />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              borderRadius: '8px', // Rounded corners for inputs
+              '& .MuiInputBase-root': {
+                borderRadius: '8px',
+              },
+              '& .MuiInputLabel-root': {
+                fontWeight: '500', // Bold label
+              },
+            }}
+          />
+
+          {/* Mobile Field */}
+          <TextField
+            label="Mobile"
+            name="mobile"
+            value={user.mobile}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+            required
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Phone />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              borderRadius: '8px', // Rounded corners for inputs
+              '& .MuiInputBase-root': {
+                borderRadius: '8px',
+              },
+              '& .MuiInputLabel-root': {
+                fontWeight: '500', // Bold label
+              },
+            }}
+          />
+
+          {/* Submit Button */}
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            sx={{
+              mt: 3,
+              padding: '0.75rem 1.5rem', // Increase padding for better touch targets
+              borderRadius: '8px', // Rounded corners for the button
+              fontWeight: 'bold', // Bold text
+              background: 'linear-gradient(310deg, #7928CA 0%, #FF0080 100%)', // Gradient background
+              color: 'white', // White text color
+              "&:hover": {
+                background: 'linear-gradient(310deg, #FF0080 0%, #7928CA 100%)', // Hover effect
+              },
+            }}
+          >
+            Save Changes
+          </Button>
+        </Box>
+      </DialogContent>
+
+      {/* Action Buttons */}
+      <DialogActions>
+        <Button
+          onClick={handleCloseEmailDialog}
+          color="secondary"
+          sx={{
+            fontWeight: 'bold',
+            padding: '0.75rem 1.5rem', // Increase padding
+            borderRadius: '8px',
+            '&:hover': {
+              backgroundColor: '#f5f5f5', // Hover effect
+            },
+          }}
+        >
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
     </Box>
   );
 };

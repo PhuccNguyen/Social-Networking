@@ -32,19 +32,19 @@ function App() {
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          {isAuth && userId && <NotificationComponent userId={userId} />} {/* Show notifications when authenticated */}
+          {isAuth && userId && <NotificationComponent userId={userId} />} 
           <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/volunteer" element={isAuth ? <VolunteerPage /> : <Navigate to="/" />} />
-            <Route path="/SavedPostsPage" element={isAuth ? <SavedPostsPage /> : <Navigate to="/" />} />
-            <Route path="/FriendPage" element={isAuth ? <FriendPage /> : <Navigate to="/" />} />
-            <Route path="/home" element={isAuth ? <HomePage /> : <Navigate to="/" />} />
-            <Route path="/profile/:userId" element={isAuth ? <ProfilePage /> : <Navigate to="/" />} />
-            <Route path="/savepost/:userId" element={isAuth ? <SavePost /> : <Navigate to="/" />} />
-            <Route path="/Admin" element={isAuth ? <Admin /> : <Navigate to="/" />} />
-            <Route path="/ManageCampaign" element={isAuth ? <ManageCampaign /> : <Navigate to="/" />} />
-            <Route path="/UserRegisterCampaign" element={isAuth ? <UserRegisterCampaign /> : <Navigate to="/" />} />
-            <Route path="/LandingPage" element={<LandingPage />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/volunteer" element={isAuth ? <VolunteerPage /> : <Navigate to="/LoginPage" />} />
+            <Route path="/SavedPostsPage" element={isAuth ? <SavedPostsPage /> : <Navigate to="/LoginPage" />} />
+            <Route path="/FriendPage" element={isAuth ? <FriendPage /> : <Navigate to="/LoginPage" />} />
+            <Route path="/home" element={isAuth ? <HomePage /> : <Navigate to="/LoginPage" />} />
+            <Route path="/profile/:userId" element={isAuth ? <ProfilePage /> : <Navigate to="/LoginPage" />} />
+            <Route path="/savepost/:userId" element={isAuth ? <SavePost /> : <Navigate to="/LoginPage" />} />
+            <Route path="/Admin" element={isAuth ? <Admin /> : <Navigate to="/LoginPage" />} />
+            <Route path="/ManageCampaign" element={isAuth ? <ManageCampaign /> : <Navigate to="/LoginPage" />} />
+            <Route path="/UserRegisterCampaign" element={isAuth ? <UserRegisterCampaign /> : <Navigate to="/LoginPage" />} />
+            <Route path="/LoginPage" element={<LoginPage />} />
             
             {/* Wildcard route for 404 page */}
             <Route  path="*" element={<NotFoundPage />} />

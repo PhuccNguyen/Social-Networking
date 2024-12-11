@@ -1,5 +1,5 @@
 import { Box, Typography, Button, useTheme, Divider } from "@mui/material";
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import WidgetWrapper from "components/WidgetWrapper";
 import EditUser from "views/widgets/EditUser";
 import UserSecurity from "views/widgets/UserSecurity";
@@ -10,11 +10,10 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-
-const UserWidgetInformation = ({ userId, picturePath }) => {
+const UserWidgetInformation = ({ userId }) => {
   const [user, setUser] = useState(null);
-  const [activeSection, setActiveSection] = useState('post');
-  const loggedInUserId = useSelector((state) => state.user._id); // ID of logged-in user 
+  const [activeSection, setActiveSection] = useState("post");
+  const loggedInUserId = useSelector((state) => state.user._id); 
   const token = useSelector((state) => state.token);
   const { palette } = useTheme();
   const dark = palette.neutral.dark;
@@ -41,101 +40,111 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
 
   if (!user) return null;
 
-  const { firstName, lastName, status, email, location, occupation, friends, intro } = user;
+  const {
+    firstName,
+    lastName,
+    status,
+    email,
+    location,
+    occupation,
+    friends,
+    intro,
+  } = user;
 
-    // Open and close dialog for editing
-    const handleOpenDialog = () => {
-    };
 
   // Function to get the section title
   const getSectionTitle = () => {
     switch (activeSection) {
-      case 'post':
-        return 'Post';
-      case 'about':
-        return 'About';
-      case 'edit':
-        return 'Details Information';
-      case 'experiences':
-        return 'Experiences';
-      case 'security':
-        return ' Password and security';
+      case "post":
+        return "Post";
+      case "about":
+        return "About";
+      case "edit":
+        return "Details Information";
+      case "experiences":
+        return "Experiences";
+      case "securities":
+        return " Password and security";
       default:
-        return '';
+        return "";
     }
   };
 
   // Function to render the section content
-  const renderSectionContent = () => {
+  const renderSectionContent = ( ) => {
     switch (activeSection) {
-      case 'post':
+      case "post":
         return (
-          <Box sx={{ textAlign: 'justify' }}> 
+          <Box sx={{ textAlign: "justify" }}>
             <Typography>
-              <PostUser userId={userId} isProfile={true}/>
+              <PostUser userId={userId} user={user} isProfile={true} />
             </Typography>
           </Box>
         );
 
-      case 'about':
+      case "about":
         return (
-          <Box sx={{ textAlign: 'justify' }}> {/* Set text alignment to justified */}
-
-          <Typography >
-              <UserAbout userId={userId} user={user}/>
+          <Box sx={{ textAlign: "justify" }}>
+            {" "}
+            <Typography>
+              <UserAbout userId={userId} user={user} />
             </Typography>
           </Box>
         );
 
-      case 'edit':
+      case "edit":
         return (
           <Box>
             <Typography variant="body1" color={medium}>
-            <EditUser userId={userId} user={user} />
+              <EditUser userId={userId} user={user} />
             </Typography>
-            <Box> 
-          </Box>
+            <Box></Box>
           </Box>
         );
-      case 'experiences':
+      case "experiences":
         return (
           <Box>
             <Typography variant="body1" color={medium}>
               <ExperienceUser userId={userId} user={user} />
             </Typography>
           </Box>
-        );      
-      case 'security':
+        );
+      case "securities":
         return (
           <Box>
             <Typography variant="body1" color={medium}>
-            <UserSecurity userId={userId} user={user} />
+              <UserSecurity userId={userId} user={user} />
             </Typography>
-            <Box> 
-          </Box>
+            <Box></Box>
           </Box>
         );
 
       default:
-
         return null;
     }
   };
 
   const buttonStyles = (section) => ({
-    minWidth: '100px',
+    minWidth: "100px",
     color: activeSection === section ? "#fff" : main,
-    background: activeSection === section ? "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)" : 'transparent',
+    background:
+      activeSection === section
+        ? "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)"
+        : "transparent",
     border: activeSection === section ? "none" : `1px solid ${main}`,
-    transition: 'background 0.3s, transform 0.2s',
-    '&:hover': {
-      background: activeSection === section ? "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)" : main,
+    transition: "background 0.3s, transform 0.2s",
+    "&:hover": {
+      background:
+        activeSection === section
+          ? "linear-gradient(310deg, #7928CA 0%, #FF0080 100%)"
+          : main,
       color: "#fff",
-      transform: 'scale(1.05)',
+      transform: "scale(1.05)",
     },
   });
 
   return (
+
     <WidgetWrapper
       sx={{
         padding: "1rem",
@@ -144,50 +153,90 @@ const UserWidgetInformation = ({ userId, picturePath }) => {
         backgroundColor: palette.background.paper,
       }}
     >
-      
-      <Box
+    {/* Title Section */}
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
+        paddingBottom: "0.5rem",
+        marginBottom: "0.8rem",
+      }}
+    >
+      <Typography
+        variant="h5"
+        color={dark}
+        fontWeight="500"
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          mb: '1rem',
+          textTransform: "capitalize",
+          fontSize: "1rem", 
         }}
       >
-        <Typography variant="h6" color={dark} fontWeight="600">
-          {getSectionTitle()}
-        </Typography>
+        {getSectionTitle()}
+      </Typography>
 
-  <Box sx={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-        <Button variant="contained" onClick={() => setActiveSection('post')} sx={buttonStyles('post')}>
-          Post
-        </Button>
-        <Button variant="contained" onClick={() => setActiveSection('about')} sx={buttonStyles('about')}>
-          About
-        </Button>
-        <Button variant="contained" onClick={() => setActiveSection('edit')} sx={buttonStyles('edit')}>
-          Details Information
-        </Button>
-        <Button variant="contained" onClick={() => setActiveSection('experiences')} sx={buttonStyles('experiences')}>
-          Experiences
-        </Button>
-        {loggedInUserId === userId && (
-          <Button variant="contained" onClick={() => setActiveSection('security')} sx={buttonStyles('security')}>
-            Password and Security
+    </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mb: "1rem",
+        }}
+      >
+        <Box sx={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          <Button
+            variant="contained"
+            onClick={() => setActiveSection("post")}
+            sx={buttonStyles("post")}
+          >
+            Post
           </Button>
-        )}
+          <Button
+            variant="contained"
+            onClick={() => setActiveSection("about")}
+            sx={buttonStyles("about")}
+          >
+            About
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={() => setActiveSection("edit")}
+            sx={buttonStyles("edit")}
+          >
+            Details Information
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={() => setActiveSection("experiences")}
+            sx={buttonStyles("experiences")}
+          >
+            Experiences
+          </Button>
 
 
-
-      </Box>
-      </Box>
-
-      <Divider />
-
-      {/* Section Content */}
-      <Box mt="1rem" width="95%" mx="auto"> {/* Set width to 95% and center the content */}
-        {renderSectionContent()}
+          {loggedInUserId === userId && (
+            <Button
+              variant="contained"
+              onClick={() => setActiveSection("securities")}
+              sx={buttonStyles("securities")}
+            >
+              Password and Security
+            </Button>
+          )}
+        </Box>
       </Box>
       
+      <Divider />
+      {/* Section Content */}
+      <Box mt="1rem" width="95%" mx="auto">
+        {" "}
+        {renderSectionContent()}
+      </Box>
     </WidgetWrapper>
   );
 };

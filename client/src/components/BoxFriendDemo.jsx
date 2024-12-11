@@ -1,11 +1,4 @@
-import {
-  PersonAddOutlined,
-  PersonRemoveOutlined,
-  HourglassEmptyOutlined,
-  MoreHoriz,
-  DeleteOutline,
-  Edit,
-} from "@mui/icons-material";
+import { MoreHoriz, DeleteOutline, Edit } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -55,15 +48,15 @@ const BoxFriend = ({
   const [editedLocation, setEditedLocation] = useState(location);
   const [editedDestination, setEditedDestination] = useState(destination);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-const [alertMessage, setAlertMessage] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
 
   const handleOpenDeleteDialog = () => setOpenDeleteDialog(true);
-const handleCloseDeleteDialog = () => setOpenDeleteDialog(false);
+  const handleCloseDeleteDialog = () => setOpenDeleteDialog(false);
 
-const handleDeleteConfirm = async () => {
-  await handleDeletePost();
-  setOpenDeleteDialog(false);
-};
+  const handleDeleteConfirm = async () => {
+    await handleDeletePost();
+    setOpenDeleteDialog(false);
+  };
 
   // Log relevant variables
   console.log("loggedInUserId:", loggedInUserId);
@@ -157,25 +150,23 @@ const handleDeleteConfirm = async () => {
         },
         body: JSON.stringify({ userId: loggedInUserId, friendId }),
       });
-      setFriendRequestStatus("not_friends"); // Update status after removing friend
-      handleMenuClose(); // Close menu after deleting friend
+      setFriendRequestStatus("not_friends");
+      handleMenuClose();
     } catch (error) {
       console.error("Error deleting friend:", error);
     }
   };
 
-  
-// Automatically close the alert after 3 seconds
-useEffect(() => {
+  useEffect(() => {
     if (alertMessage) {
       const timer = setTimeout(() => {
         setAlertMessage("");
-      }, 3000); // 3000ms = 3 seconds
-  
-      return () => clearTimeout(timer); // Cleanup timer if alertMessage changes
+      }, 3000);
+
+      return () => clearTimeout(timer);
     }
   }, [alertMessage]);
-  
+
   const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget); // Open menu
   };
@@ -194,42 +185,43 @@ useEffect(() => {
       console.error("Post ID is missing");
       return;
     }
-  
+
     try {
-      const response = await fetch(`http://localhost:3001/posts/${postId}/edit`, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          description: editedDescription,
-          location: editedLocation,
-          destination: editedDestination,
-        }),
-      });
-  
+      const response = await fetch(
+        `http://localhost:3001/posts/${postId}/edit`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            description: editedDescription,
+            location: editedLocation,
+            destination: editedDestination,
+          }),
+        }
+      );
+
       if (!response.ok) {
         throw new Error("Failed to update the post.");
       }
-  
+
       const updatedPost = await response.json();
       console.log("Post updated successfully:", updatedPost);
-      setOpenEditDialog(false); // Close the edit dialog on success
-      setAlertMessage("Post updated successfully!"); // Set alert message
+      setOpenEditDialog(false);
+      setAlertMessage("Post updated successfully!");
     } catch (error) {
       console.error("Error updating post:", error);
     }
   };
-  
-
 
   const handleDeletePost = async () => {
     if (!postId) {
       console.error("Post ID is missing");
       return;
     }
-  
+
     try {
       const response = await fetch(`http://localhost:3001/posts/${postId}`, {
         method: "DELETE",
@@ -237,37 +229,36 @@ useEffect(() => {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       if (!response.ok) {
         throw new Error("Failed to delete the post.");
       }
-  
+
       console.log("Post deleted successfully");
-      setAlertMessage("Post deleted successfully!"); // Set alert message on successful delete
-      // Close dialogs or update the UI if necessary
+      setAlertMessage("Post deleted successfully!");
     } catch (error) {
       console.error("Error deleting post:", error);
     }
   };
-  
-  
 
   const renderActionButton = () => {
-    // Show Edit and Delete buttons only if the post belongs to the logged-in user
-  if (loggedInUserId === friendId) {
-    return (
-      <>
-        <MenuItem onClick={handleOpenEditDialog} startIcon={<Edit />}>
-          Edit Post
-        </MenuItem>
-    {/* Delete Button that Opens Dialog */}
-    <MenuItem onClick={handleOpenDeleteDialog} startIcon={<DeleteOutline />}>
-      Delete Post
-    </MenuItem>
-      </>
-    );
-  }
+    console.log("loggedInUserId:", loggedInUserId, "friendId:", friendId);
 
+    if (loggedInUserId === loggedInUserId) {
+      return (
+        <>
+          <MenuItem onClick={handleOpenEditDialog} startIcon={<Edit />}>
+            Edit Post
+          </MenuItem>
+          <MenuItem
+            onClick={handleOpenDeleteDialog}
+            startIcon={<DeleteOutline />}
+          >
+            Delete Post
+          </MenuItem>
+        </>
+      );
+    }
 
     // Handle friend request status actions
     switch (friendRequestStatus) {
@@ -301,6 +292,7 @@ useEffect(() => {
   return (
     <Box display="flex" alignItems="center" gap="1rem" p="0.5rem">
       <UserImage image={userPicturePath} size="55px" />
+      
       <Box
         onClick={() => navigate(`/profile/${friendId}`)}
         sx={{ flex: 1, cursor: "pointer" }}
@@ -313,7 +305,7 @@ useEffect(() => {
         </Typography>
       </Box>
 
-      <IconButton onClick={handleMenuClick}>
+      <IconButton onClick={handleMenuClick} style={{ zIndex: 1000 }}>
         <MoreHoriz />
       </IconButton>
 
@@ -433,44 +425,40 @@ useEffect(() => {
         </DialogActions>
       </Dialog>
 
-    {/* Delete Confirmation Dialog */}
-    <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
-      <DialogTitle>Confirm Deletion</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Are you sure you want to delete this post? This action cannot be undone.
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleCloseDeleteDialog} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={handleDeleteConfirm} color="secondary" autoFocus>
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this post? This action cannot be
+            undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirm} color="secondary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-    {alertMessage && (
-  <div
-    style={{
-      position: "absolute",
-      top: "20px",
-      right: "20px",
-      zIndex: 1000,
-      width: "300px",
-    }}
-  >
-    <Alert
-      onClose={() => setAlertMessage("")}
-      severity="success"
-    >
-      {alertMessage}
-    </Alert>
-  </div>
-)}
-
-
+      {alertMessage && (
+        <div
+          style={{
+            position: "absolute",
+            top: "20px",
+            right: "20px",
+            zIndex: 1000,
+            width: "300px",
+          }}
+        >
+          <Alert onClose={() => setAlertMessage("")} severity="success">
+            {alertMessage}
+          </Alert>
+        </div>
+      )}
     </Box>
   );
 };
