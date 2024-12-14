@@ -6,9 +6,6 @@ import {   registerCampaign, getManagedCampaigns, editCampaign,
 
 const router = express.Router();
 
-//Get all campaign
-// router.get('/campaigns', verifyToken, getAllCampaigns);
-
 // Route to handle campaign registration
 router.post('/register/:campaignId', verifyToken, registerCampaign);
 
@@ -31,8 +28,5 @@ router.get('/campaigns-by-status-user', verifyToken, getCampaignsByStatusUser);
 
 //Get all campaign for manager
 router.get('/campaignsformanage', verifyToken, getAllCampaignsForManage);
-
-
-
 
 export default router;

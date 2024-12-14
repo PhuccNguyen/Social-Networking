@@ -19,7 +19,6 @@ router.patch('/demote/:id', verifyToken, verifyAdmin, demoteToUser);
 // Toggle user active status
 router.patch('/toggle-user-status/:id', verifyToken, verifyAdmin, toggleUserActiveStatus);
 
-
 // Get assistant admins and their campaigns
 router.get('/assistant-admins-campaigns', verifyToken, verifyAdmin, getAssistantAdminsAndCampaigns);
 

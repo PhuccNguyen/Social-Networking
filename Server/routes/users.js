@@ -1,7 +1,6 @@
 import express from 'express';
 import {
-    getUser,
-    getUserFriends,
+    getUser, getUserFriends,
     deleteUserFriend, 
     updateUser,
     savePosts,
@@ -20,10 +19,10 @@ const router = express.Router();
 const storage = multer.diskStorage 
 ({
   destination: function (req, file, cb) {
-    cb(null, 'public/assets/');  // Folder to store the images
+    cb(null, 'public/assets/'); 
   },
   filename: function (req, file, cb) {
-    // Generate a unique filename based on the original file name
+
     const originalName = path.parse(file.originalname).name;  // Get the name without extension
     const extension = path.extname(file.originalname);  // Get the file extension
 
@@ -34,7 +33,7 @@ const storage = multer.diskStorage
     // Save the file with the new filename in the request object for MongoDB
     req.file = { filename: newFileName };
 
-    cb(null, newFileName);  // Return the filename to save the file in the local storage
+    cb(null, newFileName); 
   }
 });
 

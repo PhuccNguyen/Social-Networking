@@ -307,6 +307,7 @@ export const getCampaignsByStatusUser = async (req, res) => {
 
 // Helper function to calculate volunteer demographics (gender and age) for the campaign
 const calculateVolunteerDemographics = async (campaignId) => {
+  
   // Count gender demographics
   const genderData = await User.aggregate([
     { $match: { joinedCampaigns: campaignId } },
@@ -399,11 +400,11 @@ const calculateCampaignProgress = (campaign, status) => {
   const sortedMilestones = [...milestones].sort(
     (a, b) => parseFloat(a.percentage) - parseFloat(b.percentage)
   );
-
   // Calculate progress based on status
   if (status === "Upcoming") {
     return parseFloat(sortedMilestones[0].percentage) || 0;
   } else if (status === "Ongoing") {
+
     // Find the current milestone based on completion dates
     const now = new Date();
     for (let milestone of sortedMilestones) {
@@ -416,7 +417,6 @@ const calculateCampaignProgress = (campaign, status) => {
       100
     );
   } else {
-    // Ended: show the last milestone percentage (100%)
     return 100;
   }
 };

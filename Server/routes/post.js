@@ -1,14 +1,7 @@
 import express from "express";
 import {
-  getFeedPosts,
-  getUserPosts,
-  likePost,
-  addComment,
-  getFriendPosts,
-  getTrendingPosts,
-  editPost,
-  deletePost,
-} from "../controllers/post.js";
+  getFeedPosts,  getUserPosts,  likePost,  addComment,  getFriendPosts,
+  getTrendingPosts,  editPost,  deletePost,} from "../controllers/post.js";
 import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
