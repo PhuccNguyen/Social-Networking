@@ -73,30 +73,6 @@ export const toggleUserActiveStatus = async (req, res) => {
   }
 };
 
-export const deleteCampaign = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    // Log the received ID to verify it's correct
-    console.log("Deleting campaign with ID:", id);
-
-    // Delete the campaign from the database
-    const deletedCampaign = await Campaign.findByIdAndDelete(id);
-
-    if (!deletedCampaign) {
-      // Campaign not found
-      return res.status(404).json({ message: 'Campaign not found.' });
-    }
-
-    // Return a success response
-    res.status(200).json({ message: 'Campaign deleted successfully.' });
-  } catch (error) {
-    console.error("Error deleting campaign:", error);  // Log the error for debugging
-    res.status(500).json({ message: 'Error deleting campaign.', error: error.message });
-  }
-};
-
-
 export const toggleCampaignStatus = async (req, res) => {
   const { id } = req.params;
 
@@ -123,5 +99,27 @@ export const getAllCampaign = async (req, res) => {
   } catch (error) {
     console.error("Error fetching campaigns:", error);
     res.status(500).json({ error: "Failed to retrieve campaigns" });
+  }
+};
+
+export const deleteCampaign = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Log the received ID to verify it's correct
+    console.log("Deleting campaign with ID:", id);
+
+    // Delete the campaign from the database
+    const deletedCampaign = await Campaign.findByIdAndDelete(id);
+
+    if (!deletedCampaign) {
+      return res.status(404).json({ message: 'Campaign not found.' });
+    }
+
+    // Return a success response
+    res.status(200).json({ message: 'Campaign deleted successfully.' });
+  } catch (error) {
+    console.error("Error deleting campaign:", error);  // Log the error for debugging
+    res.status(500).json({ message: 'Error deleting campaign.', error: error.message });
   }
 };

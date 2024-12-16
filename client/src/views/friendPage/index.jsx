@@ -153,22 +153,21 @@ const FriendPage = () => {
                   },
                 }}
               >
-  <Tooltip title="View requests others have sent to you" arrow>
-    <Tab
-      icon={
-        <Box display="flex" alignItems="center" gap="0.2rem">
-          <Box
-            component="img"
-            src="/assets/emailaa.png"
-            alt="Received"
-            sx={{ width: "34px", height: "34px" }}
-          />
-        </Box>
-      }
-      label="Requests Received"
-    />
-  </Tooltip>
-
+                <Tooltip title="View requests others have sent to you" arrow>
+                  <Tab
+                    icon={
+                      <Box display="flex" alignItems="center" gap="0.2rem">
+                        <Box
+                          component="img"
+                          src="/assets/emailaa.png"
+                          alt="Received"
+                          sx={{ width: "34px", height: "34px" }}
+                        />
+                      </Box>
+                    }
+                    label="Requests Received"
+                  />
+                </Tooltip>
 
                 <Tooltip title="Check the requests you have sent" arrow>
                   <Tab icon={<PersonAddIcon />} label="Requests Sent" />
