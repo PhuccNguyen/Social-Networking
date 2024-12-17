@@ -26,10 +26,10 @@ export const createPost = async (req, res) => {
             location: user.location,
             description,
             destination,
-            picturePath, // Save the randomized filename
-            userPicturePath: user.picturePath, // User's profile picture
+            picturePath, 
+            userPicturePath: user.picturePath, 
             likes: new Map(),  // Initialize likes as an empty Map
-            comments: [],      // Initialize comments as an empty array
+            comments: [],     
         });
 
         // Save the new post to the database

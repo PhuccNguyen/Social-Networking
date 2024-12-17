@@ -65,7 +65,19 @@ const FriendListWidget = ({ userId }) => {
     };
 
     return (
-        <Box>
+<Box
+  display="flex"
+  flexDirection="column"
+  gap="1.25rem"
+  maxHeight="400px" // Chiều cao tối đa
+  overflowY="auto" // Thanh cuộn
+  sx={{
+    "&::-webkit-scrollbar": { width: "8px" },
+    "&::-webkit-scrollbar-thumb": { backgroundColor: "#888", borderRadius: "10px" },
+    "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "#555" },
+    padding: "0 0.5rem",
+  }}
+>
             <Typography
                 color={palette.neutral.dark}
                 variant="h4"

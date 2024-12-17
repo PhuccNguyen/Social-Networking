@@ -156,42 +156,130 @@ const FriendPage = () => {
                 <Tooltip title="View requests others have sent to you" arrow>
                   <Tab
                     icon={
-                      <Box display="flex" alignItems="center" gap="0.2rem">
+                      <Box display="flex" alignItems="center" gap="0.5rem">
                         <Box
                           component="img"
-                          src="/assets/emailaa.png"
+                          src="/assets/check-mail.png"
                           alt="Received"
-                          sx={{ width: "34px", height: "34px" }}
+                          sx={{ width: "44px", height: "44px" }}
                         />
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontWeight: 500,
+                            fontSize: "1rem",
+                            color: "inherit",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          Requests Received
+                        </Typography>
                       </Box>
                     }
-                    label="Requests Received"
+                    iconPosition="start"
                   />
                 </Tooltip>
 
                 <Tooltip title="Check the requests you have sent" arrow>
-                  <Tab icon={<PersonAddIcon />} label="Requests Sent" />
+                  <Tab
+                    icon={
+                      <Box display="flex" alignItems="center" gap="0.5rem">
+                        <Box
+                          component="img"
+                          src="/assets/forward-message.png"
+                          alt="Sent Requests"
+                          sx={{ width: "44px", height: "44px" }}
+                        />
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontWeight: 500,
+                            fontSize: "1rem",
+                            color: "inherit",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          Requests Sent
+                        </Typography>
+                      </Box>
+                    }
+                    iconPosition="start"
+                  />
                 </Tooltip>
 
                 <Tooltip title="See suggestions for people you may know" arrow>
-                  <Tab icon={<PeopleIcon />} label="Suggestions" />
+                  <Tab
+                    icon={
+                      <Box display="flex" alignItems="center" gap="0.5rem">
+                        <Box
+                          component="img"
+                          src="/assets/exchange-mails.png"
+                          alt="Suggestions"
+                          sx={{ width: "44px", height: "44px" }}
+                        />
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontWeight: 500,
+                            fontSize: "1rem",
+                            color: "inherit",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          Suggestions
+                        </Typography>
+                      </Box>
+                    }
+                    iconPosition="start"
+                  />
                 </Tooltip>
 
                 <Tooltip title="View and manage your current friends" arrow>
-                  <Tab icon={<GroupIcon />} label="Friends" />
+                  <Tab
+                    icon={
+                      <Box display="flex" alignItems="center" gap="0.5rem">
+                        <Box
+                          component="img"
+                          src="/assets/group.png"
+                          alt="Friends"
+                          sx={{ width: "44px", height: "44px" }}
+                        />
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            fontWeight: 500,
+                            fontSize: "1rem",
+                            color: "inherit",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          Friends
+                        </Typography>
+                      </Box>
+                    }
+                    iconPosition="start"
+                  />
                 </Tooltip>
               </Tabs>
             </Paper>
 
             {/* Content for each tab */}
+
             <Paper
               elevation={3}
-              sx={{ borderRadius: "4px", padding: "1rem", minHeight: "470px" }}
+              sx={{
+                borderRadius: "4px",
+                padding: "1rem",
+                minHeight: "470px",
+                overflowY: "auto",
+                maxHeight: "600px",
+              }}
             >
               {tabValue === 0 && <FriendRequests userId={_id} />}
               {tabValue === 1 && <FriendRequestsSent userId={_id} />}
               {tabValue === 2 && <FriendSuggestions userId={_id} />}
-              {tabValue === 3 && <MakeFriendPost userId={_id} />}
+              {tabValue === 3 && <MakeFriendPost userId={_id} />
+              }
             </Paper>
           </Box>
         </Box>
